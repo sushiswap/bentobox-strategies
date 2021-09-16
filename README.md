@@ -1,89 +1,22 @@
+# BentoBox Strategies
+
 # HardHat Foundation
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-## Env
-
-```sh
-cp .env.example .env
-```
 
 ## Test
 
 ```sh
 yarn test
 ```
+## Deployments
 
-```sh
-yarn test test/Greeter.ts
-```
+### Polygon - Aave Strategies
 
-## Coverage
-
-```sh
-yarn test:coverage
-```
-
-<https://hardhat.org/plugins/solidity-coverage.html#tasks>
-
-## Gas
-
-```sh
-yarn test:gas
-```
-
-<https://github.com/cgewecke/hardhat-gas-reporter>
-
-## Lint
-
-```sh
-yarn lint
-```
-
-## Watch
-
-```sh
-npx hardhat watch compile
-```
-
-## Deployment
-
-### Local
-
-Running the following command will start a local node and run the defined deploy script on the local node.
-
-```sh
-npx hardhat node
-```
-
-### Mainnet
-
-```sh
-yarn mainnet:deploy
-```
-
-```sh
-yarn mainnet:verify
-```
-
-```sh
-hardhat tenderly:verify --network mainnet ContractName=Address
-```
-
-```sh
-hardhat tenderly:push --network mainnet ContractName=Address
-```
-
-### Ropsten
-
-```sh
-yarn ropsten:deploy
-```
-
-```sh
-yarn ropsten:verify
-```
-
-```sh
-hardhat tenderly:verify --network ropsten ContractName=Address
-```
+| Token                      | Address                                    |
+| -------------------------- | ------------------------------------------ |
+| WETH Aave strategy         | 0x1026cbed7b7E851426b959BC69dcC1bf5876512d |
+| USDC Aave strategy         | 0x73b88849a529Cc7b5aA7C0b6B5d2Df00856b959c |
+| WBTC Aave strategy         | 0xa19b3b22f29E23e4c04678C94CFC3e8f202137d8 |
+| WMATIC Aave strategy       | 0x4736c58BfB626C96D344Be2fC04e420aE283E9E8 |
+| USDT Aave strategy         | 0xb65Be5C721B6d6734825BA31526365b6697d9B71 |
+| DAI Aave strategy          | 0x46c687bFD144c80C0B1BD2c60D3d970fB644b0E6 |
+| AAVE Aave strategy         | 0xB6E90eBe44De40aEb0b987adC2D7d9dd0EC918d7 |

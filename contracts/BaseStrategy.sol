@@ -48,6 +48,7 @@ abstract contract BaseStrategy is IStrategy, Ownable {
         
         if (_strategyExecutor != address(0)) {
             strategyExecutors[_strategyExecutor] = true;
+            emit LogSetStrategyExecutor(_strategyExecutor, true);
         }
     }
 
