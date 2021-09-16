@@ -3,12 +3,13 @@
   "mochaExplorer.fullTrace": true,
   "mochaExplorer.exit": true,
   "solidity.enableLocalNodeCompiler": false,
-  "solidity.compileUsingRemoteVersion": "v0.6.12+commit.27d51765",
+  "solidity.compileUsingRemoteVersion": "v0.8.7+commit.e28d00a7",
   "solidity.compilerOptimization": 200,
-  "solidity.compileUsingLocalVersion": "",
+  "solidity.compileUsingLocalVersion": "c:\\Users\\Gasper\\gasper-crypto\\sushi\\bentobox-strategies\\soljson-v0.8.7+commit.e28d00a7.js",
   "solidity.linter": "solhint",
   "solidity.packageDefaultDependenciesContractsDirectory": "",
   "solidity.enabledAsYouTypeCompilationErrorCheck": true,
   "solidity.validationDelay": 1500,
-  "solidity.packageDefaultDependenciesDirectory": "node_modules"
+  "solidity.packageDefaultDependenciesDirectory": "node_modules",
+  "solidity.defaultCompiler": "remote"
 }
