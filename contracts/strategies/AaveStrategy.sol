@@ -60,10 +60,10 @@ contract AaveStrategy is BaseStrategy {
         ILendingPool _aaveLendingPool,
         IAaveIncentivesController _incentiveController,
         address strategyToken,
-		address bentoBox,
-		address strategyExecutor,
-		address factory,
-		address bridgeToken
+        address bentoBox,
+        address strategyExecutor,
+        address factory,
+        address bridgeToken
     ) BaseStrategy(strategyToken, bentoBox, strategyExecutor, factory, bridgeToken)  {
         aaveLendingPool = _aaveLendingPool;
         incentiveController = _incentiveController;

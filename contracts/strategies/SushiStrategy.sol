@@ -14,13 +14,13 @@ contract SushiStrategy is BaseStrategy {
     ISushiBar public immutable sushiBar;
 
     constructor(
-		address _sushiBar,
-		address strategyToken,
-		address bentoBox,
-		address strategyExecutor
-	) BaseStrategy(strategyToken, bentoBox, strategyExecutor, address(0), address(0)) {
+        address _sushiBar,
+        address strategyToken,
+        address bentoBox,
+        address strategyExecutor
+    ) BaseStrategy(strategyToken, bentoBox, strategyExecutor, address(0), address(0)) {
         IERC20(strategyToken).approve(_sushiBar, type(uint256).max);
-		sushiBar = ISushiBar(_sushiBar);
+        sushiBar = ISushiBar(_sushiBar);
     }
 
     function _skim(uint256 amount) internal override {
@@ -32,7 +32,7 @@ contract SushiStrategy is BaseStrategy {
         uint256 total = sushiBar.balanceOf(address(this));
         if (total > keep) sushiBar.leave(total - keep);
         // xSUSHI can't report a loss so no need to check for keep < total case
-		// we can return 0 when reporting profits (BaseContract checks balanceOf)
+        // we can return 0 when reporting profits (BaseContract checks balanceOf)
         return int256(0);
     }
 

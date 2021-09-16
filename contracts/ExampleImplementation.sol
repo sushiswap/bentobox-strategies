@@ -5,20 +5,20 @@ pragma solidity 0.8.7;
 import "./BaseStrategy.sol";
 
 /*  Example implementation stub to simplify strategy development.
-	Please refer to the BaseStrategy contract natspec comments for
-	further tips and clarifications. Also see the SushiStrategy and the
-	AavePolygonStrategy for reference implementations. */
+    Please refer to the BaseStrategy contract natspec comments for
+    further tips and clarifications. Also see the SushiStrategy and the
+    AavePolygonStrategy for reference implementations. */
 contract ExampleImplementation is BaseStrategy {
     // BaseStrategy initializes a immutable storage variable 'strategyToken' of type IERC20 we can use
 
     constructor(
-		address investmentContract,
-		address strategyToken,
-		address bentoBox,
-		address strategyExecutor,
-		address factory,
-		address bridgeToken
-	) BaseStrategy(strategyToken, bentoBox, strategyExecutor, factory, bridgeToken) {
+        address investmentContract,
+        address strategyToken,
+        address bentoBox,
+        address strategyExecutor,
+        address factory,
+        address bridgeToken
+    ) BaseStrategy(strategyToken, bentoBox, strategyExecutor, factory, bridgeToken) {
         IERC20(strategyToken).approve(investmentContract, type(uint256).max);
     }
 
