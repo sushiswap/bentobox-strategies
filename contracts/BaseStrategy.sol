@@ -12,14 +12,14 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 abstract contract BaseStrategy is IStrategy, Ownable {
 
-	using SafeERC20 for IERC20;
+    using SafeERC20 for IERC20;
 
-	address public immutable strategyToken;
+    address public immutable strategyToken;
     address public immutable bentoBox;
     address public immutable factory;
     address public immutable bridgeToken;
 
-	bool public exited; /// @dev After bentobox 'exits' the strategy harvest, skim and withdraw functions can no loner be called
+    bool public exited; /// @dev After bentobox 'exits' the strategy harvest, skim and withdraw functions can no loner be called
     uint256 public maxBentoBoxBalance; /// @dev Slippage protection when calling harvest
     mapping(address => bool) public strategyExecutors; /// @dev EOAs that can execute safeHarvest
 
@@ -33,25 +33,25 @@ abstract contract BaseStrategy is IStrategy, Ownable {
         @param _bridgeToken An intermedieary token for swapping any rewards into the underlying token.
         @dev factory and bridgeToken can be address(0) if we don't expect rewards we would need to swap
     */
-	constructor(
-		address _strategyToken,
-		address _bentoBox,
+    constructor(
+        address _strategyToken,
+        address _bentoBox,
         address _strategyExecutor,
-		address _factory,
-		address _bridgeToken
-	) {
+        address _factory,
+        address _bridgeToken
+    ) {
         
         strategyToken = _strategyToken;
-		bentoBox = _bentoBox;
-		factory = _factory;
-		bridgeToken = _bridgeToken;
+        bentoBox = _bentoBox;
+        factory = _factory;
+        bridgeToken = _bridgeToken;
         
         if (_strategyExecutor != address(0)) {
             strategyExecutors[_strategyExecutor] = true;
         }
     }
 
-	//** Strategy implementation: override the following functions: */
+    //** Strategy implementation: override the following functions: */
 
     /// @notice Invests the underlying asset.
     /// @param amount The amount of tokens to invest.
@@ -81,7 +81,7 @@ abstract contract BaseStrategy is IStrategy, Ownable {
 
     //** End strategy implementation */
 
-	modifier isActive() {
+    modifier isActive() {
         require(!exited, "BentoBox Strategy: exited");
         _;
     }
@@ -166,13 +166,13 @@ abstract contract BaseStrategy is IStrategy, Ownable {
                 int256 diff = amount + int256(contractBalance);
 
                 if (diff > 0) { // we still made some profit
-                    
+
                     /// @dev send the profit to BentoBox and reinvest the rest
                     IERC20(strategyToken).safeTransfer(bentoBox, uint256(diff));
                     _skim(uint256(-amount));
-                    
+
                 } else { // we made a loss but we have some tokens we can reinvest
-                    
+
                     _skim(contractBalance);
 
                 }
