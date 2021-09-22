@@ -22,45 +22,49 @@ const deployFunction: DeployFunction = async function ({
   const factory = "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
   const bridgeToken = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
   const zero = "0x0000000000000000000000000000000000000000";
+  const executioner = "0x1008EAC341da6452384EBadDE7655cB418447B4d";
+  const polygonMultisig = "0x2B23D9B02FffA1F5441Ef951B4B95c09faa57EBA";
 
   const aaveTokens = [
     {
-      symbol: "Weth",
+      symbol: "WETH",
       address: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
       addFactory: true,
       bridgeToken: zero
     }, {
-      symbol: "Usdc",
+      symbol: "USDC",
       address: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
       addFactory: true,
       bridgeToken
     }, {
-      symbol: "Wbtc",
+      symbol: "WBTC",
       address: "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
       addFactory: true,
       bridgeToken
     }, {
-      symbol: "Wmatic",
+      symbol: "WMATIC",
       address: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
       addFactory: false,
       bridgeToken: zero
     }, {
-      symbol: "Usdt",
+      symbol: "USDT",
       address: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
       addFactory: true,
       bridgeToken
     }, {
-      symbol: "Dai",
+      symbol: "DAI",
       address: "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
       addFactory: true,
       bridgeToken
     }, {
-      symbol: "Aave",
+      symbol: "AAVE",
       address: "0xd6df932a45c0f255f85145f286ea0b292b21c90b",
       addFactory: true,
       bridgeToken
     }
   ]
+
+  const deployedAddress: string[] = [];
 
   for (const token of aaveTokens) {
 
@@ -71,16 +75,24 @@ const deployFunction: DeployFunction = async function ({
         incentiveControler,
         token.address,
         bentoBox,
-        zero,
+        executioner,
         token.addFactory ? factory : zero,
         token.bridgeToken
       ],
       log: false,
       deterministicDeployment: false,
-    })
+    });
 
     console.log(`${token.symbol} Aave strategy deployed at ${strategy.address}`);
+    deployedAddress.push(strategy.address);
 
+  }
+
+  const strategyFactory = await ethers.getContractFactory("AaveStrategy");
+
+  for (const address of deployedAddress) {
+    const strategy = strategyFactory.attach(address);
+    await strategy.transferOwnership(polygonMultisig);
   }
 
 };

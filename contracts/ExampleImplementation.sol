@@ -18,7 +18,7 @@ contract ExampleImplementation is BaseStrategy {
         address strategyExecutor,
         address factory,
         address bridgeToken
-    ) BaseStrategy(strategyToken, bentoBox, strategyExecutor, factory, bridgeToken) {
+    ) BaseStrategy(strategyToken, bentoBox, factory, bridgeToken, strategyExecutor) {
         IERC20(strategyToken).approve(investmentContract, type(uint256).max);
     }
 

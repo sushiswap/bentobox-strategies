@@ -13,10 +13,10 @@ yarn test
 
 | Token                      | Address                                    |
 | -------------------------- | ------------------------------------------ |
-| WETH Aave strategy         | 0x1026cbed7b7E851426b959BC69dcC1bf5876512d |
-| USDC Aave strategy         | 0x73b88849a529Cc7b5aA7C0b6B5d2Df00856b959c |
-| WBTC Aave strategy         | 0xa19b3b22f29E23e4c04678C94CFC3e8f202137d8 |
-| WMATIC Aave strategy       | 0x4736c58BfB626C96D344Be2fC04e420aE283E9E8 |
-| USDT Aave strategy         | 0xb65Be5C721B6d6734825BA31526365b6697d9B71 |
-| DAI Aave strategy          | 0x46c687bFD144c80C0B1BD2c60D3d970fB644b0E6 |
-| AAVE Aave strategy         | 0xB6E90eBe44De40aEb0b987adC2D7d9dd0EC918d7 |
+| WETH Aave strategy         | 0x760ef4F484EbF2668001B090291f84A3CDf2f3aa |
+| USDC Aave strategy         | 0xCFb49550ce8f39c29E73BA0baBc16609A63b31b1 |
+| WBTC Aave strategy         | 0xF2CF8109d1c66112132180c0d0f925bDD7b4c246 |
+| WMATIC Aave strategy       | 0x7166D2efffCA02c6A21A235732131660c3E61f9F |
+| USDT Aave strategy         | 0x59c7459281B4CF2eE96C1CA2A410Fdf03F51A369 |
+| DAI Aave strategy          | 0xB6665Ba83e054A91db1e6fC2252b4346a12C60d7 |
+| AAVE Aave strategy         | 0x5fB5d087A67d412350060c848b826B9Fb0FE92bA |

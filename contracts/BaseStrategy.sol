@@ -28,17 +28,17 @@ abstract contract BaseStrategy is IStrategy, Ownable {
 
     /** @param _strategyToken Address of the underlying token the strategy invests.
         @param _bentoBox BentoBox address.
-        @param _strategyExecutor initial EOA that will execute the safeHarvest function.
         @param _factory SushiSwap factory.
         @param _bridgeToken An intermedieary token for swapping any rewards into the underlying token.
+        @param _strategyExecutor an EOA that will execute the safeHarvest function.
         @dev factory and bridgeToken can be address(0) if we don't expect rewards we would need to swap
     */
     constructor(
         address _strategyToken,
         address _bentoBox,
-        address _strategyExecutor,
         address _factory,
-        address _bridgeToken
+        address _bridgeToken,
+        address _strategyExecutor
     ) {
         
         strategyToken = _strategyToken;
@@ -110,7 +110,7 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     /// @notice Harvest profits while preventing a sandwich attack exploit.
     /// @param maxBalance The maximum balance of the underlying token that is allowed to be in BentoBox.
     /// @param rebalance Whether BentoBox should rebalance the strategy assets to acheive it's target allocation.
-    /// @param maxChangeAmount When rebalancing - the maximum amount that will be deposited to or withdrawn from a strategy.
+    /// @param maxChangeAmount When rebalancing - the maximum amount that will be deposited to or withdrawn from a strategy to BentoBox.
     /// @param harvestRewards If we want to claim any accrued reward tokens
     /// @dev maxBalance can be set to 0 to keep the previous value.
     /// @dev maxChangeAmount can be set to 0 to allow for full rebalancing.
