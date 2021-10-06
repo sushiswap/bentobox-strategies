@@ -10,6 +10,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+/// @title Abstrat contract to simplify BentoOBx strategy development.
+/// @dev Extend the _skim, _harvest, _withdraw, _exit, _harvestRewards methods
+/// @dev Ownership should be transfered to the Sushi ops multisig.
 abstract contract BaseStrategy is IStrategy, Ownable {
 
     using SafeERC20 for IERC20;
@@ -17,35 +20,49 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     address public immutable strategyToken;
     address public immutable bentoBox;
     address public immutable factory;
-    address public immutable bridgeToken;
 
-    bool public exited; /// @dev After bentobox 'exits' the strategy harvest, skim and withdraw functions can no loner be called
-    uint256 public maxBentoBoxBalance; /// @dev Slippage protection when calling harvest
-    mapping(address => bool) public strategyExecutors; /// @dev EOAs that can execute safeHarvest
+    /// @dev Path are for the original sushiswap amm
+    /// @dev Set variable visibility to private since we don't want the child contract to be able to upgrade it
+    address[][] private _allowedSwapPaths = new address[][](0);
+
+    /// @dev After bentobox 'exits' the strategy harvest, skim and withdraw functions can no loner be called
+    bool public exited;
+    
+    /// @dev Slippage protection when calling harvest
+    uint256 public maxBentoBoxBalance;
+    
+    /// @dev EOAs that can execute safeHarvest
+    mapping(address => bool) public strategyExecutors;
 
     event LogConvert(address indexed server, address indexed token0, address indexed token1, uint256 amount0, uint256 amount1);
     event LogSetStrategyExecutor(address indexed executor, bool allowed);
+    event LogSetAllowedPath(uint256 indexed pathId, bool allowed);
 
     /** @param _strategyToken Address of the underlying token the strategy invests.
         @param _bentoBox BentoBox address.
         @param _factory SushiSwap factory.
-        @param _bridgeToken An intermedieary token for swapping any rewards into the underlying token.
         @param _strategyExecutor an EOA that will execute the safeHarvest function.
-        @dev factory and bridgeToken can be address(0) if we don't expect rewards we would need to swap
+        @param _allowedSwapPath Path the contract can use when swapping a reward token to the strategy token
+        @dev factory can be set to address(0) if we don't expect rewards we would need to swap
+        @dev allowedPaths can be set to [] if we don't expect rewards we would need to swap
     */
     constructor(
         address _strategyToken,
         address _bentoBox,
+        address _strategyExecutor,
         address _factory,
-        address _bridgeToken,
-        address _strategyExecutor
+        address[] memory _allowedSwapPath
     ) {
         
         strategyToken = _strategyToken;
         bentoBox = _bentoBox;
         factory = _factory;
-        bridgeToken = _bridgeToken;
         
+        if (_allowedSwapPath.length != 0) {
+            _allowedSwapPaths.push(_allowedSwapPath);
+            emit LogSetAllowedPath(0, true);
+        }
+
         if (_strategyExecutor != address(0)) {
             strategyExecutors[_strategyExecutor] = true;
             emit LogSetStrategyExecutor(_strategyExecutor, true);
@@ -224,24 +241,29 @@ abstract contract BaseStrategy is IStrategy, Ownable {
         (success, ) = to.call{value: value}(data);
     }
 
+    function getAllowedPath(uint256 pathIndex) external view returns(address[] memory path) {
+        path = _allowedSwapPaths[pathIndex];
+    }
+
+    function setAllowedPath(address[] calldata path) external onlyOwner {
+        _allowedSwapPaths.push(path);
+        emit LogSetAllowedPath(_allowedSwapPaths.length, true);
+    }
+
+    function disallowPath(uint256 pathIndex) external onlyOwner {
+        require(pathIndex < _allowedSwapPaths.length, "Out of bounds");
+        _allowedSwapPaths[pathIndex] = new address[](0);
+        emit LogSetAllowedPath(pathIndex, false);
+    }
+
     /// @notice Swap some tokens in the contract for the underlying and deposits them to address(this)
-    function swapExactTokensForUnderlying(uint256 amountOutMin, address inputToken) public onlyExecutor returns (uint256 amountOut) {
+    /// @param amountOutMin minimum amount of output tokens we should get (slippage protection).
+    /// @param pathIndex Index of the predetermined path we will use for the swap.
+    function swapExactTokensForUnderlying(uint256 amountOutMin, uint256 pathIndex) public onlyExecutor returns (uint256 amountOut) {
         require(factory != address(0), "BentoBox Strategy: cannot swap");
-        require(inputToken != strategyToken, "BentoBox Strategy: invalid swap");
+        require(pathIndex < _allowedSwapPaths.length);
 
-        ///@dev Construct a path array consisting of the input (reward token),
-        /// underlying token and a potential bridge token
-        bool useBridge = bridgeToken != address(0);
-
-        address[] memory path = new address[](useBridge ? 3 : 2);
-
-        path[0] = inputToken;
-
-        if (useBridge) {
-            path[1] = bridgeToken;
-        }
-
-        path[path.length - 1] = strategyToken;
+        address[] memory path = _allowedSwapPaths[pathIndex];
 
         uint256 amountIn = IERC20(path[0]).balanceOf(address(this));
 
@@ -255,7 +277,7 @@ abstract contract BaseStrategy is IStrategy, Ownable {
 
         _swap(amounts, path, address(this));
 
-        emit LogConvert(msg.sender, inputToken, strategyToken, amountIn, amountOut);
+        emit LogConvert(msg.sender, path[0], strategyToken, amountIn, amountOut);
     }
 
     /// @dev requires the initial amount to have already been sent to the first pair
