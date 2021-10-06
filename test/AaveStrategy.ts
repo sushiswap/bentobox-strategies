@@ -62,7 +62,7 @@ describe("Aave Polygon strategy", async function () {
       _bentoBox,
       _bentoBoxOwner,
       _factory,
-      _weth
+      [_wmatic, _weth, _usdc]
     )).connect(signer);
 
     aaveStrategySecondary = (await AaveStrategy.deploy(
@@ -72,7 +72,7 @@ describe("Aave Polygon strategy", async function () {
       _bentoBox,
       _bentoBoxOwner,
       _factory,
-      _weth
+      [_wmatic, _weth, _usdc]
     )).connect(signer);
 
     bentoBox = (await BentoBox.attach(_bentoBox)).connect(signer);
@@ -136,7 +136,7 @@ describe("Aave Polygon strategy", async function () {
 
     const wmaticBalance = await wmatic.balanceOf(aaveStrategy.address);
     const oldUsdcbalance = await usdc.balanceOf(aaveStrategy.address);
-    await aaveStrategy.swapExactTokensForUnderlying(0, _wmatic);
+    await aaveStrategy.swapExactTokensForUnderlying(0, 0);
 
     const usdcbalance = await usdc.balanceOf(aaveStrategy.address);
     await aaveStrategy.safeHarvest(0, false, 0, true);

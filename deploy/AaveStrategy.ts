@@ -1,3 +1,4 @@
+import { BENTOBOX_ADDRESS } from "@sushiswap/core-sdk";
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
@@ -77,7 +78,11 @@ const deployFunction: DeployFunction = async function ({
         bentoBox,
         executioner,
         token.addFactory ? factory : zero,
-        token.bridgeToken
+        token.addFactory ?
+          (token.bridgeToken == zero ?
+            [incentiveToken, token.bridgeToken, token.address] :
+            [incentiveToken, token.address]) :
+          []
       ],
       log: false,
       deterministicDeployment: false,
@@ -111,3 +116,4 @@ deployFunction.skip = ({ getChainId }) =>
   });
 
 deployFunction.tags = ["AaveStrategy"];
+deployFunction.dependencies = ["BentoBoxV1"];

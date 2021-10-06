@@ -13,6 +13,7 @@ import "@tenderly/hardhat-tenderly";
 import { HardhatUserConfig, task } from "hardhat/config";
 
 import { removeConsoleLog } from "hardhat-preprocessor";
+import { ethers } from "ethers";
 
 const accounts = {
   mnemonic:
