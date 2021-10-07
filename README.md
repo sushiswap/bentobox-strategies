@@ -11,7 +11,7 @@ yarn test
 
 ### Polygon - Aave Strategies
 
-| Token                      | Token address                              | Address                                    |
+| Token                      | Token address                              | Strategy Address                           |
 | -------------------------- | ------------------------------------------ | ------------------------------------------ |
 | WETH Aave strategy         | 0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619 | 0x760ef4F484EbF2668001B090291f84A3CDf2f3aa |
 | USDC Aave strategy         | 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174 | 0xCFb49550ce8f39c29E73BA0baBc16609A63b31b1 |
