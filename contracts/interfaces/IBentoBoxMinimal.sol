@@ -10,6 +10,14 @@ interface IBentoBoxMinimal {
         uint128 base;
     }
 
+    struct StrategyData {
+        uint64 strategyStartDate;
+        uint64 targetPercentage;
+        uint128 balance; // the balance of the strategy that BentoBox thinks is in there
+    }
+
+    function strategyData(address token) external view returns (StrategyData memory);
+
     /// @notice Balance per ERC-20 token per account in shares.
     function balanceOf(address, address) external view returns (uint256);
 
