@@ -15,6 +15,8 @@ const deployFunction: DeployFunction = async function ({
 
   if (chainId != "137") throw Error("Trying to deploy Aave strategy on a different network than Polygon");
 
+  const harvester = await ethers.getContract("CombineHarvester");
+
   const incentiveToken = "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
   const lendingPool = "0x8dff5e27ea6b7ac08ebfdf9eb090f32ee9a30fcf";
   const incentiveControler = "0x357D51124f59836DeD84c8a1730D72B749d8BC23";
@@ -22,7 +24,7 @@ const deployFunction: DeployFunction = async function ({
   const factory = "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
   const bridgeToken = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
   const zero = "0x0000000000000000000000000000000000000000";
-  const executioner = "0x1008EAC341da6452384EBadDE7655cB418447B4d";
+  const executioner = harvester.address;
   const polygonMultisig = "0x2B23D9B02FffA1F5441Ef951B4B95c09faa57EBA";
 
   const aaveTokens = [
@@ -111,3 +113,4 @@ deployFunction.skip = ({ getChainId }) =>
   });
 
 deployFunction.tags = ["AaveStrategy"];
+deployFunction.dependencies = ["CombineHarvester"];
