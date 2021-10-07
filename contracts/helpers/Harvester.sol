@@ -46,7 +46,8 @@ contract CombineHarvester is Ownable {
             strategies[i].safeHarvest(maxBalance, rebalance, maxChangeAmounts[i], harvestRewards[i]);
             
             if (minOutAmounts[i] > 0) {
-                address inputToken = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270; // we only expect wmatic rewards for the current aave strategies
+                // we only expect wmatic rewards for the current aave strategies
+                address inputToken = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
                 strategies[i].swapExactTokensForUnderlying(minOutAmounts[i], inputToken);
             }
         }
@@ -59,7 +60,7 @@ contract CombineHarvester is Ownable {
         
         IBentoBoxMinimal.StrategyData memory data = bentoBox.strategyData(token);
         
-        uint256 targetStrategyBalance = bentoBox.totals(token).elastic * data.targetPercentage / 100; // target percentage value is in [0, 100]
+        uint256 targetStrategyBalance = bentoBox.totals(token).elastic * data.targetPercentage / 100; // targetPercentage ∈ [0, 100]
 
         if (data.balance == 0) return targetStrategyBalance != 0;
         
