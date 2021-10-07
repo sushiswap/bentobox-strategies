@@ -6,12 +6,12 @@ import "../interfaces/IBentoBoxMinimal.sol";
 pragma solidity 0.8.7;
 
 interface ISafeStrategy {
-    function safeHarvest(
-        uint256 maxBalance,
-        bool rebalance,
-        uint256 maxChangeAmount,
-        bool harvestRewards
-    ) external;
+	function safeHarvest(
+		uint256 maxBalance,
+		bool rebalance,
+		uint256 maxChangeAmount,
+		bool harvestRewards
+	) external;
 
     function swapExactTokensForUnderlying(uint256 amountOutMin, address inputToken) external;
     function strategyToken() external view returns(address);
