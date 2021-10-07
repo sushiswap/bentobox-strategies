@@ -20,3 +20,7 @@ yarn test
 | USDT Aave strategy         | 0xc2132D05D31c914a87C6611C10748AEb04B58e8F | 0x59c7459281B4CF2eE96C1CA2A410Fdf03F51A369 |
 | DAI Aave strategy          | 0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063 | 0xB6665Ba83e054A91db1e6fC2252b4346a12C60d7 |
 | AAVE Aave strategy         | 0xD6DF932A45C0f255f85145f286eA0b292B21C90B | 0x5fB5d087A67d412350060c848b826B9Fb0FE92bA |
+
+| Strategy                   | Harvester address                          |
+| -------------------------- | ------------------------------------------ |
+| Polygon Aave strategies    | 0xdC56bD1F319DC1976FD179Ba2A6A76363316a374 |
