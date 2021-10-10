@@ -97,7 +97,7 @@ contract AaveStrategy is BaseStrategy {
         }
     }
 
-    function _harvestRewards() internal override {
+    function _harvestRewards() internal virtual override {
         address[] memory rewardTokens = new address[](1);
         rewardTokens[0] = address(aToken);
         uint256 reward = incentiveController.getRewardsBalance(rewardTokens, address(this));
