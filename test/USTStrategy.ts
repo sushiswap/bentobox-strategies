@@ -1,21 +1,22 @@
 /* eslint-disable prefer-const */
-import { ethers, network, deployments } from "hardhat";
+import { ethers, network, deployments, getNamedAccounts } from "hardhat";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 
 import {
   BentoBoxV1,
-  CombineHarvester,
-  IERC20,
+  USTMock,
   USTStrategy,
 } from "../typechain";
+import { advanceTime, getBigNumber, impersonate } from "../utilities";
 
-describe("Ethereum UST DegenBox Strategy", async () => {
+const maybe = process.env.FORKING ? describe : describe.skip;
+
+maybe("Ethereum UST DegenBox Strategy", async () => {
   let USTStrategy: USTStrategy;
   let BentoBox: BentoBoxV1;
-  let Harvester: CombineHarvester;
-  let UST;
-  let aUST;
+  let UST: USTMock;
+  let aUST: USTMock;
   let signer;
 
   const _degenBox = "0xd96f48665a1410C0cd669A88898ecA36B9Fc2cce";
@@ -24,66 +25,68 @@ describe("Ethereum UST DegenBox Strategy", async () => {
 
   beforeEach(async () => {
     await deployments.fixture();
+    const {deployer} = await getNamedAccounts();
 
-    await network.provider.request({
-      method: "hardhat_reset",
-      params: [
-        {
-          forking: {
-            jsonRpcUrl:
-              process.env.RPC_URL ||
-              `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-            blockNumber: 13420305,
-          },
-        },
-      ],
-    });
+    await impersonate(_degenBoxOwner);
 
-    await network.provider.request({
-      method: "hardhat_impersonateAccount",
-      params: [_degenBoxOwner],
-    });
-
+    const deployerSigner = await ethers.getSigner(deployer);
     signer = await ethers.getSigner(_degenBoxOwner);
+
     await network.provider.send("hardhat_setBalance", [
       _degenBoxOwner,
       "0x1000000000000000000",
     ]);
 
     USTStrategy = await ethers.getContract("USTStrategy")
-    Harvester = await ethers.getContract("CombineHarvester")
-  
     USTStrategy = USTStrategy.connect(signer);
-    Harvester = Harvester.connect(signer);
 
-    BentoBox = (await ethers.getContractAt<BentoBoxV1>(
+    BentoBox = await ethers.getContractAt<BentoBoxV1>(
       "BentoBoxV1",
       _degenBox
-    )).connect(signer);
+    );
 
-    UST = await ethers.getContractAt<IERC20>(
-      "IERC20",
+    //const BentoBox = (await ethers.getContract("DegenBox")).connect(signer);
+
+    UST = await ethers.getContractAt<USTMock>(
+      "USTMock",
       "0xa47c8bf37f92aBed4A126BDA807A7b7498661acD"
     );
-    aUST = await ethers.getContractAt<IERC20>(
-      "IERC20",
+    aUST = await ethers.getContractAt<USTMock>(
+      "USTMock",
       "0xa8De3e3c934e2A1BB08B010104CcaBBD4D6293ab"
     );
 
+    // Transfer UST into BentoBox
+    const amountUSTDeposit = getBigNumber(20_000_000);
+    const ustOwner = await UST.owner();
+    await impersonate(ustOwner);
+    const ustOwnerSigner = await ethers.getSigner(ustOwner);
+    await UST.connect(ustOwnerSigner).mint(deployer, amountUSTDeposit);
+    await UST.connect(deployerSigner).approve(BentoBox.address, amountUSTDeposit);
+    await BentoBox.connect(deployerSigner).deposit(
+      UST.address,
+      deployer,
+      deployer,
+      amountUSTDeposit,
+      0
+    );
+    expect((await BentoBox.totals(UST.address)).elastic).to.equal(amountUSTDeposit);
+
+    BentoBox = BentoBox.connect(signer);
     await BentoBox.setStrategy(UST.address, USTStrategy.address);
-    await ethers.provider.send("evm_increaseTime", [1210000]);
+    await advanceTime(1210000);
+    await BentoBox.setStrategy(UST.address, USTStrategy.address);
+
     await BentoBox.setStrategyTargetPercentage(UST.address, 70);
     await USTStrategy.safeHarvest(_1e18.mul(10000000000), true, 0, false); // rebalances into the strategy
-    await ethers.provider.send("evm_increaseTime", [1210000]);
-    await ethers.provider.send("evm_mine", []);
+    await advanceTime(1210000);
   });
 
   it("Strategy should report a profit", async function () {
     expect((await BentoBox.strategyData(UST.address)).balance.gt(0)).to.be.true;
 
     const oldaUSTBalance = await aUST.balanceOf(USTStrategy.address);
-    await ethers.provider.send("evm_increaseTime", [1210000]);
-    await ethers.provider.send("evm_mine", []);
+    await advanceTime(1210000);
 
     const newaUSTBalance = await aUST.balanceOf(USTStrategy.address);
     const oldBentoBalance = (await BentoBox.totals(UST.address)).elastic;

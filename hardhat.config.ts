@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import "dotenv/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-solhint";
+import "@nomiclabs/hardhat-ethers"
 import "@nomiclabs/hardhat-waffle";
 import "hardhat-deploy";
 import "hardhat-gas-reporter";
@@ -66,7 +68,10 @@ const config: HardhatUserConfig = {
       forking: {
         enabled: process.env.FORKING === "true",
         url: process.env.RPC_URL || `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+        blockNumber: (process.env.FORKING === "true" && parseInt(process.env.FORKING_BLOCK!)) || undefined,
       },
+      gasPrice: 0,
+      initialBaseFeePerGas: 0,
       live: false,
       saveDeployments: true,
       tags: ["test", "local"],

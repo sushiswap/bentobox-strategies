@@ -5,7 +5,6 @@
   "solidity.enableLocalNodeCompiler": false,
   "solidity.compileUsingRemoteVersion": "v0.8.7+commit.e28d00a7",
   "solidity.compilerOptimization": 200,
-  "solidity.compileUsingLocalVersion": "c:\\Users\\Gasper\\gasper-crypto\\sushi\\bentobox-strategies\\soljson-v0.8.7+commit.e28d00a7.js",
   "solidity.linter": "solhint",
   "solidity.packageDefaultDependenciesContractsDirectory": "",
   "solidity.enabledAsYouTypeCompilationErrorCheck": true,
