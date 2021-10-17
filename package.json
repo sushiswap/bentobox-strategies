@@ -12,7 +12,9 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewlilley.com>",
   "scripts": {
+    "clean": "hardhat clean",
     "build": "hardhat compile",
+    "rebuild": "hardhat clean && hardhat compile",
     "console": "hardhat console",
     "mainnet:deploy": "hardhat --network mainnet deploy",
     "mainnet:verify": "hardhat --network mainnet etherscan-verify --solc-input --license GPL-3.0 --force-license",
