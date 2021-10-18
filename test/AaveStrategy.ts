@@ -5,7 +5,8 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { AaveStrategy, BentoBoxV1, CombineHarvester } from "../typechain";
 import { Signer } from "crypto";
 
-describe("Aave Polygon strategy", async function () {
+const maybe = process.env.ALCHEMY_API_KEY ? describe : describe.skip;
+maybe("Aave Polygon strategy", async function () {
 
   this.timeout(40000);
 
