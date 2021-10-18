@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { ethers, network, deployments, getNamedAccounts, artifacts } from "hardhat";
 import { expect } from "chai";
-import { BigNumberish, BigNumber } from "ethers";
+import { BigNumberish } from "ethers";
 
 import {
   BentoBoxV1,
@@ -111,7 +111,9 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
     await simulateEthAnchorDeposit(aUST, USTStrategy.address, aUSTAmountToReceive);
     const rateAfter = await Feeder.exchangeRateOf(UST.address, true);
     expect(rateAfter.sub(rateBefore)).to.be.gt(0);
+    expect((await BentoBox.strategyData(UST.address)).balance.gt(0)).to.be.true;
 
+    // At this state, the strategy contains 14M UST worth of aUST
     snapshotId = await ethers.provider.send('evm_snapshot', []);
   });
 
@@ -120,14 +122,11 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
     snapshotId = await ethers.provider.send('evm_snapshot', []);
   })
 
-  it("Strategy should report a profit", async function () {
-    expect((await BentoBox.strategyData(UST.address)).balance.gt(0)).to.be.true;
-
+  it("should report a profit", async function () {
     const oldBentoBalance = (await BentoBox.totals(UST.address)).elastic;
 
     await advanceTime(1210000); // 2 weeks
     await USTStrategy.safeHarvest(0, false, 0, false);
-    await advanceTime(60 * 15); // 15 minutes
 
     // because redeeming UST from aUST is async, BentoBox harvest call
     // will not transfer the profit this time in BentoBox so a subsequent safeHarvest
@@ -151,20 +150,52 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
     expect(newBentoBalance.sub(oldBentoBalance)).to.eq(ustProfits);
   });
 
-  /*it("Exits smoothly", async function () {
-    expect((await degenBox.strategyData(_usdc)).balance.gt(0)).to.be.true;
+  it("should withdraw the right amount when rebalancing", async() => {
+    const oldBentoBalance = (await BentoBox.totals(UST.address)).elastic;
+    await advanceTime(1210000); // 2 weeks
 
-    const oldBentoBalance = (await degenBox.totals(_usdc)).elastic;
+    // Adjusting strategy allocation from 70% to 50%
+    await BentoBox.setStrategyTargetPercentage(UST.address, 50);
 
-    await degenBox.setStrategy(_usdc, aaveStrategySecondary.address);
-    await ethers.provider.send("evm_increaseTime", [1210000]);
-    await degenBox.setStrategy(_usdc, aaveStrategySecondary.address);
+    // Harvest with rebalance after reducing the strategy target percentage should
+    // withdraw some UST.
+    // The first safeHarvest call will initiate the ethAnchor redeem UST from aUST
+    // and the subsequent call (once the UST is received), should withdraw some UST
+    // to bento box.
+    await USTStrategy.safeHarvest(0, true, 0, false);
+    expect(await UST.balanceOf(USTStrategy.address)).to.eq(0);
 
-    const newBentoBalance = (await degenBox.totals(_usdc)).elastic;
-    const newAUsdcBalance = await aUsdc.balanceOf(ustStrategy.address);
-    const balanceDiff = newBentoBalance.sub(oldBentoBalance);
+    await simulateEthAnchorDeposit(UST, USTStrategy.address, getBigNumber(42));
 
-    expect(balanceDiff.gt(0)).to.be.true;
-    expect(newAUsdcBalance.eq(0)).to.be.true;
-  });*/
+    // Now that the UST has arrived, it should be withdrawn to bentobox
+    await USTStrategy.safeHarvest(0, true, 0, false);
+    const newBentoBalance = (await BentoBox.totals(UST.address)).elastic;
+    expect(newBentoBalance.sub(oldBentoBalance)).to.eq(getBigNumber(42));
+  });
+
+  it("should exit smoothly", async() => {
+    const oldBentoBalance = (await BentoBox.totals(UST.address)).elastic;
+    const strategyDataBalance = (await BentoBox.strategyData(UST.address)).balance;
+
+    await expect(BentoBox.setStrategy(UST.address, USTStrategy.address))
+      .to.emit(BentoBox, "LogStrategyQueued")
+      .withArgs(UST.address, USTStrategy.address);
+
+    await advanceTime(1210000); // 2 weeks
+
+    const profits = getBigNumber(42);
+
+    // in a real scenario, the bentobox owner would have to make sure the UST
+    // arrived before calling setStrategy the second time.
+    await simulateEthAnchorDeposit(UST, USTStrategy.address, strategyDataBalance.add(profits));
+
+    await expect(BentoBox.setStrategy(UST.address, USTStrategy.address))
+      .to.emit(BentoBox, "LogStrategyProfit")
+      .withArgs(UST.address, profits);
+
+    let newBentoBalance = (await BentoBox.totals(UST.address)).elastic;
+
+    // UST deposit hasn't arrived yet, bentobox is reporting a strategy loss
+    expect(newBentoBalance.sub(oldBentoBalance)).to.eq(profits);
+  });
 });
