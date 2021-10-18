@@ -9,14 +9,11 @@ const deployFunction: DeployFunction = async function ({
 }: HardhatRuntimeEnvironment) {
   console.log("Running Aave strategy deploy script");
 
-  const { deployer } = await getNamedAccounts();
+  const { deployer } = await getNamedAccounts()
 
   const chainId = await getChainId();
 
-  if (chainId != "137")
-    throw Error(
-      "Trying to deploy Aave strategy on a different network than Polygon"
-    );
+  if (chainId != "137") throw Error("Trying to deploy Aave strategy on a different network than Polygon");
 
   const harvester = await ethers.getContract("CombineHarvester");
 
@@ -35,49 +32,44 @@ const deployFunction: DeployFunction = async function ({
       symbol: "WETH",
       address: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
       addFactory: true,
-      bridgeToken: zero,
-    },
-    {
+      bridgeToken: zero
+    }, {
       symbol: "USDC",
       address: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
       addFactory: true,
-      bridgeToken,
-    },
-    {
+      bridgeToken
+    }, {
       symbol: "WBTC",
       address: "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
       addFactory: true,
-      bridgeToken,
-    },
-    {
+      bridgeToken
+    }, {
       symbol: "WMATIC",
       address: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
       addFactory: false,
-      bridgeToken: zero,
-    },
-    {
+      bridgeToken: zero
+    }, {
       symbol: "USDT",
       address: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
       addFactory: true,
-      bridgeToken,
-    },
-    {
+      bridgeToken
+    }, {
       symbol: "DAI",
       address: "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
       addFactory: true,
-      bridgeToken,
-    },
-    {
+      bridgeToken
+    }, {
       symbol: "AAVE",
       address: "0xd6df932a45c0f255f85145f286ea0b292b21c90b",
       addFactory: true,
-      bridgeToken,
-    },
-  ];
+      bridgeToken
+    }
+  ]
 
   const deployedAddress: string[] = [];
 
   for (const token of aaveTokens) {
+
     const strategy = await deployments.deploy("AaveStrategy", {
       from: deployer,
       args: [
@@ -87,16 +79,15 @@ const deployFunction: DeployFunction = async function ({
         bentoBox,
         executioner,
         token.addFactory ? factory : zero,
-        token.bridgeToken,
+        token.bridgeToken
       ],
       log: false,
       deterministicDeployment: false,
     });
 
-    console.log(
-      `${token.symbol} Aave strategy deployed at ${strategy.address}`
-    );
+    console.log(`${token.symbol} Aave strategy deployed at ${strategy.address}`);
     deployedAddress.push(strategy.address);
+
   }
 
   const strategyFactory = await ethers.getContractFactory("AaveStrategy");
@@ -105,6 +96,7 @@ const deployFunction: DeployFunction = async function ({
     const strategy = strategyFactory.attach(address);
     await strategy.transferOwnership(polygonMultisig);
   }
+
 };
 
 export default deployFunction;
@@ -112,7 +104,7 @@ export default deployFunction;
 deployFunction.skip = ({ getChainId }) =>
   new Promise((resolve, reject) => {
     try {
-      getChainId().then((chainId) => {
+      getChainId().then(chainId => {
         resolve(chainId !== "137");
       });
     } catch (error) {
@@ -121,5 +113,5 @@ deployFunction.skip = ({ getChainId }) =>
   });
 
 deployFunction.tags = ["AaveStrategy"];
-deployFunction.dependencies = ["PolygonHarvester"];
+deployFunction.dependencies = ["CombineHarvester"];
 deployFunction.skip = async () => true; // temporary
