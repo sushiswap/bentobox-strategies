@@ -59,7 +59,6 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
     ]);
 
     USTStrategy = await ethers.getContract("USTStrategy")
-    USTStrategy = USTStrategy.connect(signer);
 
     BentoBox = await ethers.getContractAt<BentoBoxV1>(
       "BentoBoxV1",
