@@ -35,7 +35,7 @@ task("accounts", "Prints the list of accounts", async (args, { ethers }) => {
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: process.env.ETHERSCAN_TOKEN,
   },
   gasReporter: {
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,

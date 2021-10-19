@@ -103,7 +103,8 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
     expect(await UST.balanceOf(USTStrategy.address)).to.equal(0);
 
     const rateBefore = await Feeder.exchangeRateOf(UST.address, true);
-    const aUSTAmountToReceive = await USTStrategy.toAUST(strategyUstBalance);
+
+    const aUSTAmountToReceive = strategyUstBalance.mul(getBigNumber(1)).div(rateBefore) 
 
     // should always receive less aUST than UST
     expect(aUSTAmountToReceive).to.be.lt(strategyUstBalance);

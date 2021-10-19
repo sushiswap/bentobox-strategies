@@ -47,7 +47,7 @@ contract USTStrategy is BaseStrategy {
     }
 
     function _exit() internal override {
-        router.redeemStable(aUST.balanceOf(address(this)));
+        try router.redeemStable(aUST.balanceOf(address(this))) {} catch {}
     }
 
     function toAUST(uint256 amount) internal view returns (uint256) {

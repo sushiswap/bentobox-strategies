@@ -7,6 +7,7 @@ const deployFunction: DeployFunction = async function ({
   getNamedAccounts,
   getChainId,
 }: HardhatRuntimeEnvironment) {
+  /*
   console.log("Running CombineHarvester deploy script");
 
   const { deployer } = await getNamedAccounts()
@@ -32,6 +33,7 @@ const deployFunction: DeployFunction = async function ({
 
   const strategy = strategyFactory.attach(address);
   await strategy.transferOwnership(executioner);
+  */
 
 };
 

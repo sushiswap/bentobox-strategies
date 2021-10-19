@@ -8,7 +8,7 @@ const deployFunction: DeployFunction = async function ({
   getChainId,
 }: HardhatRuntimeEnvironment) {
   console.log("Running Aave strategy deploy script");
-
+  /*
   const { deployer } = await getNamedAccounts()
 
   const chainId = await getChainId();
@@ -96,6 +96,7 @@ const deployFunction: DeployFunction = async function ({
     const strategy = strategyFactory.attach(address);
     await strategy.transferOwnership(polygonMultisig);
   }
+  */
 
 };
 
