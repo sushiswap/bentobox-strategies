@@ -29,11 +29,6 @@ contract USTStrategy is BaseStrategy {
         UST.approve(address(router), type(uint256).max);
         aUST.approve(address(router), type(uint256).max);
     }
-
-    function resetAllowance() external {
-        UST.approve(address(router), type(uint256).max);
-        aUST.approve(address(router), type(uint256).max);
-    }
     
     function _skim(uint256 amount) internal override {
         router.depositStable(amount);
@@ -55,7 +50,7 @@ contract USTStrategy is BaseStrategy {
         router.redeemStable(aUST.balanceOf(address(this)));
     }
 
-    function toAUST(uint256 amount) public view returns (uint256) {
+    function toAUST(uint256 amount) internal view returns (uint256) {
         return amount * 1e18 / feeder.exchangeRateOf(address(UST), true);
     }
 }
