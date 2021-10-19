@@ -48,4 +48,5 @@ deployFunction.skip = ({ getChainId }) =>
     }
   });
 
+deployFunction.skip = async () => true; // temporary
 deployFunction.tags = ["CombineHarvester"];

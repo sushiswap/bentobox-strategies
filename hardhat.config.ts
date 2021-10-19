@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import "dotenv/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-solhint";
+import "@nomiclabs/hardhat-ethers"
 import "@nomiclabs/hardhat-waffle";
 import "hardhat-deploy";
 import "hardhat-gas-reporter";
@@ -65,11 +67,24 @@ const config: HardhatUserConfig = {
       // Reported to HardHat team and fix is incoming
       forking: {
         enabled: process.env.FORKING === "true",
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+        url: process.env.RPC_URL || `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+        blockNumber: (process.env.FORKING === "true" && parseInt(process.env.FORKING_BLOCK!)) || undefined,
       },
+      gasPrice: 0,
+      initialBaseFeePerGas: 0,
       live: false,
       saveDeployments: true,
       tags: ["test", "local"],
+    },
+    mainnet: {
+      url:
+        process.env.RPC_URL ||
+        `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      accounts,
+      chainId: 1,
+      saveDeployments: true,
+      live: true,
+      tags: ["prod"],
     },
     ropsten: {
       url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
@@ -161,6 +176,10 @@ const config: HardhatUserConfig = {
       (bre) =>
         bre.network.name !== "hardhat" && bre.network.name !== "localhost"
     ),
+  },
+  mocha: {
+    timeout: 40000,
+    bail: true,
   },
   solidity: {
     compilers: [
