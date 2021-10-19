@@ -67,7 +67,7 @@ const config: HardhatUserConfig = {
       // Reported to HardHat team and fix is incoming
       forking: {
         enabled: process.env.FORKING === "true",
-        url: process.env.RPC_URL || `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+        url: process.env.ETHEREUM_RPC_URL || `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
         blockNumber: (process.env.FORKING === "true" && parseInt(process.env.FORKING_BLOCK!)) || undefined,
       },
       gasPrice: 0,
@@ -78,7 +78,7 @@ const config: HardhatUserConfig = {
     },
     mainnet: {
       url:
-        process.env.RPC_URL ||
+        process.env.ETHEREUM_RPC_URL ||
         `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
       accounts,
       chainId: 1,

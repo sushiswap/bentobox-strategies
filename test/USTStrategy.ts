@@ -11,7 +11,7 @@ import {
 } from "../typechain";
 import { advanceTime, getBigNumber, impersonate } from "../utilities";
 
-const maybe = process.env.FORKING ? describe : describe.skip;
+const maybe = (process.env.ETHEREUM_RPC_URL || process.env.INFURA_API_KEY) ? describe : describe.skip;
 const degenBox = "0xd96f48665a1410C0cd669A88898ecA36B9Fc2cce";
 const degenBoxOwner = "0xb4EfdA6DAf5ef75D08869A0f9C0213278fb43b6C";
 
@@ -45,6 +45,18 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
   let signer;
 
   before(async () => {
+    await network.provider.request({
+      method: "hardhat_reset",
+      params: [
+        {
+          forking: {
+            jsonRpcUrl: process.env.ETHEREUM_RPC_URL || `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+            blockNumber: 13430664,
+          },
+        },
+      ],
+    })
+
     await deployments.fixture();
     const {deployer} = await getNamedAccounts();
 

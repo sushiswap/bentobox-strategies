@@ -34,4 +34,4 @@ if(network.name !== "hardhat") {
 }
 
 deployFunction.tags = ["USTStrategy"];
-deployFunction.dependencies = ["EthereumHarvester"];
+deployFunction.dependencies = [];
