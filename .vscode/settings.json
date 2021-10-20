@@ -10,14 +10,5 @@
   "solidity.enabledAsYouTypeCompilationErrorCheck": true,
   "solidity.validationDelay": 1500,
   "solidity.packageDefaultDependenciesDirectory": "node_modules",
-  "solidity.defaultCompiler": "remote",
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "**/Thumbs.db": true,
-    "**/node_modules": false
-  }
+  "solidity.defaultCompiler": "remote"
 }
