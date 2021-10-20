@@ -57,7 +57,7 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
       ],
     })
 
-    await deployments.fixture();
+    await deployments.fixture(['USTStrategy']);
     const {deployer} = await getNamedAccounts();
 
     await impersonate(degenBoxOwner);

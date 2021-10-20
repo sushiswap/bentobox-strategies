@@ -19,6 +19,7 @@
     "mainnet:deploy": "hardhat --network mainnet deploy",
     "mainnet:verify": "hardhat --network mainnet etherscan-verify --solc-input --license GPL-3.0 --force-license",
     "mainnet:export": "hardhat --network mainnet export",
+    "avalanche:deploy": "hardhat --network avalanche deploy",
     "polygon:deploy": "hardhat --network polygon deploy",
     "polygon:verify": "hardhat --network polygon etherscan-verify --solc-input --license GPL-3.0 --force-license",
     "polygon:export": "hardhat --network polygon export",
