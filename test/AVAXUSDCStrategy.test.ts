@@ -95,6 +95,10 @@ describe("AVAX/USDC LP DegenBox Strategy", async () => {
 
   it("should farm joe rewards, mint lp and deposit back", async() => {
     await advanceTime(1210000);
+
     await Strategy.safeHarvest(ethers.constants.MaxUint256, false, 0, false);
+
+    const { amount } = await MasterChef.userInfo(pid, Strategy.address);
+    expect(amount).to.be.gt(initialStakedLpAmount);
   });
 });

@@ -65,7 +65,8 @@ contract LPStrategy is BaseStrategy {
         uint256 /* balance */
     ) internal override returns (int256) {
         masterchef.withdraw(pid, 0);
-        _swapToLp();
+        uint256 lpAmount = _swapToLp();
+        masterchef.deposit(pid, lpAmount);
 
         return int256(0);
     }
@@ -84,7 +85,7 @@ contract LPStrategy is BaseStrategy {
         token1 = sushiPair.token1();
     }
 
-    function _swapTokensForUnderlying(address tokenIn, address tokenOut) private returns (uint256 amountOut) {
+    function _swapTokens(address tokenIn, address tokenOut) private returns (uint256 amountOut) {
         bool useBridge = bridgeToken != address(0);
         address[] memory path = new address[](useBridge ? 3 : 2);
 
@@ -99,23 +100,23 @@ contract LPStrategy is BaseStrategy {
         uint256 amountIn = IERC20(path[0]).balanceOf(address(this));
         uint256[] memory amounts = UniswapV2Library.getAmountsOut(factory, amountIn, path, pairCodeHash);
         amountOut = amounts[amounts.length - 1];
-        IERC20(path[0]).safeTransfer(UniswapV2Library.pairFor(factory, path[0], path[1], pairCodeHash), amounts[0]);
 
+        IERC20(path[0]).safeTransfer(UniswapV2Library.pairFor(factory, path[0], path[1], pairCodeHash), amounts[0]);
         _swap(amounts, path, address(this));
     }
 
-    function _calculateSwapInAmount(uint256 reserveIn, uint256 userIn) private pure returns (uint256) {
-        return (Babylonian.sqrt(reserveIn * userIn * 3988000 + reserveIn * 3988009) - reserveIn * 1997) / 1994;
+    function _calculateSwapInAmount(uint256 reserveIn, uint256 userIn) internal pure returns (uint256) {
+        return (Babylonian.sqrt(reserveIn * ((userIn * 3988000) + (reserveIn * 3988009))) - (reserveIn * 1997)) / 1994;
     }
 
     /// @notice Swap some tokens in the contract for the underlying and deposits them to address(this)
     function _swapToLp() private returns (uint256 amountOut) {
-        uint256 tokenInAmount = _swapTokensForUnderlying(rewardToken, pairInputToken);
+        uint256 tokenInAmount = _swapTokens(rewardToken, pairInputToken);
         (uint256 reserve0, uint256 reserve1, ) = ISushiSwap(strategyToken).getReserves();
         (address token0, address token1) = _getPairTokens(strategyToken);
 
         // The pairInputToken amount to swap to get the equivalent pair second token amount
-        uint256 swapAmountIn = _calculateSwapInAmount(tokenInAmount, usePairToken0 ? reserve0 : reserve1);
+        uint256 swapAmountIn = _calculateSwapInAmount(usePairToken0 ? reserve0 : reserve1, tokenInAmount);
 
         address[] memory path = new address[](2);
         if (usePairToken0) {
@@ -129,14 +130,17 @@ contract LPStrategy is BaseStrategy {
         uint256[] memory amounts = UniswapV2Library.getAmountsOut(factory, swapAmountIn, path, pairCodeHash);
         IERC20(path[0]).safeTransfer(strategyToken, amounts[0]);
         _swap(amounts, path, address(this));
-        uint256 pairInputTokenAmount = IERC20(pairInputToken).balanceOf(address(this));
 
         uint256 amountStrategyLpBefore = IERC20(strategyToken).balanceOf(address(this));
+
+        // Minting liquidity with optimal token balances but is still leaving some
+        // dust because of rounding. The dust will be used the next time the function
+        // is called.
         router.addLiquidity(
             token0,
             token1,
-            usePairToken0 ? pairInputTokenAmount : amounts[0],
-            usePairToken0 ? amounts[0] : pairInputTokenAmount,
+            IERC20(token0).balanceOf(address(this)),
+            IERC20(token1).balanceOf(address(this)),
             1,
             1,
             address(this),
