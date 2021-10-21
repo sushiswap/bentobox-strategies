@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
-import { network } from "hardhat";
+import { ethers, network } from "hardhat";
 
 const deployFunction: DeployFunction = async function (
   hre: HardhatRuntimeEnvironment
@@ -12,7 +12,10 @@ const deployFunction: DeployFunction = async function (
 
   await deploy("USTStrategy", {
     from: deployer,
-    args: [deployer],
+    args: [
+      deployer,
+      ethers.constants.HashZero
+    ],
     log: true,
     deterministicDeployment: false,
   })

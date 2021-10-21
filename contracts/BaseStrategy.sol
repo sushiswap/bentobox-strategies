@@ -11,7 +11,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 abstract contract BaseStrategy is IStrategy, Ownable {
-
     using SafeERC20 for IERC20;
 
     address public immutable strategyToken;
@@ -23,6 +22,8 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     uint256 public maxBentoBoxBalance; /// @dev Slippage protection when calling harvest
     mapping(address => bool) public strategyExecutors; /// @dev EOAs that can execute safeHarvest
 
+    bytes32 internal immutable pairCodeHash;
+
     event LogConvert(address indexed server, address indexed token0, address indexed token1, uint256 amount0, uint256 amount1);
     event LogSetStrategyExecutor(address indexed executor, bool allowed);
 
@@ -31,6 +32,8 @@ abstract contract BaseStrategy is IStrategy, Ownable {
         @param _factory SushiSwap factory.
         @param _bridgeToken An intermedieary token for swapping any rewards into the underlying token.
         @param _strategyExecutor an EOA that will execute the safeHarvest function.
+        @param _pairCodeHash This hash is used to calculate the address of a uniswap-like pool
+                                by providing only the addresses of the two ERC20 tokens.
         @dev factory and bridgeToken can be address(0) if we don't expect rewards we would need to swap
     */
     constructor(
@@ -38,14 +41,15 @@ abstract contract BaseStrategy is IStrategy, Ownable {
         address _bentoBox,
         address _factory,
         address _bridgeToken,
-        address _strategyExecutor
+        address _strategyExecutor,
+        bytes32 _pairCodeHash
     ) {
-        
         strategyToken = _strategyToken;
         bentoBox = _bentoBox;
         factory = _factory;
         bridgeToken = _bridgeToken;
-        
+        pairCodeHash = _pairCodeHash;
+
         if (_strategyExecutor != address(0)) {
             strategyExecutors[_strategyExecutor] = true;
             emit LogSetStrategyExecutor(_strategyExecutor, true);
@@ -139,12 +143,7 @@ abstract contract BaseStrategy is IStrategy, Ownable {
         /** @dev Don't revert if conditions aren't met in order to allow
             BentoBox to continiue execution as it might need to do a rebalance. */
 
-        if (
-            sender == address(this) &&
-            IBentoBoxMinimal(bentoBox).totals(strategyToken).elastic <= maxBentoBoxBalance &&
-            balance > 0
-        ) {
-            
+        if (sender == address(this) && IBentoBoxMinimal(bentoBox).totals(strategyToken).elastic <= maxBentoBoxBalance && balance > 0) {
             int256 amount = _harvest(balance);
 
             /** @dev Since harvesting of rewards is accounted for seperately we might also have
@@ -154,38 +153,37 @@ abstract contract BaseStrategy is IStrategy, Ownable {
 
             uint256 contractBalance = IERC20(strategyToken).balanceOf(address(this));
 
-            if (amount >= 0) { // _harvest reported a profit
+            if (amount >= 0) {
+                // _harvest reported a profit
 
                 if (contractBalance > 0) {
                     IERC20(strategyToken).safeTransfer(bentoBox, contractBalance);
                 }
 
                 return int256(contractBalance);
-
-            } else if (contractBalance > 0) { // _harvest reported a loss but we have some tokens sitting in the contract
+            } else if (contractBalance > 0) {
+                // _harvest reported a loss but we have some tokens sitting in the contract
 
                 int256 diff = amount + int256(contractBalance);
 
-                if (diff > 0) { // we still made some profit
+                if (diff > 0) {
+                    // we still made some profit
 
                     /// @dev send the profit to BentoBox and reinvest the rest
                     IERC20(strategyToken).safeTransfer(bentoBox, uint256(diff));
                     _skim(uint256(-amount));
-
-                } else { // we made a loss but we have some tokens we can reinvest
+                } else {
+                    // we made a loss but we have some tokens we can reinvest
 
                     _skim(contractBalance);
-
                 }
 
                 return diff;
-
-            } else { // we made a loss
+            } else {
+                // we made a loss
 
                 return amount;
-
             }
-
         }
 
         return int256(0);
@@ -245,13 +243,13 @@ abstract contract BaseStrategy is IStrategy, Ownable {
 
         uint256 amountIn = IERC20(path[0]).balanceOf(address(this));
 
-        uint256[] memory amounts = UniswapV2Library.getAmountsOut(factory, amountIn, path);
+        uint256[] memory amounts = UniswapV2Library.getAmountsOut(factory, amountIn, path, pairCodeHash);
 
         amountOut = amounts[amounts.length - 1];
 
         require(amountOut >= amountOutMin, "BentoBox Strategy: insufficient output");
 
-        IERC20(path[0]).safeTransfer(UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]);
+        IERC20(path[0]).safeTransfer(UniswapV2Library.pairFor(factory, path[0], path[1], pairCodeHash), amounts[0]);
 
         _swap(amounts, path, address(this));
 
@@ -269,9 +267,8 @@ abstract contract BaseStrategy is IStrategy, Ownable {
             address token0 = input < output ? input : output;
             uint256 amountOut = amounts[i + 1];
             (uint256 amount0Out, uint256 amount1Out) = input == token0 ? (uint256(0), amountOut) : (amountOut, uint256(0));
-            address to = i < path.length - 2 ? UniswapV2Library.pairFor(factory, output, path[i + 2]) : _to;
-            IUniswapV2Pair(UniswapV2Library.pairFor(factory, input, output)).swap(amount0Out, amount1Out, to, new bytes(0));
+            address to = i < path.length - 2 ? UniswapV2Library.pairFor(factory, output, path[i + 2], pairCodeHash) : _to;
+            IUniswapV2Pair(UniswapV2Library.pairFor(factory, input, output, pairCodeHash)).swap(amount0Out, amount1Out, to, new bytes(0));
         }
     }
-
 }

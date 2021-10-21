@@ -26,6 +26,7 @@ const deployFunction: DeployFunction = async function ({
   const zero = "0x0000000000000000000000000000000000000000";
   const executioner = harvester.address;
   const polygonMultisig = "0x2B23D9B02FffA1F5441Ef951B4B95c09faa57EBA";
+  const pairHashCode = "0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303"; // sushiswap pair hashcode
 
   const aaveTokens = [
     {
@@ -79,7 +80,8 @@ const deployFunction: DeployFunction = async function ({
         bentoBox,
         executioner,
         token.addFactory ? factory : zero,
-        token.bridgeToken
+        token.bridgeToken,
+        ''
       ],
       log: false,
       deterministicDeployment: false,

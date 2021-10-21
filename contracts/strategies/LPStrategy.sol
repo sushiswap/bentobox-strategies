@@ -8,8 +8,6 @@ import "../interfaces/ISushiSwap.sol";
 import "../interfaces/IMasterChef.sol";
 import "../libraries/Babylonian.sol";
 
-import "hardhat/console.sol";
-
 contract LPStrategy is BaseStrategy {
     using SafeERC20 for IERC20;
 
@@ -29,6 +27,8 @@ contract LPStrategy is BaseStrategy {
         @param _strategyExecutor an EOA that will execute the safeHarvest function.
         @param _usePairToken0 When true, the _rewardToken will be swapped to the pair's token0 for one-sided liquidity
                                 providing, otherwise, the pair's token1.
+        @param _pairCodeHash This hash is used to calculate the address of a uniswap-like pool
+                                by providing only the addresses of the two ERC20 tokens.
     */
     constructor(
         address _strategyToken,
@@ -40,12 +40,14 @@ contract LPStrategy is BaseStrategy {
         uint256 _pid,
         ISushiSwap _router,
         address _rewardToken,
-        bool _usePairToken0
-    ) BaseStrategy(_strategyToken, _bentoBox, _factory, _bridgeToken, _strategyExecutor) {
+        bool _usePairToken0,
+        bytes32 _pairCodeHash
+    ) BaseStrategy(_strategyToken, _bentoBox, _factory, _bridgeToken, _strategyExecutor, _pairCodeHash) {
         masterchef = _masterchef;
         pid = _pid;
         router = _router;
         rewardToken = _rewardToken;
+
         (address token0, address token1) = _getPairTokens(_strategyToken);
         IERC20(token0).safeApprove(address(_router), type(uint256).max);
         IERC20(token1).safeApprove(address(_router), type(uint256).max);
@@ -59,37 +61,11 @@ contract LPStrategy is BaseStrategy {
         masterchef.deposit(pid, amount);
     }
 
-    function _harvest(uint256 balanceToKeep) internal override returns (int256) {
-        console.log("wut...");
-        // claim the reward tokens
+    function _harvest(
+        uint256 /* balance */
+    ) internal override returns (int256) {
         masterchef.withdraw(pid, 0);
-
-        // mint new LPs by selling the reward tokens
-        uint256 amountMinted = _swapToLp();
-
-        (uint256 amountStaked, ) = masterchef.userInfo(pid, address(this));
-        uint256 total = amountMinted + amountStaked;
-
-        // Remove excess balance from this strategy according to balanceToKeep
-        if (balanceToKeep < total) {
-            uint256 amountOut = total - balanceToKeep;
-
-            // edge case where the number of minted lp from rewards
-            // exceeds the deposited amount
-            if (amountMinted > amountOut) {
-                masterchef.deposit(pid, amountMinted - amountOut);
-            } else {
-                // removed newly amount from amount to exit as it's
-                // already unstaked.
-                amountOut -= amountMinted;
-            }
-
-            if (amountOut > 0) {
-                masterchef.withdraw(pid, amountOut);
-            }
-        } else {
-            masterchef.deposit(pid, amountMinted);
-        }
+        _swapToLp();
 
         return int256(0);
     }
@@ -113,16 +89,17 @@ contract LPStrategy is BaseStrategy {
         address[] memory path = new address[](useBridge ? 3 : 2);
 
         path[0] = tokenIn;
+
         if (useBridge) {
             path[1] = bridgeToken;
         }
+
         path[path.length - 1] = tokenOut;
 
         uint256 amountIn = IERC20(path[0]).balanceOf(address(this));
-        uint256[] memory amounts = UniswapV2Library.getAmountsOut(factory, amountIn, path);
+        uint256[] memory amounts = UniswapV2Library.getAmountsOut(factory, amountIn, path, pairCodeHash);
         amountOut = amounts[amounts.length - 1];
-
-        IERC20(path[0]).safeTransfer(UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]);
+        IERC20(path[0]).safeTransfer(UniswapV2Library.pairFor(factory, path[0], path[1], pairCodeHash), amounts[0]);
 
         _swap(amounts, path, address(this));
     }
@@ -148,8 +125,8 @@ contract LPStrategy is BaseStrategy {
             path[0] = token1;
             path[1] = token0;
         }
-    
-        uint256[] memory amounts = UniswapV2Library.getAmountsOut(factory, swapAmountIn, path);
+
+        uint256[] memory amounts = UniswapV2Library.getAmountsOut(factory, swapAmountIn, path, pairCodeHash);
         IERC20(path[0]).safeTransfer(strategyToken, amounts[0]);
         _swap(amounts, path, address(this));
         uint256 pairInputTokenAmount = IERC20(pairInputToken).balanceOf(address(this));

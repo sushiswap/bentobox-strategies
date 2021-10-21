@@ -24,8 +24,9 @@ contract USTStrategy is BaseStrategy {
     address private constant degenBox = 0xd96f48665a1410C0cd669A88898ecA36B9Fc2cce;
 
     constructor(
-        address strategyExecutor
-    ) BaseStrategy(address(UST), degenBox, address(0), address(0), strategyExecutor) {
+        address strategyExecutor,
+        bytes32 pairHashCode
+    ) BaseStrategy(address(UST), degenBox, address(0), address(0), strategyExecutor, pairHashCode) {
         UST.approve(address(router), type(uint256).max);
         aUST.approve(address(router), type(uint256).max);
     }

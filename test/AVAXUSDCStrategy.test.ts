@@ -18,7 +18,9 @@ describe("AVAX/USDC LP DegenBox Strategy", async () => {
   let Strategy: LPStrategy;
   let BentoBox: BentoBoxV1;
   let LpToken: IERC20;
+  let JoeToken: IERC20;
   let MasterChef: IMasterChef;
+  let initialStakedLpAmount;
 
   before(async () => {
     await network.provider.request({
@@ -47,6 +49,7 @@ describe("AVAX/USDC LP DegenBox Strategy", async () => {
     BentoBox = await ethers.getContractAt<BentoBoxV1>("BentoBoxV1", degenBox);
     MasterChef = await ethers.getContractAt<IMasterChef>("IMasterChef", masterChef);
     LpToken = await ethers.getContractAt<IERC20>("ERC20Mock", avaxUsdcPair);
+    JoeToken = await ethers.getContractAt<IERC20>("ERC20Mock", joeToken);
 
     expect((await BentoBox.totals(LpToken.address)).elastic).to.equal(0);
 
@@ -75,10 +78,13 @@ describe("AVAX/USDC LP DegenBox Strategy", async () => {
     await Strategy.safeHarvest(ethers.constants.MaxUint256, true, 0, false);
     expect(await LpToken.balanceOf(Strategy.address)).to.equal(0);
 
+    // Should get JOE tokens from initial deposit
+    expect(await JoeToken.balanceOf(Strategy.address)).to.eq(0);
+
     // verify if the lp has been deposited to masterchef
     const { amount } = await MasterChef.userInfo(pid, Strategy.address);
-    expect(amount).to.eq(aliceLpAmount.mul(70).div(100))
-
+    initialStakedLpAmount = aliceLpAmount.mul(70).div(100);
+    expect(amount).to.eq(initialStakedLpAmount)
     snapshotId = await ethers.provider.send("evm_snapshot", []);
   });
 
@@ -87,5 +93,8 @@ describe("AVAX/USDC LP DegenBox Strategy", async () => {
     snapshotId = await ethers.provider.send("evm_snapshot", []);
   });
 
-  it("should", async function () {});
+  it("should farm joe rewards, mint lp and deposit back", async() => {
+    await advanceTime(1210000);
+    await Strategy.safeHarvest(ethers.constants.MaxUint256, false, 0, false);
+  });
 });

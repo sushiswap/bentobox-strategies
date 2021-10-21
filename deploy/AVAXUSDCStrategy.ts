@@ -20,6 +20,7 @@ const deployFunction: DeployFunction = async function (
   const router = "0x60aE616a2155Ee3d9A68541Ba4544862310933d4"; // Joe Router
   const rewardToken = "0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd"; // Joe Token
   const usePairToken0 = true; // Swap Joe rewards to AVAX to provide AVAX/USDC liquidity
+  const pairHashCode = "0x0bbca9af0511ad1a1da383135cf3a8d2ac620e549ef9f6ae3a4c33c2fed0af91"; // pair hash code for TraderJoe
 
   await deploy("AVAXUSDCStrategy", {
     from: deployer,
@@ -33,7 +34,8 @@ const deployFunction: DeployFunction = async function (
       pid,
       router,
       rewardToken,
-      usePairToken0
+      usePairToken0,
+      pairHashCode
     ],
     log: true,
     deterministicDeployment: false,
