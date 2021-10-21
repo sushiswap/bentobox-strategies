@@ -93,16 +93,27 @@ describe("AVAX/USDC LP DegenBox Strategy", async () => {
     snapshotId = await ethers.provider.send("evm_snapshot", []);
   });
 
-  it("should farm joe rewards, mint lp and deposit back", async () => {
-    let previousAmount = initialStakedLpAmount;
+  it("should farm joe rewards", async () => {
+    let previousAmount = await JoeToken.balanceOf(Strategy.address);
 
     for (let i = 0; i < 10; i++) {
       await advanceTime(1210000);
       await Strategy.safeHarvest(ethers.constants.MaxUint256, false, 0, false);
-      let { amount } = await MasterChef.userInfo(pid, Strategy.address);
+      const amount = await JoeToken.balanceOf(Strategy.address);
 
       expect(amount).to.be.gt(previousAmount);
       previousAmount = amount;
     }
+  });
+
+  it("should mint lp from joe rewards", async () => {
+    await advanceTime(1210000);
+    await Strategy.safeHarvest(ethers.constants.MaxUint256, false, 0, false);
+
+    const balanceBefore = await LpToken.balanceOf(Strategy.address);
+    await Strategy.swapToLP(0);
+    const balanceAfter = await LpToken.balanceOf(Strategy.address);
+
+    expect(balanceAfter.sub(balanceBefore)).to.be.gt(0);
   });
 });

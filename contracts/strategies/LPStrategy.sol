@@ -11,14 +11,18 @@ import "../libraries/Babylonian.sol";
 contract LPStrategy is BaseStrategy {
     using SafeERC20 for IERC20;
 
-    uint256 constant deadline = 0xf000000000000000000000000000000000000000000000000000000000000000; // ~ placeholder for swap deadline
+    uint256 private constant DEADLINE = 0xf000000000000000000000000000000000000000000000000000000000000000; // ~ placeholder for swap deadline
+    uint256 private constant FEE = 10; // 10% fees on minted LP
 
     ISushiSwap private immutable router;
     IMasterChef private immutable masterchef;
     uint256 private immutable pid;
+
     address private immutable rewardToken;
-    bool private immutable usePairToken0;
     address private immutable pairInputToken;
+    bool private immutable usePairToken0;
+
+    address private feeCollector;
 
     /** @param _strategyToken Address of the underlying LP token the strategy invests.
         @param _bentoBox BentoBox address.
@@ -47,6 +51,7 @@ contract LPStrategy is BaseStrategy {
         pid = _pid;
         router = _router;
         rewardToken = _rewardToken;
+        feeCollector = _msgSender();
 
         (address token0, address token1) = _getPairTokens(_strategyToken);
         IERC20(token0).safeApprove(address(_router), type(uint256).max);
@@ -61,13 +66,8 @@ contract LPStrategy is BaseStrategy {
         masterchef.deposit(pid, amount);
     }
 
-    function _harvest(
-        uint256 /* balance */
-    ) internal override returns (int256) {
+    function _harvest(uint256) internal override returns (int256) {
         masterchef.withdraw(pid, 0);
-        uint256 lpAmount = _swapToLp();
-        masterchef.deposit(pid, lpAmount);
-
         return int256(0);
     }
 
@@ -110,7 +110,7 @@ contract LPStrategy is BaseStrategy {
     }
 
     /// @notice Swap some tokens in the contract for the underlying and deposits them to address(this)
-    function _swapToLp() private returns (uint256 amountOut) {
+    function swapToLP(uint256 amountOutMin) public onlyExecutor returns (uint256 amountOut) {
         uint256 tokenInAmount = _swapTokens(rewardToken, pairInputToken);
         (uint256 reserve0, uint256 reserve1, ) = ISushiSwap(strategyToken).getReserves();
         (address token0, address token1) = _getPairTokens(strategyToken);
@@ -144,9 +144,16 @@ contract LPStrategy is BaseStrategy {
             1,
             1,
             address(this),
-            deadline
+            DEADLINE
         );
 
         amountOut = IERC20(strategyToken).balanceOf(address(this)) - amountStrategyLpBefore;
+        require(amountOut >= amountOutMin, "LPStrategy: HIGH_SLIPPAGE");
+
+        IERC20(strategyToken).safeTransfer(feeCollector, (amountOut * FEE) / 100);
+    }
+
+    function setFeeCollector(address _feeCollector) external onlyOwner {
+        feeCollector = _feeCollector;
     }
 }
