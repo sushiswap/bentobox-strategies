@@ -150,7 +150,10 @@ contract LPStrategy is BaseStrategy {
         amountOut = IERC20(strategyToken).balanceOf(address(this)) - amountStrategyLpBefore;
         require(amountOut >= amountOutMin, "LPStrategy: HIGH_SLIPPAGE");
 
-        IERC20(strategyToken).safeTransfer(feeCollector, (amountOut * FEE) / 100);
+        uint256 feeAmount = (amountOut * FEE) / 100;
+        amountOut -= feeAmount;
+
+        IERC20(strategyToken).safeTransfer(feeCollector, feeAmount);
     }
 
     function setFeeCollector(address _feeCollector) external onlyOwner {
