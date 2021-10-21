@@ -84,7 +84,7 @@ describe("AVAX/USDC LP DegenBox Strategy", async () => {
     // verify if the lp has been deposited to masterchef
     const { amount } = await MasterChef.userInfo(pid, Strategy.address);
     initialStakedLpAmount = aliceLpAmount.mul(70).div(100);
-    expect(amount).to.eq(initialStakedLpAmount)
+    expect(amount).to.eq(initialStakedLpAmount);
     snapshotId = await ethers.provider.send("evm_snapshot", []);
   });
 
@@ -93,12 +93,16 @@ describe("AVAX/USDC LP DegenBox Strategy", async () => {
     snapshotId = await ethers.provider.send("evm_snapshot", []);
   });
 
-  it("should farm joe rewards, mint lp and deposit back", async() => {
-    await advanceTime(1210000);
+  it("should farm joe rewards, mint lp and deposit back", async () => {
+    let previousAmount = initialStakedLpAmount;
 
-    await Strategy.safeHarvest(ethers.constants.MaxUint256, false, 0, false);
+    for (let i = 0; i < 10; i++) {
+      await advanceTime(1210000);
+      await Strategy.safeHarvest(ethers.constants.MaxUint256, false, 0, false);
+      let { amount } = await MasterChef.userInfo(pid, Strategy.address);
 
-    const { amount } = await MasterChef.userInfo(pid, Strategy.address);
-    expect(amount).to.be.gt(initialStakedLpAmount);
+      expect(amount).to.be.gt(previousAmount);
+      previousAmount = amount;
+    }
   });
 });
