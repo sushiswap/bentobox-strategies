@@ -175,13 +175,14 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
     // The first safeHarvest call will initiate the ethAnchor redeem UST from aUST
     // and the subsequent call (once the UST is received), should withdraw some UST
     // to bento box.
-    await USTStrategy.safeHarvest(0, true, 0, false);
+    await expect(USTStrategy.safeHarvest(0, true, 0, false)).to.emit(BentoBox, "LogStrategyDivest");
     expect(await UST.balanceOf(USTStrategy.address)).to.eq(0);
 
     await simulateEthAnchorDeposit(UST, USTStrategy.address, getBigNumber(42));
 
     // Now that the UST has arrived, it should be withdrawn to bentobox
-    await USTStrategy.safeHarvest(0, true, 0, false);
+    await expect(USTStrategy.safeHarvest(0, true, 0, false)).to.emit(BentoBox, "LogStrategyProfit");
+    
     const newBentoBalance = (await BentoBox.totals(UST.address)).elastic;
     expect(newBentoBalance.sub(oldBentoBalance)).to.eq(getBigNumber(42));
   });

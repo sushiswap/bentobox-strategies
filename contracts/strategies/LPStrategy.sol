@@ -11,6 +11,8 @@ import "../libraries/Babylonian.sol";
 contract LPStrategy is BaseStrategy {
     using SafeERC20 for IERC20;
 
+    event LpMinted(uint256 total, uint256 strategyAmount, uint256 feeAmount);
+
     uint256 private constant DEADLINE = 0xf000000000000000000000000000000000000000000000000000000000000000; // ~ placeholder for swap deadline
     uint256 private constant FEE = 10; // 10% fees on minted LP
 
@@ -22,7 +24,7 @@ contract LPStrategy is BaseStrategy {
     address private immutable pairInputToken;
     bool private immutable usePairToken0;
 
-    address private feeCollector;
+    address public feeCollector;
 
     /** @param _strategyToken Address of the underlying LP token the strategy invests.
         @param _bentoBox BentoBox address.
@@ -147,13 +149,14 @@ contract LPStrategy is BaseStrategy {
             DEADLINE
         );
 
-        amountOut = IERC20(strategyToken).balanceOf(address(this)) - amountStrategyLpBefore;
-        require(amountOut >= amountOutMin, "LPStrategy: HIGH_SLIPPAGE");
+        uint256 total = IERC20(strategyToken).balanceOf(address(this)) - amountStrategyLpBefore;
+        require(total >= amountOutMin, "LPStrategy: SLIPPAGE_TOO_HIGH");
 
-        uint256 feeAmount = (amountOut * FEE) / 100;
-        amountOut -= feeAmount;
+        uint256 feeAmount = (total * FEE) / 100;
+        amountOut = total - feeAmount;
 
         IERC20(strategyToken).safeTransfer(feeCollector, feeAmount);
+        emit LpMinted(total, amountOut, feeAmount);
     }
 
     function setFeeCollector(address _feeCollector) external onlyOwner {

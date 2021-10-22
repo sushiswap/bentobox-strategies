@@ -10,7 +10,7 @@ const degenBox = "0x1fC83f75499b7620d53757f0b01E2ae626aAE530";
 const degenBoxOwner = "0xb4EfdA6DAf5ef75D08869A0f9C0213278fb43b6C";
 const joeToken = "0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd";
 const masterChef = "0xd6a4F121CA35509aF06A0Be99093d08462f53052";
-const avaxUsdcPair = "0xa389f9430876455c36478deea9769b7ca4e3ddb1";
+const avaxUsdcPair = "0xA389f9430876455C36478DeEa9769B7Ca4E3DDB1";
 const pid = 39; // MasterChefV2 AVAX/USDC pool id
 
 describe("AVAX/USDC LP DegenBox Strategy", async () => {
@@ -21,6 +21,8 @@ describe("AVAX/USDC LP DegenBox Strategy", async () => {
   let JoeToken: IERC20;
   let MasterChef: IMasterChef;
   let initialStakedLpAmount;
+  let deployerSigner;
+  let aliceSigner;
 
   before(async () => {
     await network.provider.request({
@@ -41,8 +43,8 @@ describe("AVAX/USDC LP DegenBox Strategy", async () => {
 
     await impersonate(degenBoxOwner);
 
-    const deployerSigner = await ethers.getSigner(deployer);
-    const aliceSigner = await ethers.getSigner(alice);
+    deployerSigner = await ethers.getSigner(deployer);
+    aliceSigner = await ethers.getSigner(alice);
     const degenBoxOnwerSigner = await ethers.getSigner(degenBoxOwner);
 
     Strategy = await ethers.getContract("AVAXUSDCStrategy");
@@ -106,14 +108,79 @@ describe("AVAX/USDC LP DegenBox Strategy", async () => {
     }
   });
 
-  it("should mint lp from joe rewards", async () => {
+  it("should mint lp from joe rewards and take 10%", async () => {
     await advanceTime(1210000);
-    await Strategy.safeHarvest(ethers.constants.MaxUint256, false, 0, false);
+    await Strategy.safeHarvest(0, false, 0, false);
 
+    const feeCollector = await Strategy.feeCollector();
+    const balanceFeeCollectorBefore = await LpToken.balanceOf(feeCollector);
     const balanceBefore = await LpToken.balanceOf(Strategy.address);
-    await Strategy.swapToLP(0);
+    const tx = await Strategy.swapToLP(0);
     const balanceAfter = await LpToken.balanceOf(Strategy.address);
+    const balanceFeeCollectorAfter = await LpToken.balanceOf(feeCollector);
 
+    // Strategy should now have more LP
     expect(balanceAfter.sub(balanceBefore)).to.be.gt(0);
+
+    // FeeCollector should have received some LP
+    expect(balanceFeeCollectorAfter.sub(balanceFeeCollectorBefore)).to.be.gt(0);
+
+    await expect(tx).to.emit(Strategy, "LpMinted");
+  });
+
+  it("should be able to change the fee collector only my the owner", async () => {
+    expect(await Strategy.feeCollector()).to.eq(await Strategy.owner());
+
+    await expect(Strategy.connect(aliceSigner).setFeeCollector(aliceSigner.address)).to.revertedWith("Ownable: caller is not the owner");
+    await expect(Strategy.connect(deployerSigner).setFeeCollector(aliceSigner.address));
+
+    expect(await Strategy.feeCollector()).to.eq(aliceSigner.address);
+  });
+
+  it("should avoid front running when minting lp", async () => {
+    await advanceTime(1210000);
+    await Strategy.safeHarvest(0, false, 0, false);
+
+    // expected amount out should be around 11e13 so adding extra decimals to
+    // simulate a front running situation.
+    await expect(Strategy.swapToLP(getBigNumber(2, 14))).to.revertedWith("LPStrategy: SLIPPAGE_TOO_HIGH");
+  });
+
+  it("should harvest harvest, mint lp and report a profit", async () => {
+    const oldBentoBalance = (await BentoBox.totals(LpToken.address)).elastic;
+
+    await advanceTime(1210000);
+    await Strategy.safeHarvest(0, false, 0, false); // harvest joe
+    await Strategy.swapToLP(0); // mint new usdc/avax lp from harvest joe
+
+    // harvest joe, report lp profit to bentobox
+    await expect(Strategy.safeHarvest(0, false, 0, false)).to.emit(BentoBox, "LogStrategyProfit");
+    const newBentoBalance = (await BentoBox.totals(LpToken.address)).elastic;
+    expect(newBentoBalance).to.be.gt(oldBentoBalance);
+  });
+
+  it("should rebalance and withdraw lp to degenbox", async () => {
+    const oldBentoBalance = await LpToken.balanceOf(BentoBox.address);
+    await BentoBox.setStrategyTargetPercentage(LpToken.address, 50);
+    await expect(Strategy.safeHarvest(0, true, 0, false)).to.emit(BentoBox, "LogStrategyDivest");
+    const newBentoBalance = await LpToken.balanceOf(BentoBox.address);
+
+    expect(newBentoBalance).to.be.gt(oldBentoBalance);
+  });
+
+  it("should exit the strategy properly", async () => {
+    const oldBentoBalance = await LpToken.balanceOf(BentoBox.address);
+
+    await advanceTime(1210000);
+    await Strategy.safeHarvest(0, false, 0, false); // harvest joe
+    await Strategy.swapToLP(0); // mint new usdc/avax lp from harvest joe
+
+    await expect(BentoBox.setStrategy(LpToken.address, Strategy.address)).to.emit(BentoBox, "LogStrategyQueued");
+    await advanceTime(1210000);
+    await expect(BentoBox.setStrategy(LpToken.address, Strategy.address)).to.emit(BentoBox, "LogStrategyDivest");
+    const newBentoBalance = await LpToken.balanceOf(BentoBox.address);
+
+    expect(newBentoBalance).to.be.gt(oldBentoBalance);
+    expect(await LpToken.balanceOf(Strategy.address)).to.eq(0);
   });
 });
