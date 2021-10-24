@@ -127,7 +127,7 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       tags: ["staging"],
     },
-    matic: {
+    polygon: {
       url: "https://rpc-mainnet.maticvigil.com",
       accounts,
       chainId: 137,
