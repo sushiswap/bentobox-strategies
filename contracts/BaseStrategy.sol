@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-/// @title Abstrat contract to simplify BentoOBx strategy development.
+/// @title Abstrat contract to simplify BentoBox strategy development.
 /// @dev Extend the _skim, _harvest, _withdraw, _exit, _harvestRewards methods
 /// @dev Ownership should be transfered to the Sushi ops multisig.
 abstract contract BaseStrategy is IStrategy, Ownable {
