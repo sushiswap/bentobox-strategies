@@ -3,7 +3,6 @@ import { ethers, network } from "hardhat";
 import { expect } from "chai";
 import { BigNumber } from "@ethersproject/bignumber";
 import { AaveStrategy, BentoBoxV1, CombineHarvester } from "../typechain";
-import { Signer } from "crypto";
 
 describe("Aave Polygon strategy", async function () {
 
