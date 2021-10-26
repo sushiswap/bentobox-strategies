@@ -63,8 +63,8 @@ contract AaveStrategy is BaseStrategy {
         address bentoBox,
         address strategyExecutor,
         address factory,
-        address bridgeToken
-    ) BaseStrategy(strategyToken, bentoBox, factory, bridgeToken, strategyExecutor)  {
+        address[] memory allowedSwapPath
+    ) BaseStrategy(strategyToken, bentoBox, strategyExecutor, factory, allowedSwapPath)  {
         aaveLendingPool = _aaveLendingPool;
         incentiveController = _incentiveController;
         aToken = IERC20(_aaveLendingPool.getReserveData(strategyToken).aTokenAddress);

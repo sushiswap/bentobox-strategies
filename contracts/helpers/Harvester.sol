@@ -13,7 +13,7 @@ interface ISafeStrategy {
 		bool harvestRewards
 	) external;
 
-    function swapExactTokensForUnderlying(uint256 amountOutMin, address inputToken) external;
+    function swapExactTokensForUnderlying(uint256 amountOutMin, uint256 pathIndex) external;
     function strategyToken() external view returns(address);
 }
 
@@ -46,9 +46,7 @@ contract CombineHarvester is Ownable {
             strategies[i].safeHarvest(maxBalance, rebalance, maxChangeAmounts[i], harvestRewards[i]);
             
             if (minOutAmounts[i] > 0) {
-                // we only expect wmatic rewards for the current aave strategies
-                address inputToken = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
-                strategies[i].swapExactTokensForUnderlying(minOutAmounts[i], inputToken);
+                strategies[i].swapExactTokensForUnderlying(minOutAmounts[i], 0);
             }
         }
     }

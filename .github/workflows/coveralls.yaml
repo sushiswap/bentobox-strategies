@@ -39,8 +39,13 @@ jobs:
     - name: Installing dependencies
       run: yarn install --frozen-lockfile
 
+    - name: compile
+      run: yarn build
+
     - name: yarn test:coverage
       run: yarn test:coverage
+      env:
+        ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
 
     - name: Coveralls
       uses: coverallsapp/github-action@master

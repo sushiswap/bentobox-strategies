@@ -27,8 +27,8 @@ contract AaveStrategyMainnet is AaveStrategy {
         address bentoBox,
         address strategyExecutor,
         address factory,
-        address bridgeToken
-    ) AaveStrategy(aaveLendingPool,incentiveController,strategyToken,bentoBox,strategyExecutor,factory,bridgeToken) {
+        address[] memory allowedSwapPath
+    ) AaveStrategy(aaveLendingPool,incentiveController,strategyToken,bentoBox,strategyExecutor,factory,allowedSwapPath) {
         stkAave = _stkAave;
         COOLDOWN_SECONDS = _stkAave.COOLDOWN_SECONDS();
         UNSTAKE_WINDOW = _stkAave.UNSTAKE_WINDOW();

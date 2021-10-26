@@ -3,7 +3,6 @@ import { ethers, network } from "hardhat";
 import { expect } from "chai";
 import { BigNumber } from "@ethersproject/bignumber";
 import { AaveStrategy, BentoBoxV1, CombineHarvester } from "../typechain";
-import { Signer } from "crypto";
 
 describe("Aave Polygon strategy", async function () {
 
@@ -12,7 +11,7 @@ describe("Aave Polygon strategy", async function () {
   let snapshotId;
   let aaveStrategy: AaveStrategy;
   let aaveStrategySecondary: AaveStrategy;
-  let aaveStrategyHarvester: AaveStrategy;
+  let aaveStrategyWithHarvester: AaveStrategy;
   let bentoBox: BentoBoxV1;
   let harvester: CombineHarvester;
   let signer;
@@ -68,7 +67,7 @@ describe("Aave Polygon strategy", async function () {
       _bentoBox,
       _bentoBoxOwner,
       _factory,
-      _weth
+      [_wmatic, _usdc]
     )).connect(signer) as AaveStrategy;
 
     aaveStrategySecondary = (await AaveStrategy.deploy(
@@ -78,19 +77,19 @@ describe("Aave Polygon strategy", async function () {
       _bentoBox,
       _bentoBoxOwner,
       _factory,
-      _weth
+      [_wmatic, _usdc]
     )).connect(signer) as AaveStrategy;
 
     harvester = (await Harvester.deploy(_bentoBox)).connect(signer) as CombineHarvester;
 
-    aaveStrategyHarvester = (await AaveStrategy.deploy(
+    aaveStrategyWithHarvester = (await AaveStrategy.deploy(
       _lendingPool,
       _incentiveController,
       _usdc,
       _bentoBox,
       harvester.address,
       _factory,
-      _weth
+      [_wmatic, _usdc]
     )).connect(signer) as AaveStrategy;
 
     bentoBox = (await BentoBox.attach(_bentoBox)).connect(signer) as BentoBoxV1;
@@ -154,7 +153,7 @@ describe("Aave Polygon strategy", async function () {
 
     const wmaticBalance = await wmatic.balanceOf(aaveStrategy.address);
     const oldUsdcbalance = await usdc.balanceOf(aaveStrategy.address);
-    await aaveStrategy.swapExactTokensForUnderlying(0, _wmatic);
+    await aaveStrategy.swapExactTokensForUnderlying(0, 0);
 
     const usdcbalance = await usdc.balanceOf(aaveStrategy.address);
     await aaveStrategy.safeHarvest(0, false, 0, true);
@@ -173,9 +172,9 @@ describe("Aave Polygon strategy", async function () {
 
     let oldBentoBalance = (await bentoBox.totals(_usdc)).elastic;
 
-    await bentoBox.setStrategy(_usdc, aaveStrategyHarvester.address);
+    await bentoBox.setStrategy(_usdc, aaveStrategyWithHarvester.address);
     await ethers.provider.send("evm_increaseTime", [1210000]);
-    await bentoBox.setStrategy(_usdc, aaveStrategyHarvester.address);
+    await bentoBox.setStrategy(_usdc, aaveStrategyWithHarvester.address);
 
     let newBentoBalance = (await bentoBox.totals(_usdc)).elastic;
     let newAUsdcBalance = await aUsdc.balanceOf(aaveStrategy.address);
@@ -185,7 +184,7 @@ describe("Aave Polygon strategy", async function () {
     expect(newAUsdcBalance.eq(0)).to.be.true;
 
     await harvester.executeSafeHarvests(
-      [aaveStrategyHarvester.address],
+      [aaveStrategyWithHarvester.address],
       [true],
       [ethers.constants.MaxUint256],
       [true],
@@ -194,16 +193,16 @@ describe("Aave Polygon strategy", async function () {
       [0]
     );
 
-    let oldAUsdcBalance = await aUsdc.balanceOf(aaveStrategyHarvester.address);
+    let oldAUsdcBalance = await aUsdc.balanceOf(aaveStrategyWithHarvester.address);
     oldBentoBalance = (await bentoBox.totals(_usdc)).elastic;
 
-    await expect(aaveStrategyHarvester.safeHarvest(0, false, 0, true)).to.be.revertedWith("BentoBox Strategy: only Executors");
+    await expect(aaveStrategyWithHarvester.safeHarvest(0, false, 0, true)).to.be.revertedWith("BentoBox Strategy: only Executors");
 
     await ethers.provider.send("evm_increaseTime", [1210000]);
     await ethers.provider.send("evm_mine", []);
 
     await harvester.executeSafeHarvests(
-      [aaveStrategyHarvester.address],
+      [aaveStrategyWithHarvester.address],
       [false],
       [0],
       [true],
@@ -213,19 +212,19 @@ describe("Aave Polygon strategy", async function () {
     );
 
 
-    newAUsdcBalance = await aUsdc.balanceOf(aaveStrategyHarvester.address);
-    let newWmaticBalance = await wmatic.balanceOf(aaveStrategyHarvester.address);
+    newAUsdcBalance = await aUsdc.balanceOf(aaveStrategyWithHarvester.address);
+    let newWmaticBalance = await wmatic.balanceOf(aaveStrategyWithHarvester.address);
     let newerBentoBalance = (await bentoBox.totals(_usdc)).elastic;
     let aTokenDiff = newAUsdcBalance.sub(oldAUsdcBalance);
     let newBalanceDiff = newerBentoBalance.sub(newBentoBalance);
 
     expect(aTokenDiff.lt(10)).to.be.true; // shouldn't skim the profits since we won't be out of the +-3% target
 
-    oldAUsdcBalance = await aUsdc.balanceOf(aaveStrategyHarvester.address);
+    oldAUsdcBalance = await aUsdc.balanceOf(aaveStrategyWithHarvester.address);
     oldBentoBalance = (await bentoBox.totals(_usdc)).elastic;
 
     await harvester.executeSafeHarvests(
-      [aaveStrategyHarvester.address],
+      [aaveStrategyWithHarvester.address],
       [true],
       [0],
       [true],
@@ -235,8 +234,8 @@ describe("Aave Polygon strategy", async function () {
     );
 
 
-    newAUsdcBalance = await aUsdc.balanceOf(aaveStrategyHarvester.address);
-    newWmaticBalance = await wmatic.balanceOf(aaveStrategyHarvester.address);
+    newAUsdcBalance = await aUsdc.balanceOf(aaveStrategyWithHarvester.address);
+    newWmaticBalance = await wmatic.balanceOf(aaveStrategyWithHarvester.address);
 
     newerBentoBalance = (await bentoBox.totals(_usdc)).elastic;
     aTokenDiff = newAUsdcBalance.sub(oldAUsdcBalance);
@@ -246,10 +245,10 @@ describe("Aave Polygon strategy", async function () {
     expect(newBalanceDiff.gt(0)).to.be.true;
     expect(newWmaticBalance.gt(0)).to.be.true;
 
-    let oldUsdcBalance = await usdc.balanceOf(aaveStrategyHarvester.address);
+    let oldUsdcBalance = await usdc.balanceOf(aaveStrategyWithHarvester.address);
 
     await harvester.executeSafeHarvests(
-      [aaveStrategyHarvester.address],
+      [aaveStrategyWithHarvester.address],
       [false],
       [0],
       [true],
@@ -258,8 +257,8 @@ describe("Aave Polygon strategy", async function () {
       [1]
     );
 
-    let newUsdcBalance = await aUsdc.balanceOf(aaveStrategyHarvester.address);
-    newWmaticBalance = await wmatic.balanceOf(aaveStrategyHarvester.address);
+    let newUsdcBalance = await aUsdc.balanceOf(aaveStrategyWithHarvester.address);
+    newWmaticBalance = await wmatic.balanceOf(aaveStrategyWithHarvester.address);
 
     expect(newUsdcBalance.gt(oldUsdcBalance)).to.be.true;
     expect(newWmaticBalance.eq(0)).to.be.true;

@@ -17,8 +17,8 @@ contract ExampleImplementation is BaseStrategy {
         address bentoBox,
         address strategyExecutor,
         address factory,
-        address bridgeToken
-    ) BaseStrategy(strategyToken, bentoBox, factory, bridgeToken, strategyExecutor) {
+        address[] memory allowedSwapPath
+    ) BaseStrategy(strategyToken, bentoBox, factory, strategyExecutor, allowedSwapPath) {
         IERC20(strategyToken).approve(investmentContract, type(uint256).max);
     }
 
