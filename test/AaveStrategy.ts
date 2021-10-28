@@ -3,6 +3,7 @@ import { ethers, network } from "hardhat";
 import { expect } from "chai";
 import { BigNumber } from "@ethersproject/bignumber";
 import { AaveStrategy, BentoBoxV1, CombineHarvester } from "../typechain";
+import { customError } from "./Utils";
 
 describe.only("Aave Polygon strategy", async function () {
 
@@ -202,7 +203,7 @@ describe.only("Aave Polygon strategy", async function () {
     let oldAUsdcBalance = await aUsdc.balanceOf(aaveStrategyWithHarvester.address);
     oldBentoBalance = (await bentoBox.totals(_usdc)).elastic;
 
-    await expect(aaveStrategyWithHarvester.safeHarvest(0, false, 0, true)).to.be.revertedWith("BentoBox Strategy: only Executors");
+    await expect(aaveStrategyWithHarvester.safeHarvest(0, false, 0, true)).to.be.revertedWith(customError("OnlyExecutor"));
 
     await ethers.provider.send("evm_increaseTime", [1210000]);
     await ethers.provider.send("evm_mine", []);
@@ -280,11 +281,11 @@ describe.only("Aave Polygon strategy", async function () {
     expect(await aaveStrategy.aToken()).to.be.eq(_aUsdc, "didn't set correct aToken address");
     expect(await aaveStrategy.incentiveController()).to.be.eq(_incentiveController, "didn't set correct incentive controller address");
 
-    await expect(aaveStrategy.connect(randomSigner).safeHarvest(0, false, 0, true)).to.be.revertedWith("BentoBox Strategy: only Executors");
+    await expect(aaveStrategy.connect(randomSigner).safeHarvest(0, false, 0, true)).to.be.revertedWith(customError("OnlyExecutor"));
     await expect(harvester.connect(randomSigner).executeSafeHarvests([], [], [], [], [], [], [])).to.be.revertedWith("Ownable: caller is not the owner");
-    await expect(aaveStrategy.exit("1")).to.be.revertedWith("BentoBox Strategy: only BentoBox");
-    await expect(aaveStrategy.withdraw("1")).to.be.revertedWith("BentoBox Strategy: only BentoBox");
-    await expect(aaveStrategy.harvest("1", randomSigner.address)).to.be.revertedWith("BentoBox Strategy: only BentoBox");
+    await expect(aaveStrategy.exit("1")).to.be.revertedWith(customError("OnlyBentoBox"));
+    await expect(aaveStrategy.withdraw("1")).to.be.revertedWith(customError("OnlyBentoBox"));
+    await expect(aaveStrategy.harvest("1", randomSigner.address)).to.be.revertedWith(customError("OnlyBentoBox"));
   });
 
 });

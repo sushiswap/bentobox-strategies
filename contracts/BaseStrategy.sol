@@ -37,6 +37,13 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     event LogSetStrategyExecutor(address indexed executor, bool allowed);
     event LogSetAllowedPath(uint256 indexed pathId, bool allowed);
 
+    error StrategyExited();
+    error StrategyNotExited();
+    error OnlyBentoBox();
+    error OnlyExecutor();
+    error NoFactory();
+    error SlippageProtection();
+
     struct ConstructorParams {
         IERC20 strategyToken;
         IBentoBoxMinimal bentoBox;
@@ -100,17 +107,23 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     //** End strategy implementation */
 
     modifier isActive() {
-        require(!exited, "BentoBox Strategy: exited");
+        if (exited) {
+            revert StrategyExited();
+        }
         _;
     }
 
     modifier onlyBentoBox() {
-        require(msg.sender == address(bentoBox), "BentoBox Strategy: only BentoBox");
+        if (msg.sender != address(bentoBox)) {
+            revert OnlyBentoBox();
+        }
         _;
     }
 
     modifier onlyExecutor() {
-        require(strategyExecutors[msg.sender], "BentoBox Strategy: only Executors");
+        if (!strategyExecutors[msg.sender]) {
+            revert OnlyExecutor();
+        }
         _;
     }
 
@@ -237,7 +250,9 @@ abstract contract BaseStrategy is IStrategy, Ownable {
         uint256 value,
         bytes memory data
     ) public onlyOwner returns (bool success) {
-        require(exited, "BentoBox Strategy: not exited");
+        if (!exited) {
+            revert StrategyNotExited();
+        }
         (success, ) = to.call{value: value}(data);
     }
 
@@ -260,8 +275,10 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     /// @param amountOutMin minimum amount of output tokens we should get (slippage protection).
     /// @param pathIndex Index of the predetermined path we will use for the swap.
     function swapExactTokensForUnderlying(uint256 amountOutMin, uint256 pathIndex) public onlyExecutor returns (uint256 amountOut) {
-        require(factory != address(0), "BentoBox Strategy: cannot swap");
-        require(pathIndex < _allowedSwapPaths.length);
+
+        if (factory == address(0)) {
+            revert NoFactory();
+        }
 
         address[] memory path = _allowedSwapPaths[pathIndex];
 
@@ -271,7 +288,9 @@ abstract contract BaseStrategy is IStrategy, Ownable {
 
         amountOut = amounts[amounts.length - 1];
 
-        require(amountOut >= amountOutMin, "BentoBox Strategy: insufficient output");
+        if (amountOut < amountOutMin) {
+            revert SlippageProtection();
+        }
 
         IERC20(path[0]).safeTransfer(UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]);
 
