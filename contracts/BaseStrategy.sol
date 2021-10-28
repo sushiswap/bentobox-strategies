@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-pragma solidity 0.8.7;
+pragma solidity >=0.8;
 
 import "./interfaces/IStrategy.sol";
 import "./interfaces/IUniswapV2Pair.sol";
@@ -11,14 +11,14 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /// @title Abstrat contract to simplify BentoBox strategy development.
-/// @dev Extend the _skim, _harvest, _withdraw, _exit, _harvestRewards methods
+/// @dev Extend the contract and implement _skim, _harvest, _withdraw, _exit and _harvestRewards methods.
 /// @dev Ownership should be transfered to the Sushi ops multisig.
 abstract contract BaseStrategy is IStrategy, Ownable {
 
     using SafeERC20 for IERC20;
 
-    address public immutable strategyToken;
-    address public immutable bentoBox;
+    IERC20 public immutable strategyToken;
+    IBentoBoxMinimal public immutable bentoBox;
     address public immutable factory;
 
     /// @dev Path are for the original sushiswap amm
@@ -34,42 +34,42 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     /// @dev EOAs that can execute safeHarvest
     mapping(address => bool) public strategyExecutors;
 
-    event LogConvert(address indexed server, address indexed token0, address indexed token1, uint256 amount0, uint256 amount1);
     event LogSetStrategyExecutor(address indexed executor, bool allowed);
     event LogSetAllowedPath(uint256 indexed pathId, bool allowed);
 
-    /** @param _strategyToken Address of the underlying token the strategy invests.
-        @param _bentoBox BentoBox address.
-        @param _factory SushiSwap factory.
-        @param _strategyExecutor an EOA that will execute the safeHarvest function.
-        @param _allowedSwapPath Path the contract can use when swapping a reward token to the strategy token
-        @dev factory can be set to address(0) if we don't expect rewards we would need to swap
-        @dev allowedPaths can be set to [] if we don't expect rewards we would need to swap
-    */
-    constructor(
-        address _strategyToken,
-        address _bentoBox,
-        address _strategyExecutor,
-        address _factory,
-        address[] memory _allowedSwapPath
-    ) {
+    struct ConstructorParams {
+        IERC20 strategyToken;
+        IBentoBoxMinimal bentoBox;
+        address strategyExecutor;
+        address factory;
+        address[] allowedSwapPath;
+    }
+    /** @param params a ConstructorParam struct whith the following fields:
+        strategyToken - Address of the underlying token the strategy invests.
+        bentoBox - BentoBox address.
+        factory - legacy SushiSwap factory.
+        strategyExecutor - an EOA that will execute the safeHarvest function.
+        allowedSwapPath - Path the contract can use when swapping a reward token to the strategy token.
+        @dev factory can be set to address(0) if we don't expect rewards we would need to swap.
+        @dev allowedPaths can be set to [] if we don't expect rewards we would need to swap. */
+    constructor(ConstructorParams memory params) {
         
-        strategyToken = _strategyToken;
-        bentoBox = _bentoBox;
-        factory = _factory;
+        strategyToken = params.strategyToken;
+        bentoBox = params.bentoBox;
+        factory = params.factory;
         
-        if (_allowedSwapPath.length != 0) {
-            _allowedSwapPaths.push(_allowedSwapPath);
+        if (params.allowedSwapPath.length != 0) {
+            _allowedSwapPaths.push(params.allowedSwapPath);
             emit LogSetAllowedPath(0, true);
         }
 
-        if (_strategyExecutor != address(0)) {
-            strategyExecutors[_strategyExecutor] = true;
-            emit LogSetStrategyExecutor(_strategyExecutor, true);
+        if (params.strategyExecutor != address(0)) {
+            strategyExecutors[params.strategyExecutor] = true;
+            emit LogSetStrategyExecutor(params.strategyExecutor, true);
         }
     }
 
-    //** Strategy implementation: override the following functions: */
+    //** Strategy implementation (override the following functions) */
 
     /// @notice Invests the underlying asset.
     /// @param amount The amount of tokens to invest.
@@ -105,7 +105,7 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     }
 
     modifier onlyBentoBox() {
-        require(msg.sender == bentoBox, "BentoBox Strategy: only BentoBox");
+        require(msg.sender == address(bentoBox), "BentoBox Strategy: only BentoBox");
         _;
     }
 
@@ -145,7 +145,7 @@ abstract contract BaseStrategy is IStrategy, Ownable {
             maxBentoBoxBalance = maxBalance;
         }
 
-        IBentoBoxMinimal(bentoBox).harvest(strategyToken, rebalance, maxChangeAmount);
+        bentoBox.harvest(address(strategyToken), rebalance, maxChangeAmount);
     }
 
     /** @inheritdoc IStrategy
@@ -158,7 +158,7 @@ abstract contract BaseStrategy is IStrategy, Ownable {
 
         if (
             sender == address(this) &&
-            IBentoBoxMinimal(bentoBox).totals(strategyToken).elastic <= maxBentoBoxBalance &&
+            bentoBox.totals(address(strategyToken)).elastic <= maxBentoBoxBalance &&
             balance > 0
         ) {
             
@@ -169,12 +169,12 @@ abstract contract BaseStrategy is IStrategy, Ownable {
             E.g. reward tokens that have been sold into the underlying tokens which are now sitting in the contract.
             Meaning the amount returned by the internal _harvest function isn't necessary the final profit/loss amount */
 
-            uint256 contractBalance = IERC20(strategyToken).balanceOf(address(this));
+            uint256 contractBalance = strategyToken.balanceOf(address(this));
 
             if (amount >= 0) { // _harvest reported a profit
 
                 if (contractBalance > 0) {
-                    IERC20(strategyToken).safeTransfer(bentoBox, contractBalance);
+                    strategyToken.safeTransfer(address(bentoBox), contractBalance);
                 }
 
                 return int256(contractBalance);
@@ -186,7 +186,7 @@ abstract contract BaseStrategy is IStrategy, Ownable {
                 if (diff > 0) { // we still made some profit
 
                     /// @dev send the profit to BentoBox and reinvest the rest
-                    IERC20(strategyToken).safeTransfer(bentoBox, uint256(diff));
+                    strategyToken.safeTransfer(address(bentoBox), uint256(diff));
                     _skim(uint256(-amount));
 
                 } else { // we made a loss but we have some tokens we can reinvest
@@ -212,8 +212,8 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     function withdraw(uint256 amount) external override isActive onlyBentoBox returns (uint256 actualAmount) {
         _withdraw(amount);
         /// @dev Make sure we send and report the exact same amount of tokens by using balanceOf.
-        actualAmount = IERC20(strategyToken).balanceOf(address(this));
-        IERC20(strategyToken).safeTransfer(bentoBox, actualAmount);
+        actualAmount = strategyToken.balanceOf(address(this));
+        strategyToken.safeTransfer(address(bentoBox), actualAmount);
     }
 
     /// @inheritdoc IStrategy
@@ -221,11 +221,11 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     function exit(uint256 balance) external override onlyBentoBox returns (int256 amountAdded) {
         _exit();
         /// @dev Check balance of token on the contract.
-        uint256 actualBalance = IERC20(strategyToken).balanceOf(address(this));
+        uint256 actualBalance = strategyToken.balanceOf(address(this));
         /// @dev Calculate tokens added (or lost).
         amountAdded = int256(actualBalance) - int256(balance);
         /// @dev Transfer all tokens to bentoBox.
-        IERC20(strategyToken).safeTransfer(bentoBox, actualBalance);
+        strategyToken.safeTransfer(address(bentoBox), actualBalance);
         /// @dev Flag as exited, allowing the owner to manually deal with any amounts available later.
         exited = true;
     }
@@ -276,8 +276,6 @@ abstract contract BaseStrategy is IStrategy, Ownable {
         IERC20(path[0]).safeTransfer(UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]);
 
         _swap(amounts, path, address(this));
-
-        emit LogConvert(msg.sender, path[0], strategyToken, amountIn, amountOut);
     }
 
     /// @dev requires the initial amount to have already been sent to the first pair

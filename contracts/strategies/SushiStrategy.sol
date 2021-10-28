@@ -15,11 +15,9 @@ contract SushiStrategy is BaseStrategy {
 
     constructor(
         address _sushiBar,
-        address strategyToken,
-        address bentoBox,
-        address strategyExecutor
-    ) BaseStrategy(strategyToken, bentoBox, strategyExecutor, address(0), new address[](0)) {
-        IERC20(strategyToken).approve(_sushiBar, type(uint256).max);
+        BaseStrategy.ConstructorParams memory baseStrategyParams
+    ) BaseStrategy(baseStrategyParams) {
+        baseStrategyParams.strategyToken.approve(_sushiBar, type(uint256).max);
         sushiBar = ISushiBar(_sushiBar);
     }
 

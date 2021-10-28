@@ -9,21 +9,18 @@ import "./BaseStrategy.sol";
     further tips and clarifications. Also see the SushiStrategy and the
     AavePolygonStrategy for reference implementations. */
 contract ExampleImplementation is BaseStrategy {
-    // BaseStrategy initializes a immutable storage variable 'strategyToken' of type IERC20 we can use
+
+    // BaseStrategy initializes a immutable storage variable 'strategyToken' we can use
 
     constructor(
         address investmentContract,
-        address strategyToken,
-        address bentoBox,
-        address strategyExecutor,
-        address factory,
-        address[] memory allowedSwapPath
-    ) BaseStrategy(strategyToken, bentoBox, factory, strategyExecutor, allowedSwapPath) {
-        IERC20(strategyToken).approve(investmentContract, type(uint256).max);
+        BaseStrategy.ConstructorParams memory baseStrategyParams
+    ) BaseStrategy(baseStrategyParams) {
+        baseStrategyParams.strategyToken.approve(investmentContract, type(uint256).max);
     }
 
     function _skim(uint256 amount) internal override {
-        // assume strategyToken.balanceOf(address(this)) >= amount
+        // assume IERC20(strategyToken).balanceOf(address(this)) >= amount
         // invest the token
     }
 

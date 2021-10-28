@@ -71,6 +71,7 @@ const config: HardhatUserConfig = {
       live: false,
       saveDeployments: true,
       tags: ["test", "local"],
+      hardfork: process.env.CODE_COVERAGE ? "berlin" : "london"
     },
     ropsten: {
       url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
