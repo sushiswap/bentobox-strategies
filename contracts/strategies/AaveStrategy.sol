@@ -59,16 +59,12 @@ contract AaveStrategy is BaseStrategy {
     constructor(
         ILendingPool _aaveLendingPool,
         IAaveIncentivesController _incentiveController,
-        address strategyToken,
-        address bentoBox,
-        address strategyExecutor,
-        address factory,
-        address[] memory allowedSwapPath
-    ) BaseStrategy(strategyToken, bentoBox, strategyExecutor, factory, allowedSwapPath)  {
+        BaseStrategy.ConstructorParams memory params
+    ) BaseStrategy(params)  {
         aaveLendingPool = _aaveLendingPool;
         incentiveController = _incentiveController;
-        aToken = IERC20(_aaveLendingPool.getReserveData(strategyToken).aTokenAddress);
-        IERC20(strategyToken).approve(address(_aaveLendingPool), type(uint256).max);
+        aToken = IERC20(_aaveLendingPool.getReserveData(address(params.strategyToken)).aTokenAddress);
+        params.strategyToken.approve(address(_aaveLendingPool), type(uint256).max);
     }
 
     function _skim(uint256 amount) internal override {

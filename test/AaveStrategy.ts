@@ -4,7 +4,7 @@ import { expect } from "chai";
 import { BigNumber } from "@ethersproject/bignumber";
 import { AaveStrategy, BentoBoxV1, CombineHarvester } from "../typechain";
 
-describe("Aave Polygon strategy", async function () {
+describe.only("Aave Polygon strategy", async function () {
 
   this.timeout(40000);
 
@@ -63,21 +63,25 @@ describe("Aave Polygon strategy", async function () {
     aaveStrategy = (await AaveStrategy.deploy(
       _lendingPool,
       _incentiveController,
-      _usdc,
-      _bentoBox,
-      _bentoBoxOwner,
-      _factory,
-      [_wmatic, _usdc]
+      [
+        _usdc,
+        _bentoBox,
+        _bentoBoxOwner,
+        _factory,
+        [_wmatic, _usdc]
+      ]
     )).connect(signer) as AaveStrategy;
 
     aaveStrategySecondary = (await AaveStrategy.deploy(
       _lendingPool,
       _incentiveController,
-      _usdc,
-      _bentoBox,
-      _bentoBoxOwner,
-      _factory,
-      [_wmatic, _usdc]
+      [
+        _usdc,
+        _bentoBox,
+        _bentoBoxOwner,
+        _factory,
+        [_wmatic, _usdc]
+      ]
     )).connect(signer) as AaveStrategy;
 
     harvester = (await Harvester.deploy(_bentoBox)).connect(signer) as CombineHarvester;
@@ -85,11 +89,13 @@ describe("Aave Polygon strategy", async function () {
     aaveStrategyWithHarvester = (await AaveStrategy.deploy(
       _lendingPool,
       _incentiveController,
-      _usdc,
-      _bentoBox,
-      harvester.address,
-      _factory,
-      [_wmatic, _usdc]
+      [
+        _usdc,
+        _bentoBox,
+        harvester.address,
+        _factory,
+        [_wmatic, _usdc]
+      ]
     )).connect(signer) as AaveStrategy;
 
     bentoBox = (await BentoBox.attach(_bentoBox)).connect(signer) as BentoBoxV1;
