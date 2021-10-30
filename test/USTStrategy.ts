@@ -50,7 +50,7 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
       params: [
         {
           forking: {
-            jsonRpcUrl: process.env.ETHEREUM_RPC_URL || `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+            jsonRpcUrl: process.env.ETHEREUM_RPC_URL || `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
             blockNumber: 13430664,
           },
         },
@@ -105,6 +105,7 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
     expect((await BentoBox.totals(UST.address)).elastic).to.equal(amountUSTDeposit);
     const strategyUstBalance = amountUSTDeposit.mul(70).div(100);
 
+
     BentoBox = BentoBox.connect(signer);
     await BentoBox.setStrategy(UST.address, USTStrategy.address);
     await advanceTime(1210000);
@@ -128,6 +129,7 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
 
     // At this state, the strategy contains 14M UST worth of aUST
     snapshotId = await ethers.provider.send('evm_snapshot', []);
+
   });
 
   afterEach(async () => {
@@ -139,7 +141,8 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
     const oldBentoBalance = (await BentoBox.totals(UST.address)).elastic;
 
     await advanceTime(1210000); // 2 weeks
-    await USTStrategy.safeHarvest(0, false, 0, false);
+    // redeem profits
+    await USTStrategy.redeemEarnings();
 
     // because redeeming UST from aUST is async, BentoBox harvest call
     // will not transfer the profit this time in BentoBox so a subsequent safeHarvest
@@ -150,8 +153,7 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
     await simulateEthAnchorDeposit(UST, USTStrategy.address, ustProfits);
     const oldUSTBalance = await UST.balanceOf(USTStrategy.address);
 
-    // Harvest again, some small amount is going to be withdrawn again but the first batch would
-    // have been bridged back to the strategy contract.
+    // Harvest again, the earnings redeemed before should go to BentoBox
     await USTStrategy.safeHarvest(0, false, 0, false);
 
     const newUSTBalance = await UST.balanceOf(USTStrategy.address);
@@ -170,12 +172,8 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
     // Adjusting strategy allocation from 70% to 50%
     await BentoBox.setStrategyTargetPercentage(UST.address, 50);
 
-    // Harvest with rebalance after reducing the strategy target percentage should
-    // withdraw some UST.
-    // The first safeHarvest call will initiate the ethAnchor redeem UST from aUST
-    // and the subsequent call (once the UST is received), should withdraw some UST
-    // to bento box.
-    await USTStrategy.safeHarvest(0, true, 0, false);
+    // Withdraw enough UST for a rebalance
+    await USTStrategy.safeWithdraw(getBigNumber(42));
     expect(await UST.balanceOf(USTStrategy.address)).to.eq(0);
 
     await simulateEthAnchorDeposit(UST, USTStrategy.address, getBigNumber(42));
@@ -211,4 +209,9 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
     // UST deposit hasn't arrived yet, bentobox is reporting a strategy loss
     expect(newBentoBalance.sub(oldBentoBalance)).to.eq(profits);
   });
+
+  it("should allow to update feeder", async() => {
+    await USTStrategy.updateExchangeRateFeeder("0xd96f48665a1410C0cd669A88898ecA36B9Fc2cce");
+    expect((await USTStrategy.feeder())).to.be.equal("0xd96f48665a1410C0cd669A88898ecA36B9Fc2cce");
+  })
 });
