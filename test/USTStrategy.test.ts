@@ -57,7 +57,7 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
       ],
     })
 
-    await deployments.fixture();
+    await deployments.fixture(['USTStrategy']);
     const {deployer} = await getNamedAccounts();
 
     await impersonate(degenBoxOwner);
@@ -179,7 +179,8 @@ maybe("Ethereum UST DegenBox Strategy", async () => {
     await simulateEthAnchorDeposit(UST, USTStrategy.address, getBigNumber(42));
 
     // Now that the UST has arrived, it should be withdrawn to bentobox
-    await USTStrategy.safeHarvest(0, true, 0, false);
+    await expect(USTStrategy.safeHarvest(0, true, 0, false)).to.emit(BentoBox, "LogStrategyProfit");
+    
     const newBentoBalance = (await BentoBox.totals(UST.address)).elastic;
     expect(newBentoBalance.sub(oldBentoBalance)).to.eq(getBigNumber(42));
   });

@@ -2,6 +2,7 @@
   "mochaExplorer.files": "test/**/*.{j,t}s",
   "mochaExplorer.fullTrace": true,
   "mochaExplorer.exit": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "solidity.enableLocalNodeCompiler": false,
   "solidity.compileUsingRemoteVersion": "v0.8.7+commit.e28d00a7",
   "solidity.compilerOptimization": 200,
@@ -10,5 +11,6 @@
   "solidity.enabledAsYouTypeCompilationErrorCheck": true,
   "solidity.validationDelay": 1500,
   "solidity.packageDefaultDependenciesDirectory": "node_modules",
-  "solidity.defaultCompiler": "remote"
+  "solidity.defaultCompiler": "remote",
+  "eslint.validate": ["javascript"],
 }

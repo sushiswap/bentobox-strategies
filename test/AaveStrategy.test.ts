@@ -31,6 +31,7 @@ maybe("Aave Polygon strategy", async function () {
   const _aUsdc = "0x1a13F4Ca1d028320A707D99520AbFefca3998b7F";
   const _incentiveController = "0x357D51124f59836DeD84c8a1730D72B749d8BC23";
   const _1e18 = BigNumber.from("1000000000000000000");
+  const _pairHashCode = "0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303"; // sushiswap pair hashcode
 
   before(async () => {
 
@@ -69,7 +70,8 @@ maybe("Aave Polygon strategy", async function () {
       _bentoBox,
       _bentoBoxOwner,
       _factory,
-      _weth
+      _weth,
+      _pairHashCode
     )).connect(signer) as AaveStrategy;
 
     aaveStrategySecondary = (await AaveStrategy.deploy(
@@ -79,7 +81,8 @@ maybe("Aave Polygon strategy", async function () {
       _bentoBox,
       _bentoBoxOwner,
       _factory,
-      _weth
+      _weth,
+      _pairHashCode
     )).connect(signer) as AaveStrategy;
 
     harvester = (await Harvester.deploy(_bentoBox)).connect(signer) as CombineHarvester;
@@ -91,7 +94,8 @@ maybe("Aave Polygon strategy", async function () {
       _bentoBox,
       harvester.address,
       _factory,
-      _weth
+      _weth,
+      _pairHashCode
     )).connect(signer) as AaveStrategy;
 
     bentoBox = (await BentoBox.attach(_bentoBox)).connect(signer) as BentoBoxV1;

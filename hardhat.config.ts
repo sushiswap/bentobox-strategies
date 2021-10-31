@@ -86,6 +86,14 @@ const config: HardhatUserConfig = {
       live: true,
       tags: ["prod"],
     },
+    avalanche: {
+      chainId: 43114,
+      url: "https://api.avax.network/ext/bc/C/rpc",
+      accounts,
+      live: true,
+      saveDeployments: true,
+      tags: ["prod"],
+    },
     ropsten: {
       url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
       accounts,
