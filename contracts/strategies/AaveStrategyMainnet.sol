@@ -36,30 +36,31 @@ contract AaveStrategyMainnet is AaveStrategy {
         address[] memory rewardTokens = new address[](1);
         rewardTokens[0] = address(aToken);
 
-        // We can pass type(uint256).max to receive all of the rewards
-        // We receive stkAAVE tokens
+        // We can pass type(uint256).max to receive all of the rewards.
+        // We receive stkAAVE tokens.
         incentiveController.claimRewards(rewardTokens, type(uint256).max, address(this));
         
-        // Now we try to unstake the stkAAVE tokens
+        // Now we try to unstake the stkAAVE tokens.
         uint256 cooldown = stkAave.stakersCooldowns(address(this));
 
         if (cooldown == 0) {
             
-            // We initiate unstaking for the stkAAVE tokens
+            // We initiate unstaking for the stkAAVE tokens.
             stkAave.cooldown();
 
         } else if (cooldown + COOLDOWN_SECONDS < block.timestamp) {
 
             if (block.timestamp < cooldown + COOLDOWN_SECONDS + UNSTAKE_WINDOW) {
 
-                // We claim any AAVE rewards we have from staking AAVE
+                // We claim any AAVE rewards we have from staking AAVE.
                 stkAave.claimRewards(address(this), type(uint256).max);
-                // We unstake stkAAVE and receive AAVE tokens
+                // We unstake stkAAVE and receive AAVE tokens.
+                // Our cooldown timestamp resets to 0.
                 stkAave.redeem(address(this), type(uint256).max);
 
             } else {
             
-                // We missed the unstake window - we have to reset the cooldown timestamp
+                // We missed the unstake window - we have to reset the cooldown timestamp.
                 stkAave.cooldown();
 
             }

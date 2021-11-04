@@ -65,8 +65,9 @@ const config: HardhatUserConfig = {
       // Seems to be a bug with this, even when false it complains about being unauthenticated.
       // Reported to HardHat team and fix is incoming
       forking: {
-        enabled: process.env.FORKING === "true",
+        enabled: true,
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+        blockNumber: 13500000
       },
       live: false,
       saveDeployments: true,
