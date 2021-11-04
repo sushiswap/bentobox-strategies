@@ -51,6 +51,7 @@ abstract contract BaseStrategy is IStrategy, Ownable {
         address factory;
         address[] allowedSwapPath;
     }
+
     /** @param params a ConstructorParam struct whith the following fields:
         strategyToken - Address of the underlying token the strategy invests.
         bentoBox - BentoBox address.

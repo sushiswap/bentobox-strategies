@@ -42,8 +42,8 @@ jobs:
     - name: compile
       run: yarn build
 
-    - name: yarn test:coverage
-      run: yarn test:coverage
+    - name: yarn test
+      run: yarn test
       env:
         ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
 
