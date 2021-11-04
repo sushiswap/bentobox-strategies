@@ -42,12 +42,7 @@ jobs:
     - name: compile
       run: yarn build
 
-    - name: yarn test:coverage
-      run: yarn test:coverage
+    - name: yarn test
+      run: yarn test
       env:
         ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
-
-    - name: Coveralls
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.github_token }}
