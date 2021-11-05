@@ -180,6 +180,50 @@ describe.only("Aave Mainnet strategy", async function () {
     expect(cooldown.toString()).to.be.eq("0");
   });
 
+  it("Should sell rewards", async function () {
+    await ethers.provider.send("evm_increaseTime", [1210000]);
+    await aaveStrategy.safeHarvest(0, true, 0, true);
+    await ethers.provider.send("evm_increaseTime", [950400]);
+    await ethers.provider.send("evm_mine", []);
+    await aaveStrategy.safeHarvest(0, true, 0, true);
+
+    const oldAaveBalance = (await aave.balanceOf(aaveStrategy.address));
+    const oldUsdcBalance = (await usdc.balanceOf(aaveStrategy.address));
+
+    await expect(aaveStrategy.swapExactTokensForUnderlying("380000000", 0)).to.be.revertedWith(customError("SlippageProtection"));
+    await aaveStrategy.swapExactTokensForUnderlying("370000000", 0);
+
+    const newUsdcBalance = (await usdc.balanceOf(aaveStrategy.address));
+    const newAaveBalance = (await aave.balanceOf(aaveStrategy.address));
+
+    expect(oldAaveBalance.gt(0)).to.be.true;
+    expect(oldUsdcBalance.lt(newUsdcBalance)).to.be.true;
+    expect(newAaveBalance.eq(0)).to.be.true;
+  });
+
+  it("Should reset cooldown", async function () {
+    const oldStkAaveBalance = (await stkAave.balanceOf(aaveStrategy.address));
+
+    await ethers.provider.send("evm_increaseTime", [1210000]);
+    const tx1 = await aaveStrategy.safeHarvest(0, true, 0, true);
+    const timestamp1 = (await ethers.provider.getBlock(tx1.blockNumber as number)).timestamp;
+    const newStkAaveBalance = (await stkAave.balanceOf(aaveStrategy.address));
+
+    expect(oldStkAaveBalance.lt(newStkAaveBalance)).to.be.true;
+
+    const cooldown1 = await stkAave.stakersCooldowns(aaveStrategy.address);
+
+    // 950400 seconds is 11 days
+    await ethers.provider.send("evm_increaseTime", [950400 * 2]);
+
+    const tx2 = await aaveStrategy.safeHarvest(0, true, 0, true);
+    const timestamp2 = (await ethers.provider.getBlock(tx2.blockNumber as number)).timestamp;
+    const cooldown2 = (await stkAave.stakersCooldowns(aaveStrategy.address)).toString()
+
+    expect(cooldown1.toString()).to.be.eq(timestamp1.toString(), "cooldown wasn't set")
+    expect(cooldown2.toString()).to.be.eq(timestamp2.toString(), "cooldown wasn't reset")
+  });
+
   it("Sanity checks", async function () {
 
     const randomSigner = await ethers.getNamedSigner("carol");
@@ -194,6 +238,7 @@ describe.only("Aave Mainnet strategy", async function () {
     await expect(aaveStrategy.exit("1")).to.be.revertedWith(customError("OnlyBentoBox"));
     await expect(aaveStrategy.withdraw("1")).to.be.revertedWith(customError("OnlyBentoBox"));
     await expect(aaveStrategy.harvest("1", randomSigner.address)).to.be.revertedWith(customError("OnlyBentoBox"));
+    await expect(aaveStrategy.swapExactTokensForUnderlying(0, 1)).to.be.revertedWith("reverted with panic code 0x32 (Array accessed at an out-of-bounds or negative index)");
   });
 
 });

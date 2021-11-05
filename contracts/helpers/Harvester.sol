@@ -51,7 +51,7 @@ contract CombineHarvester is Ownable {
         }
     }
 
-    // returns true if strategy balance differs more than -+3% from the strategy target balance
+    // returns true if strategy balance differs more than -+2% from the strategy target balance
     function _rebalanceNecessairy(ISafeStrategy strategy) public view returns (bool) {
         
         address token = strategy.strategyToken();
@@ -64,6 +64,6 @@ contract CombineHarvester is Ownable {
         
         uint256 ratio = targetStrategyBalance * 100 / data.balance;
         
-        return ratio >= 103 || ratio <= 97;
+        return ratio >= 102 || ratio <= 98;
     }
 }
