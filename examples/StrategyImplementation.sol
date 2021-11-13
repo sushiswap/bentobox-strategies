@@ -8,7 +8,7 @@ import "./BaseStrategy.sol";
     Please refer to the BaseStrategy contract natspec comments for
     further tips and clarifications. Also see the SushiStrategy and the
     AavePolygonStrategy for reference implementations. */
-contract ExampleImplementation is BaseStrategy {
+contract StrategyImplementation is BaseStrategy {
     // BaseStrategy initializes a immutable storage variable 'strategyToken' of type IERC20 we can use
 
     constructor(
