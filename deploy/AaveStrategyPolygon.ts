@@ -1,4 +1,3 @@
-import { BENTOBOX_ADDRESS } from "@sushiswap/core-sdk";
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
@@ -105,7 +104,7 @@ const deployFunction: DeployFunction = async function ({
 };
 
 export default deployFunction;
-
+/*
 deployFunction.skip = ({ getChainId }) =>
   new Promise((resolve, reject) => {
     try {
@@ -115,7 +114,11 @@ deployFunction.skip = ({ getChainId }) =>
     } catch (error) {
       reject(error);
     }
-  });
+  }); */
 
 deployFunction.tags = ["AaveStrategy"];
 deployFunction.dependencies = ["CombineHarvester"];
+deployFunction.skip = ({ getChainId }) =>
+  new Promise((resolve) => {
+    getChainId().then(chainId => resolve(chainId !== "137"))
+  });

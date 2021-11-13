@@ -26,32 +26,41 @@ contract CombineHarvester is Ownable {
         bentoBox = IBentoBoxMinimal(_bentoBox);
     }
 
-    function executeSafeHarvests(
-        ISafeStrategy[] memory strategies,
-        bool[] memory manual,
-        uint256[] memory maxBalances,
-        bool[] memory rebalances,
-        uint256[] memory maxChangeAmounts, // can be set to 0 to allow for full withdrawals / deposits
-        bool[] memory harvestRewards,
-        uint256[] memory minOutAmounts
+    function executeSafeHarvestsManual(
+        ISafeStrategy[] calldata strategies,
+        uint256[] calldata maxBalances, // strategy sandwich protection
+        bool[] calldata rebalances,
+        uint256[] calldata maxChangeAmounts, // can be set to 0 to allow for full withdrawals / deposits from / to strategy
+        bool[] calldata harvestRewards,
+        uint256[] calldata minOutAmounts
     ) external onlyOwner {
         for (uint256 i = 0; i < strategies.length; i++) {
-            
-            // BentoBox frontrunning deposit protection - likely won't be needed for Polygon since we will be frequently executing.
-            uint256 maxBalance = manual[i] ? maxBalances[i] : 0;
-            
-            // If BentoBox has to rebalance strategy assets to the target percentage.
-            bool rebalance = manual[i] ? rebalances[i] : _rebalanceNecessairy(strategies[i]);
-            
-            strategies[i].safeHarvest(maxBalance, rebalance, maxChangeAmounts[i], harvestRewards[i]);
-            
-            if (minOutAmounts[i] > 0) {
+
+            strategies[i].safeHarvest(maxBalances[i], rebalances[i], maxChangeAmounts[i], harvestRewards[i]);
+
+            if (minOutAmounts[i] != 0) {
                 strategies[i].swapExactTokensForUnderlying(minOutAmounts[i], 0);
             }
         }
     }
 
-    // returns true if strategy balance differs more than -+2% from the strategy target balance
+    function executeSafeHarvests(
+        ISafeStrategy[] calldata strategies,
+        uint256[] calldata maxChangeAmounts, // can be set to 0 to allow for full withdrawals / deposits from / to strategy
+        bool[] calldata harvestRewards,
+        uint256[] calldata minOutAmounts
+    ) external onlyOwner {
+        for (uint256 i = 0; i < strategies.length; i++) {
+
+            strategies[i].safeHarvest(0, _rebalanceNecessairy(strategies[i]), maxChangeAmounts[i], harvestRewards[i]);
+
+            if (minOutAmounts[i] != 0) {
+                strategies[i].swapExactTokensForUnderlying(minOutAmounts[i], 0);
+            }
+        }
+    }
+
+    // returns true if strategy balance differs more than -+1% from the strategy target balance
     function _rebalanceNecessairy(ISafeStrategy strategy) public view returns (bool) {
         
         address token = strategy.strategyToken();
@@ -64,6 +73,6 @@ contract CombineHarvester is Ownable {
         
         uint256 ratio = targetStrategyBalance * 100 / data.balance;
         
-        return ratio >= 102 || ratio <= 98;
+        return ratio >= 101 || ratio <= 99;
     }
 }

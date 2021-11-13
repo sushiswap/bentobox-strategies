@@ -52,8 +52,11 @@ interface IAaveIncentivesController {
 }
 
 contract AaveStrategy is BaseStrategy {
-    ILendingPool public immutable aaveLendingPool;
-    IAaveIncentivesController public immutable incentiveController;
+
+    using SafeERC20 for IERC20;
+
+    ILendingPool internal immutable aaveLendingPool;
+    IAaveIncentivesController internal immutable incentiveController;
     IERC20 public immutable aToken;
 
     constructor(
@@ -64,7 +67,7 @@ contract AaveStrategy is BaseStrategy {
         aaveLendingPool = _aaveLendingPool;
         incentiveController = _incentiveController;
         aToken = IERC20(_aaveLendingPool.getReserveData(address(params.strategyToken)).aTokenAddress);
-        params.strategyToken.approve(address(_aaveLendingPool), type(uint256).max);
+        params.strategyToken.safeApprove(address(_aaveLendingPool), type(uint256).max);
     }
 
     function _skim(uint256 amount) internal override {

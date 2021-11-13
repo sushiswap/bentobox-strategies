@@ -13,13 +13,15 @@ import "@tenderly/hardhat-tenderly";
 import { HardhatUserConfig, task } from "hardhat/config";
 
 import { removeConsoleLog } from "hardhat-preprocessor";
-import { ethers } from "ethers";
 
-const accounts = {
+import { HttpNetworkAccountsUserConfig } from "hardhat/types";
+
+/* const accounts = {
   mnemonic:
     process.env.MNEMONIC ||
     "test test test test test test test test test test test junk",
-};
+}; */
+const accounts = [process.env.DEPLOYER_KEY as string] as HttpNetworkAccountsUserConfig;
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -89,6 +91,15 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
       tags: ["staging"],
+    },
+    mainnet: {
+      url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      // url: `https://rpc.tenderly.co/fork/${process.env.TENDERLY_MAINNET_FORK}`,
+      accounts,
+      chainId: 1,
+      live: true,
+      saveDeployments: true,
+      tags: ["mainnet"],
     },
     kovan: {
       url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,

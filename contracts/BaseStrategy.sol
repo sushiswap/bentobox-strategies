@@ -17,21 +17,26 @@ abstract contract BaseStrategy is IStrategy, Ownable {
 
     using SafeERC20 for IERC20;
 
+    /// @dev invested token.
     IERC20 public immutable strategyToken;
-    IBentoBoxMinimal public immutable bentoBox;
-    address public immutable factory;
+    
+    /// @dev BentoBox address.
+    IBentoBoxMinimal private immutable bentoBox;
+    
+    /// @dev Legacy Sushiswap AMM factory address.
+    address private immutable factory;
 
-    /// @dev Path are for the original sushiswap amm
-    /// @dev Set variable visibility to private since we don't want the child contract to be able to upgrade it
+    /// @dev Path are for the original sushiswap AMM.
+    /// @dev Set variable visibility to private since we don't want the child contract to modify it.
     address[][] private _allowedSwapPaths = new address[][](0);
 
-    /// @dev After bentobox 'exits' the strategy harvest, skim and withdraw functions can no loner be called
+    /// @dev After bentobox 'exits' the strategy harvest, skim and withdraw functions can no loner be called.
     bool public exited;
     
-    /// @dev Slippage protection when calling harvest
+    /// @dev Slippage protection when calling harvest.
     uint256 public maxBentoBoxBalance;
     
-    /// @dev EOAs that can execute safeHarvest
+    /// @dev EOAs that can execute safeHarvest.
     mapping(address => bool) public strategyExecutors;
 
     event LogSetStrategyExecutor(address indexed executor, bool allowed);

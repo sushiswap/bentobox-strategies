@@ -5,7 +5,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { AaveStrategy, BentoBoxV1, CombineHarvester } from "../typechain";
 import { customError } from "./Utils";
 
-describe.only("Aave Mainnet strategy", async function () {
+describe("Aave Mainnet strategy", async function () {
 
   this.timeout(40000);
 
@@ -15,7 +15,7 @@ describe.only("Aave Mainnet strategy", async function () {
   let aaveStrategyWithHarvester: AaveStrategy;
   let bentoBox: BentoBoxV1;
   let harvester: CombineHarvester;
-  let signer, usdc, aUsdc, weth, aave, stkAave;
+  let signer, usdc, aUsdc, weth, aave, stkAave, usdt, aUsdt;
 
   const _bentoBox = "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
   const _bentoBoxOwner = "0x19B3Eb3Af5D93b77a5619b047De0EED7115A19e7";
@@ -27,10 +27,25 @@ describe.only("Aave Mainnet strategy", async function () {
   const _usdc = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
   const _aUsdc = "0xBcca60bB61934080951369a648Fb03DF4F96263C";
   const _incentiveController = "0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5";
+  const _usdt = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
+  const _aUsdt = "0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811";
 
   const _1e18 = BigNumber.from("1000000000000000000");
 
   before(async () => {
+
+    await network.provider.request({
+      method: "hardhat_reset",
+      params: [
+        {
+          forking: {
+            // jsonRpcUrl: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+            jsonRpcUrl: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+            blockNumber: 13500000,
+          },
+        },
+      ],
+    })
 
     await network.provider.request({ method: "hardhat_impersonateAccount", params: [_bentoBoxOwner] })
     signer = await ethers.getSigner(_bentoBoxOwner);
@@ -46,10 +61,12 @@ describe.only("Aave Mainnet strategy", async function () {
     const stkAAVE = (await ethers.getContractFactory("stkAAVE"));
 
     usdc = await Token.attach(_usdc);
+    usdt = await Token.attach(_usdt);
     weth = await Token.attach(_weth);
     aave = await Token.attach(_aave);
     stkAave = await stkAAVE.attach(_stkAave);
     aUsdc = await Token.attach(_aUsdc);
+    aUsdt = await Token.attach(_aUsdt);
 
     aaveStrategy = (await AaveStrategy.deploy(
       _stkAave,
@@ -69,11 +86,11 @@ describe.only("Aave Mainnet strategy", async function () {
       _lendingPool,
       _incentiveController,
       [
-        _usdc,
+        _usdt,
         _bentoBox,
         _bentoBoxOwner,
         _factory,
-        [_aave, _weth, _usdc]
+        [_aave, _weth, _usdt]
       ]
     )).connect(signer) as AaveStrategy;
 
@@ -132,9 +149,9 @@ describe.only("Aave Mainnet strategy", async function () {
   it("Exits smoothly", async function () {
     const oldBentoBalance = (await bentoBox.totals(_usdc)).elastic;
 
-    await bentoBox.setStrategy(_usdc, aaveStrategySecondary.address);
+    await bentoBox.setStrategy(_usdc, aaveStrategyWithHarvester.address);
     await ethers.provider.send("evm_increaseTime", [1210000]);
-    await bentoBox.setStrategy(_usdc, aaveStrategySecondary.address);
+    await bentoBox.setStrategy(_usdc, aaveStrategyWithHarvester.address);
 
     const newBentoBalance = (await bentoBox.totals(_usdc)).elastic;
     const newAUsdcBalance = await aUsdc.balanceOf(aaveStrategy.address);
@@ -150,9 +167,7 @@ describe.only("Aave Mainnet strategy", async function () {
 
     await ethers.provider.send("evm_increaseTime", [1210000]);
     await ethers.provider.send("evm_mine", []);
-
     await aaveStrategy.safeHarvest(0, true, 0, true);
-
     const newStkAaveBalance = (await stkAave.balanceOf(aaveStrategy.address));
 
     expect(oldStkAaveBalance.lt(newStkAaveBalance)).to.be.true;
@@ -164,14 +179,12 @@ describe.only("Aave Mainnet strategy", async function () {
     await ethers.provider.send("evm_mine", []);
 
     await aaveStrategy.safeHarvest(0, true, 0, true);
-
     expect((await stkAave.stakersCooldowns(aaveStrategy.address)).toString()).to.be.eq(cooldown.toString(), "Cooldown was reset by mistake");
 
     await ethers.provider.send("evm_increaseTime", [950400 / 2]);
     await ethers.provider.send("evm_mine", []);
 
     await aaveStrategy.safeHarvest(0, true, 0, true);
-
     const newAaveBalance = (await aave.balanceOf(aaveStrategy.address));
 
     cooldown = await stkAave.stakersCooldowns(aaveStrategy.address);
@@ -201,6 +214,32 @@ describe.only("Aave Mainnet strategy", async function () {
     expect(newAaveBalance.eq(0)).to.be.true;
   });
 
+  it("Should use helper", async function () {
+    await bentoBox.setStrategy(_usdc, aaveStrategyWithHarvester.address);
+    await ethers.provider.send("evm_increaseTime", [1210000]);
+    await bentoBox.setStrategy(_usdc, aaveStrategyWithHarvester.address);
+
+    await expect(aaveStrategyWithHarvester.safeHarvest(_1e18.mul(10000000000), true, 0, false)).to.be.revertedWith(customError("OnlyExecutor"));
+    expect(await harvester.executeSafeHarvestsManual(
+      [aaveStrategyWithHarvester.address],
+      [ethers.constants.MaxUint256],
+      [true],
+      [0],
+      [false],
+      [0]
+    ));
+    const oldAUsdcBalance = await aUsdc.balanceOf(aaveStrategyWithHarvester.address);
+
+    await ethers.provider.send("evm_increaseTime", [1210000]);
+    await ethers.provider.send("evm_mine", []);
+
+    const newAUsdcBalance = await aUsdc.balanceOf(aaveStrategyWithHarvester.address);
+    expect(await harvester.executeSafeHarvests([aaveStrategyWithHarvester.address], [0], [false], [0]));
+    const endAUsdcBalance = await aUsdc.balanceOf(aaveStrategyWithHarvester.address);
+    expect(oldAUsdcBalance.lt(newAUsdcBalance)).to.be.true;
+    expect(oldAUsdcBalance.eq(endAUsdcBalance)).to.be.true;
+  });
+
   it("Should reset cooldown", async function () {
     const oldStkAaveBalance = (await stkAave.balanceOf(aaveStrategy.address));
 
@@ -228,13 +267,13 @@ describe.only("Aave Mainnet strategy", async function () {
 
     const randomSigner = await ethers.getNamedSigner("carol");
 
-    expect(await aaveStrategy.bentoBox()).to.be.eq(_bentoBox, "didn't set correct bento box address");
-    expect(await aaveStrategy.strategyToken()).to.be.eq(_usdc, "didn't set correct token address");
+    // expect(await aaveStrategy.bentoBox()).to.be.eq(_bentoBox, "didn't set correct bento box address");
+    // expect(await aaveStrategy.strategyToken()).to.be.eq(_usdc, "didn't set correct token address");
     expect(await aaveStrategy.aToken()).to.be.eq(_aUsdc, "didn't set correct aToken address");
-    expect(await aaveStrategy.incentiveController()).to.be.eq(_incentiveController, "didn't set correct incentive controller address");
+    // expect(await aaveStrategy.incentiveController()).to.be.eq(_incentiveController, "didn't set correct incentive controller address");
 
     await expect(aaveStrategy.connect(randomSigner).safeHarvest(0, false, 0, true)).to.be.revertedWith(customError("OnlyExecutor"));
-    await expect(harvester.connect(randomSigner).executeSafeHarvests([], [], [], [], [], [], [])).to.be.revertedWith("Ownable: caller is not the owner");
+    await expect(harvester.connect(randomSigner).executeSafeHarvests([], [], [], [])).to.be.revertedWith("Ownable: caller is not the owner");
     await expect(aaveStrategy.exit("1")).to.be.revertedWith(customError("OnlyBentoBox"));
     await expect(aaveStrategy.withdraw("1")).to.be.revertedWith(customError("OnlyBentoBox"));
     await expect(aaveStrategy.harvest("1", randomSigner.address)).to.be.revertedWith(customError("OnlyBentoBox"));

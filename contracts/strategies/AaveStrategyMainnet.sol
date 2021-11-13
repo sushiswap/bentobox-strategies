@@ -15,9 +15,9 @@ interface IStkAave {
 
 contract AaveStrategyMainnet is AaveStrategy {
 
-    IStkAave public immutable stkAave;
-    uint256 public immutable COOLDOWN_SECONDS; // 10 days
-    uint256 public immutable UNSTAKE_WINDOW; // 2 days
+    IStkAave private immutable stkAave;
+    uint256 private immutable COOLDOWN_SECONDS; // 10 days
+    uint256 private immutable UNSTAKE_WINDOW; // 2 days
 
     constructor(
         IStkAave _stkAave,
