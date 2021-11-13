@@ -44,6 +44,7 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   if (network.name !== "hardhat") {
     const AVAXMIMStrategy = await ethers.getContract<LPStrategy>("AVAXMIMStrategy");
     await AVAXMIMStrategy.transferOwnership(xMerlin);
+    await AVAXMIMStrategy.setFeeCollector(xMerlin); // Temporary until changed to correct feeCollector
   }
 };
 

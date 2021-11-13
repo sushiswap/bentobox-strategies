@@ -12,8 +12,6 @@ contract LPStrategy is BaseStrategy {
     using SafeERC20 for IERC20;
 
     event LpMinted(uint256 total, uint256 strategyAmount, uint256 feeAmount);
-
-    uint256 private constant DEADLINE = 0xf000000000000000000000000000000000000000000000000000000000000000; // ~ placeholder for swap deadline
     uint256 private constant FEE = 10; // 10% fees on minted LP
 
     ISushiSwap private immutable router;
@@ -146,11 +144,11 @@ contract LPStrategy is BaseStrategy {
             1,
             1,
             address(this),
-            DEADLINE
+            type(uint256).max
         );
 
         uint256 total = IERC20(strategyToken).balanceOf(address(this)) - amountStrategyLpBefore;
-        require(total >= amountOutMin, "LPStrategy: SLIPPAGE_TOO_HIGH");
+        require(total >= amountOutMin, "INSUFFICIENT_AMOUNT_OUT");
 
         uint256 feeAmount = (total * FEE) / 100;
         amountOut = total - feeAmount;
