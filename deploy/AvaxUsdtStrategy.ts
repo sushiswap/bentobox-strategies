@@ -3,15 +3,13 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { network, ethers } from "hardhat";
 import { LPStrategy } from "../typechain";
 
-const deployFunction: DeployFunction = async function (
-  hre: HardhatRuntimeEnvironment
-) {
+const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
   const { deploy } = deployments;
 
   const { deployer } = await getNamedAccounts();
 
-  const strategyToken = "0xed8cbd9f0ce3c6986b22002f03c6475ceb7a6256";   // AVAX/USDT
+  const strategyToken = "0xed8cbd9f0ce3c6986b22002f03c6475ceb7a6256"; // AVAX/USDT
   const degenBox = "0x1fC83f75499b7620d53757f0b01E2ae626aAE530";
   const factory = "0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10"; // Joe Factory
   const bridgeToken = ethers.constants.AddressZero;
@@ -36,25 +34,23 @@ const deployFunction: DeployFunction = async function (
       router,
       rewardToken,
       usePairToken0,
-      pairHashCode
+      pairHashCode,
     ],
     log: true,
     deterministicDeployment: false,
-    contract: "LPStrategy"
+    contract: "LPStrategy",
   });
 
-  if(network.name !== "hardhat") {
+  if (network.name !== "hardhat") {
     const AVAXUSDTStrategy = await ethers.getContract<LPStrategy>("AVAXUSDTStrategy");
     await AVAXUSDTStrategy.transferOwnership(xMerlin);
   }
 };
 
-
-
 export default deployFunction;
 
 // Deploy on Avalanche only
-if(network.name !== "hardhat") {
+if (network.name !== "hardhat") {
   deployFunction.skip = ({ getChainId }) =>
     new Promise((resolve, reject) => {
       try {
