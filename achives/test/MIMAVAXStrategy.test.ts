@@ -3,8 +3,8 @@ import { ethers, network, deployments, getNamedAccounts, artifacts } from "hardh
 import { expect } from "chai";
 import { BigNumberish } from "ethers";
 
-import { BentoBoxV1, IERC20, IExchangeRateFeeder, IMasterChef, IUniswapV2Pair, LPStrategy, USTMock, USTStrategy } from "../typechain";
-import { advanceTime, blockNumber, getBigNumber, impersonate } from "../utilities";
+import { BentoBoxV1, IERC20, IExchangeRateFeeder, IMasterChef, IUniswapV2Pair, LPStrategy, USTMock, USTStrategy } from "../../typechain";
+import { advanceTime, blockNumber, getBigNumber, impersonate } from "../../utilities";
 
 const degenBox = "0x1fC83f75499b7620d53757f0b01E2ae626aAE530";
 const degenBoxOwner = "0xb4EfdA6DAf5ef75D08869A0f9C0213278fb43b6C";

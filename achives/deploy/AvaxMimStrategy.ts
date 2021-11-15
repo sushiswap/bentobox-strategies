@@ -1,7 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { network, ethers } from "hardhat";
-import { LPStrategy } from "../typechain";
+import { LPStrategy } from "../../typechain";
 
 const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
@@ -43,12 +43,8 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
 
   if (network.name !== "hardhat") {
     const AVAXMIMStrategy = await ethers.getContract<LPStrategy>("AVAXMIMStrategy");
-    if ((await AVAXMIMStrategy.feeCollector()) !== xMerlin) {
-      await AVAXMIMStrategy.setFeeCollector(xMerlin); // Temporary until changed to correct feeCollector
-    }
-    if ((await AVAXMIMStrategy.owner()) !== xMerlin) {
-      await AVAXMIMStrategy.transferOwnership(xMerlin);
-    }
+    await AVAXMIMStrategy.transferOwnership(xMerlin);
+    await AVAXMIMStrategy.setFeeCollector(xMerlin); // Temporary until changed to correct feeCollector
   }
 };
 
