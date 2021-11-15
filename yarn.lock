@@ -5578,13 +5578,6 @@ hardhat-log-remover@^2.0.2:
   resolved "https://registry.yarnpkg.com/hardhat-log-remover/-/hardhat-log-remover-2.0.2.tgz#6014fe2c515ced1e0eaa7a4d854e37695aaac61a"
   integrity sha512-TvEWOisQmZUZ7Mlb7s4XYS/MxgZzjFJSjDI8v3uTcrD6aaXy1QtomW6D6WNsISEWtwwRlSntOGpHQwFjrz2MCw==
 
-hardhat-preprocessor@^0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/hardhat-preprocessor/-/hardhat-preprocessor-0.1.4.tgz#daa3004c3d2cca2ce1b5555c0c9b1940670fd022"
-  integrity sha512-TeIi9y5xXf6oKa2BMqXAFQV0tAJRy9MKDElu0VrHMsEVpiUXRh47AEJqWkFpWr2lVLFweif40n1RGxGIEFOPXw==
-  dependencies:
-    murmur-128 "^0.2.1"
-
 hardhat-spdx-license-identifier@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/hardhat-spdx-license-identifier/-/hardhat-spdx-license-identifier-2.0.3.tgz#6dd89a7e036ede4f7e86fb349eb23daaaad6890f"

@@ -14,8 +14,6 @@ import "@tenderly/hardhat-tenderly";
 
 import { HardhatUserConfig, task } from "hardhat/config";
 
-import { removeConsoleLog } from "hardhat-preprocessor";
-
 const accounts = {
   mnemonic:
     process.env.MNEMONIC ||
@@ -73,7 +71,7 @@ const config: HardhatUserConfig = {
       gasPrice: 0,
       initialBaseFeePerGas: 0,
       live: false,
-      saveDeployments: true,
+      saveDeployments: false,
       tags: ["test", "local"],
     },
     mainnet: {
@@ -179,12 +177,6 @@ const config: HardhatUserConfig = {
       tags: ["staging"],
     },
   },
-  preprocess: {
-    eachLine: removeConsoleLog(
-      (bre) =>
-        bre.network.name !== "hardhat" && bre.network.name !== "localhost"
-    ),
-  },
   mocha: {
     timeout: 40000,
     bail: true,
@@ -196,7 +188,7 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 99999,
+            runs: 200,
           },
         },
       },
