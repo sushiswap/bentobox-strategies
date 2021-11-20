@@ -24,7 +24,7 @@ Using commit: https://github.com/sushiswap/bentobox-strategies/tree/4a2ee8a2e069
 
 ### Mainnet - Aave Strategies
 
-Using commit: ...
+Using commit: https://github.com/sushiswap/bentobox-strategies/tree/ac977e88e5721f1aedd016234b8419be271292c1
 
 | Token                      | Strategy Address                           |
 | -------------------------- | ------------------------------------------ |
