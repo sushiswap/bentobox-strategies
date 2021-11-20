@@ -16,12 +16,12 @@ import { removeConsoleLog } from "hardhat-preprocessor";
 
 import { HttpNetworkAccountsUserConfig } from "hardhat/types";
 
-/* const accounts = {
+const accounts = {
   mnemonic:
     process.env.MNEMONIC ||
     "test test test test test test test test test test test junk",
-}; */
-const accounts = [process.env.DEPLOYER_KEY as string] as HttpNetworkAccountsUserConfig;
+};
+// const accounts = [process.env.DEPLOYER_KEY as string] as HttpNetworkAccountsUserConfig;
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
