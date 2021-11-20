@@ -39,12 +39,14 @@ jobs:
     - name: Installing dependencies
       run: yarn install --frozen-lockfile
 
-    # - name: compile
-      # run: yarn build
-      # env:
-        # INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+    - name: compile
+      run: yarn build
+      env:
+        INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+        ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
 
     - name: yarn test
       run: yarn test
       env:
+        INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
         ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
