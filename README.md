@@ -8,9 +8,9 @@ yarn test
 
 ## Deployments
 
-## Avalanche - Joe Strategy
+### Avalanche - Joe Strategy
 
-| Token              | Token address                              | Strategy Address                           |
+| Contract           | Token address                              | Strategy Address                           |
 | ------------------ | ------------------------------------------ | ------------------------------------------ |
 | USDC/AVAX strategy | 0xA389f9430876455C36478DeEa9769B7Ca4E3DDB1 | 0x663Ef4455A07243D9029bA0fC48297AE181aeb38 |
 | MIM/AVAX strategy  | 0x781655d802670bbA3c89aeBaaEa59D3182fD755D | 0x43838338F30795185Dabf1e52DaE6a3FEEdC953d |
@@ -18,7 +18,7 @@ yarn test
 
 ### Polygon - Aave Strategies
 
-| Token                | Token address                              | Strategy Address                           |
+| Contract             | Token address                              | Strategy Address                           |
 | -------------------- | ------------------------------------------ | ------------------------------------------ |
 | WETH Aave strategy   | 0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619 | 0x760ef4F484EbF2668001B090291f84A3CDf2f3aa |
 | USDC Aave strategy   | 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174 | 0xCFb49550ce8f39c29E73BA0baBc16609A63b31b1 |
@@ -31,3 +31,9 @@ yarn test
 | Strategy                | Harvester address                          |
 | ----------------------- | ------------------------------------------ |
 | Polygon Aave strategies | 0xdC56bD1F319DC1976FD179Ba2A6A76363316a374 |
+
+### BSC - PancakeSwap Strategies
+
+| Contract      | Token address                              | Strategy Address                           |
+| ------------- | ------------------------------------------ | ------------------------------------------ |
+| Cake strategy | 0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82 | 0x08B918dD18E087893bb9d711d9E0BBaA7a63Ef63 |

@@ -8,3 +8,8 @@ interface IMasterChef {
     function userInfo(uint256 _pid, address user) external view returns (uint256 amount, uint256 rewardDebt);
     function emergencyWithdraw(uint256 _pid) external;
 }
+
+interface ICakeChef is IMasterChef {
+    function enterStaking(uint256 _amount) external;
+    function leaveStaking(uint256 _amount) external;
+}
