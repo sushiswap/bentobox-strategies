@@ -1,12 +1,14 @@
 # BentoBox Strategies
 
-BentoBox can allocate a certian percantage of a token's reserves to be used in an underlying strategy. The profits from the strategy are distributed back to BentoBox.
+[BentoBox](https://github.com/sushiswap/bentobox/) is a token vault users can deposit their tokens into. Apps (Trident, Kashi...) can be built on top of BentoBox that use the user's virtual BentoBox balances instead of native token balances, with gas optimization benefits and extra income due to strategies.
+
+BentoBox can allocate a percentage of a token's reserves to be used in an underlying strategy. The profits from the strategy are distributed back into BentoBox. Each strategy has a target balance (e.g. 75%) for the amount of tokens it invests from BentoBox. If any withdrawals or deposits happen in BentoBox anyone can rebalance (deposit into or withdraw from) the strategy so it achieves the target utilization again. To prevent sandwich attacks where a malicious actor deposits some tokens into BentoBox just before a strategy is harvested and withdraw right after (collecting most profits) the permissioned profit harvester can set a condition where a harvest can only happen if the BentoBox token balance is below some limit.
 
 ## Deployments
 
 ### Polygon - Aave Strategies
 
-Using commit: https://github.com/sushiswap/bentobox-strategies/tree/4a2ee8a2e069253e47511671226dbcb967baf0e7
+Using commit: [4a2ee8a2](https://github.com/sushiswap/bentobox-strategies/tree/4a2ee8a2e069253e47511671226dbcb967baf0e7)
 
 | Token                      | Strategy Address                           |
 | -------------------------- | ------------------------------------------ |
@@ -24,7 +26,7 @@ Using commit: https://github.com/sushiswap/bentobox-strategies/tree/4a2ee8a2e069
 
 ### Mainnet - Aave Strategies
 
-Using commit: https://github.com/sushiswap/bentobox-strategies/tree/ac977e88e5721f1aedd016234b8419be271292c1
+Using commit: [ac977e88](https://github.com/sushiswap/bentobox-strategies/tree/ac977e88e5721f1aedd016234b8419be271292c1)
 
 | Token                      | Strategy Address                           |
 | -------------------------- | ------------------------------------------ |
