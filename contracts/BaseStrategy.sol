@@ -19,10 +19,10 @@ abstract contract BaseStrategy is IStrategy, Ownable {
 
     /// @dev invested token.
     IERC20 public immutable strategyToken;
-    
+
     /// @dev BentoBox address.
     IBentoBoxMinimal private immutable bentoBox;
-    
+
     /// @dev Legacy Sushiswap AMM factory address.
     address private immutable factory;
 
@@ -32,10 +32,10 @@ abstract contract BaseStrategy is IStrategy, Ownable {
 
     /// @dev After bentobox 'exits' the strategy harvest, skim and withdraw functions can no loner be called.
     bool public exited;
-    
+
     /// @dev Slippage protection when calling harvest.
     uint256 public maxBentoBoxBalance;
-    
+
     /// @dev EOAs that can execute safeHarvest.
     mapping(address => bool) public strategyExecutors;
 
@@ -66,11 +66,11 @@ abstract contract BaseStrategy is IStrategy, Ownable {
         @dev factory can be set to address(0) if we don't expect rewards we would need to swap.
         @dev allowedPaths can be set to [] if we don't expect rewards we would need to swap. */
     constructor(ConstructorParams memory params) {
-        
+
         strategyToken = params.strategyToken;
         bentoBox = params.bentoBox;
         factory = params.factory;
-        
+
         if (params.allowedSwapPath.length != 0) {
             _allowedSwapPaths.push(params.allowedSwapPath);
             emit LogSetAllowedPath(0, true);
@@ -106,7 +106,7 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     /// @dev This shouldn't revert (use try catch).
     function _exit() internal virtual;
 
-    /// @notice Claim any rewards reward tokens and optionally sell them for the underlying token.
+    /// @notice Claim any reward tokens and optionally sell them for the underlying token.
     /// @dev Doesn't need to be implemented if we don't expect any rewards.
     function _harvestRewards() internal virtual {}
 
@@ -180,13 +180,13 @@ abstract contract BaseStrategy is IStrategy, Ownable {
             bentoBox.totals(address(strategyToken)).elastic <= maxBentoBoxBalance &&
             balance > 0
         ) {
-            
+
             int256 amount = _harvest(balance);
 
             /** @dev Since harvesting of rewards is accounted for seperately we might also have
-            some underlying tokens in the contract that the _harvest call doesn't report. 
+            some underlying tokens in the contract that the _harvest call doesn't report.
             E.g. reward tokens that have been sold into the underlying tokens which are now sitting in the contract.
-            Meaning the amount returned by the internal _harvest function isn't necessary the final profit/loss amount */
+            Meaning the amount returned by the internal _harvest function isn't necessarily the final profit/loss amount */
 
             uint256 contractBalance = strategyToken.balanceOf(address(this));
 
