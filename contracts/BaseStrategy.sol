@@ -1,46 +1,44 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-pragma solidity >=0.8;
+pragma solidity 0.8.7;
 
 import "./interfaces/IStrategy.sol";
 import "./interfaces/IUniswapV2Pair.sol";
 import "./interfaces/IBentoBoxMinimal.sol";
-import "./libraries/UniswapV2Library.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@rari-capital/solmate/src/utils/SafeTransferLib.sol";
 
-/// @title Abstrat contract to simplify BentoBox strategy development.
+/// @title Abstract contract to simplify BentoBox strategy development.
 /// @dev Extend the contract and implement _skim, _harvest, _withdraw, _exit and _harvestRewards methods.
-/// @dev Ownership should be transfered to the Sushi ops multisig.
+/// Ownership should be transfered to the Sushi ops multisig.
 abstract contract BaseStrategy is IStrategy, Ownable {
 
-    using SafeERC20 for IERC20;
+    using SafeTransferLib for ERC20;
 
-    /// @dev invested token.
-    IERC20 public immutable strategyToken;
+    // invested token.
+    ERC20 public immutable strategyToken;
     
-    /// @dev BentoBox address.
+    // BentoBox address.
     IBentoBoxMinimal private immutable bentoBox;
     
-    /// @dev Legacy Sushiswap AMM factory address.
+    // Legacy Sushiswap AMM factory address.
     address private immutable factory;
 
-    /// @dev Path are for the original sushiswap AMM.
-    /// @dev Set variable visibility to private since we don't want the child contract to modify it.
-    address[][] private _allowedSwapPaths = new address[][](0);
+    // Swap paths (bridges) the original sushiswap AMM.
+    // Should lead to the underlying token.
+    mapping(address => address) public swapPath;
 
-    /// @dev After bentobox 'exits' the strategy harvest, skim and withdraw functions can no loner be called.
-    bool public exited;
+    // After bentobox 'exits' the strategy harvest and withdraw functions can no longer be called.
+    bool private _exited;
     
-    /// @dev Slippage protection when calling harvest.
-    uint256 public maxBentoBoxBalance;
-    
-    /// @dev EOAs that can execute safeHarvest.
+    // Slippage protection when calling harvest.
+    uint256 private _maxBentoBoxBalance;
+
+    // Accounts that can execute methods where slippage protection is required.
     mapping(address => bool) public strategyExecutors;
 
     event LogSetStrategyExecutor(address indexed executor, bool allowed);
-    event LogSetAllowedPath(uint256 indexed pathId, bool allowed);
+    event LogSetSwapPath(address indexed input, address indexed output);
 
     error StrategyExited();
     error StrategyNotExited();
@@ -48,53 +46,42 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     error OnlyExecutor();
     error NoFactory();
     error SlippageProtection();
+    error InvalidSwapPath();
+    error NoSwapPath();
 
     struct ConstructorParams {
-        IERC20 strategyToken;
-        IBentoBoxMinimal bentoBox;
+        address strategyToken;
+        address bentoBox;
         address strategyExecutor;
         address factory;
-        address[] allowedSwapPath;
     }
 
     /** @param params a ConstructorParam struct whith the following fields:
         strategyToken - Address of the underlying token the strategy invests.
         bentoBox - BentoBox address.
         factory - legacy SushiSwap factory.
-        strategyExecutor - an EOA that will execute the safeHarvest function.
-        allowedSwapPath - Path the contract can use when swapping a reward token to the strategy token.
-        @dev factory can be set to address(0) if we don't expect rewards we would need to swap.
-        @dev allowedPaths can be set to [] if we don't expect rewards we would need to swap. */
+        strategyExecutor - initial account that will execute the safeHarvest function. */
     constructor(ConstructorParams memory params) {
-        
-        strategyToken = params.strategyToken;
-        bentoBox = params.bentoBox;
+        strategyToken = ERC20(params.strategyToken);
+        bentoBox = IBentoBoxMinimal(params.bentoBox);
         factory = params.factory;
-        
-        if (params.allowedSwapPath.length != 0) {
-            _allowedSwapPaths.push(params.allowedSwapPath);
-            emit LogSetAllowedPath(0, true);
-        }
-
-        if (params.strategyExecutor != address(0)) {
-            strategyExecutors[params.strategyExecutor] = true;
-            emit LogSetStrategyExecutor(params.strategyExecutor, true);
-        }
+        strategyExecutors[params.strategyExecutor] = true;
+        emit LogSetStrategyExecutor(params.strategyExecutor, true);
     }
 
     //** Strategy implementation (override the following functions) */
 
-    /// @notice Invests the underlying asset.
+    /// @notice Invests the underlying asset.   
     /// @param amount The amount of tokens to invest.
-    /// @dev Assume the contract's balance is greater than the amount
+    /// @dev Assume the contract's balance is greater than the amount.
     function _skim(uint256 amount) internal virtual;
 
-    /// @notice Harvest any profits made and transfer them to address(this) or report a loss
+    /// @notice Harvest any profits made and transfer them to address(this) or report a loss.
     /// @param balance The amount of tokens that have been invested.
     /// @return amountAdded The delta (+profit or -loss) that occured in contrast to `balance`.
     /// @dev amountAdded can be left at 0 when reporting profits (gas savings).
     /// amountAdded should not reflect any rewards or tokens the strategy received.
-    /// Calcualte the amount added based on what the current deposit is worth.
+    /// Calculate the amount added based on what the current deposit is worth.
     /// (The Base Strategy harvest function accounts for rewards).
     function _harvest(uint256 balance) internal virtual returns (int256 amountAdded);
 
@@ -106,14 +93,14 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     /// @dev This shouldn't revert (use try catch).
     function _exit() internal virtual;
 
-    /// @notice Claim any rewards reward tokens and optionally sell them for the underlying token.
+    /// @notice Claim any reward tokens and optionally sell them for the underlying token.
     /// @dev Doesn't need to be implemented if we don't expect any rewards.
     function _harvestRewards() internal virtual {}
 
     //** End strategy implementation */
 
     modifier isActive() {
-        if (exited) {
+        if (_exited) {
             revert StrategyExited();
         }
         _;
@@ -136,6 +123,12 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     function setStrategyExecutor(address executor, bool value) external onlyOwner {
         strategyExecutors[executor] = value;
         emit LogSetStrategyExecutor(executor, value);
+    }
+
+    function setSwapPath(address tokenIn, address tokenOut) external onlyOwner {
+        if (tokenIn == address(strategyToken)) revert InvalidSwapPath();
+        swapPath[tokenIn] = tokenOut;
+        emit LogSetSwapPath(tokenIn, tokenOut);
     }
 
     /// @inheritdoc IStrategy
@@ -161,7 +154,7 @@ abstract contract BaseStrategy is IStrategy, Ownable {
         }
 
         if (maxBalance > 0) {
-            maxBentoBoxBalance = maxBalance;
+            _maxBentoBoxBalance = maxBalance;
         }
 
         bentoBox.harvest(address(strategyToken), rebalance, maxChangeAmount);
@@ -172,81 +165,77 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     @dev Ensures that (1) the caller was this contract (called through the safeHarvest function)
         and (2) that we are not being frontrun by a large BentoBox deposit when harvesting profits. */
     function harvest(uint256 balance, address sender) external override isActive onlyBentoBox returns (int256) {
+        
         /** @dev Don't revert if conditions aren't met in order to allow
-            BentoBox to continiue execution as it might need to do a rebalance. */
-
+            BentoBox to continue execution as it might need to do a rebalance. */
         if (
-            sender == address(this) &&
-            bentoBox.totals(address(strategyToken)).elastic <= maxBentoBoxBalance &&
-            balance > 0
-        ) {
+            sender != address(this) ||
+            bentoBox.totals(address(strategyToken)).elastic > _maxBentoBoxBalance || 
+            balance == 0
+        ) return int256(0);
             
-            int256 amount = _harvest(balance);
+        int256 amount = _harvest(balance);
 
-            /** @dev Since harvesting of rewards is accounted for seperately we might also have
-            some underlying tokens in the contract that the _harvest call doesn't report. 
-            E.g. reward tokens that have been sold into the underlying tokens which are now sitting in the contract.
-            Meaning the amount returned by the internal _harvest function isn't necessary the final profit/loss amount */
+        /** @dev We might have some underlying tokens in the contract that the _harvest call doesn't report. 
+        E.g. reward tokens that have been sold into the underlying tokens which are now sitting in the contract.
+        Meaning the amount returned by the internal _harvest function isn't necessary the final profit/loss amount */
 
-            uint256 contractBalance = strategyToken.balanceOf(address(this));
+        uint256 contractBalance = strategyToken.balanceOf(address(this)); // Reasonably assume this is less than type(int256).max
 
-            if (amount >= 0) { // _harvest reported a profit
+        if (amount > 0) { // _harvest reported a profit
 
-                if (contractBalance > 0) {
-                    strategyToken.safeTransfer(address(bentoBox), contractBalance);
-                }
+            strategyToken.safeTransfer(address(bentoBox), contractBalance);
 
-                return int256(contractBalance);
+            return int256(contractBalance);
 
-            } else if (contractBalance > 0) { // _harvest reported a loss but we have some tokens sitting in the contract
+        } else if (contractBalance > 0) { // _harvest reported a loss but we have some tokens sitting in the contract
 
-                int256 diff = amount + int256(contractBalance);
+            int256 diff = amount + int256(contractBalance);
 
-                if (diff > 0) { // we still made some profit
+            if (diff > 0) { // We still made some profit.
 
-                    /// @dev send the profit to BentoBox and reinvest the rest
-                    strategyToken.safeTransfer(address(bentoBox), uint256(diff));
-                    _skim(uint256(-amount));
+                // Send the profit to BentoBox and reinvest the rest.
+                strategyToken.safeTransfer(address(bentoBox), uint256(diff));
+                _skim(contractBalance - uint256(diff));
 
-                } else { // we made a loss but we have some tokens we can reinvest
+            } else { // We made a loss but we have some tokens we can reinvest.
 
-                    _skim(contractBalance);
-
-                }
-
-                return diff;
-
-            } else { // we made a loss
-
-                return amount;
+                _skim(contractBalance);
 
             }
 
+            return diff;
+
+        } else { // We made a loss.
+
+            return amount;
+
         }
 
-        return int256(0);
     }
 
     /// @inheritdoc IStrategy
     function withdraw(uint256 amount) external override isActive onlyBentoBox returns (uint256 actualAmount) {
         _withdraw(amount);
-        /// @dev Make sure we send and report the exact same amount of tokens by using balanceOf.
+        // Make sure we send and report the exact same amount of tokens by using balanceOf.
         actualAmount = strategyToken.balanceOf(address(this));
         strategyToken.safeTransfer(address(bentoBox), actualAmount);
     }
 
     /// @inheritdoc IStrategy
-    /// @dev do not use isActive modifier here; allow bentobox to call strategy.exit() multiple times
+    /// @dev Do not use isActive modifier here. Allow bentobox to call strategy.exit() multiple times
+    /// This is to ensure that the strategy isn't locked if its (accidentally) set twice in a row as a token's strategy in bentobox.
     function exit(uint256 balance) external override onlyBentoBox returns (int256 amountAdded) {
         _exit();
-        /// @dev Check balance of token on the contract.
+        // Flag as exited, allowing the owner to manually deal with any amounts available later.
+        _exited = true;
+        // Check balance of token on the contract.
         uint256 actualBalance = strategyToken.balanceOf(address(this));
-        /// @dev Calculate tokens added (or lost).
+        // Calculate tokens added (or lost).
+        // We reasonably assume actualBalance and balance are less than type(int256).max
         amountAdded = int256(actualBalance) - int256(balance);
-        /// @dev Transfer all tokens to bentoBox.
+        // Transfer all tokens to bentoBox.
         strategyToken.safeTransfer(address(bentoBox), actualBalance);
-        /// @dev Flag as exited, allowing the owner to manually deal with any amounts available later.
-        exited = true;
     }
 
     /** @dev After exited, the owner can perform ANY call. This is to rescue any funds that didn't
@@ -255,67 +244,81 @@ abstract contract BaseStrategy is IStrategy, Ownable {
         address to,
         uint256 value,
         bytes memory data
-    ) public onlyOwner returns (bool success) {
-        if (!exited) {
+    ) external onlyOwner returns (bool success) {
+        if (!_exited) {
             revert StrategyNotExited();
         }
         (success, ) = to.call{value: value}(data);
+        require(success);
     }
 
-    function getAllowedPath(uint256 pathIndex) external view returns(address[] memory path) {
-        path = _allowedSwapPaths[pathIndex];
+    function exited() public view returns(bool) {
+        return _exited;
     }
 
-    function setAllowedPath(address[] calldata path) external onlyOwner {
-        _allowedSwapPaths.push(path);
-        emit LogSetAllowedPath(_allowedSwapPaths.length, true);
+    function maxBentoBoxBalance() public view returns (uint256) {
+        return _maxBentoBoxBalance;
     }
 
-    function disallowPath(uint256 pathIndex) external onlyOwner {
-        require(pathIndex < _allowedSwapPaths.length, "Out of bounds");
-        _allowedSwapPaths[pathIndex] = new address[](0);
-        emit LogSetAllowedPath(pathIndex, false);
+    /// @notice Swap some tokens in the contract.
+    /// @param tokenIn Token we are swapping.
+    /// @param amountOutMin Minimum amount of output tokens we should get (slippage protection).
+    function swapExactTokens(address tokenIn, uint256 amountOutMin) external onlyExecutor {
+
+        address tokenOut = swapPath[tokenIn];
+
+        if (tokenOut == address(0)) revert NoSwapPath();
+
+        uint256 amountIn = ERC20(tokenIn).balanceOf(address(this));
+
+        uint256 amountOut = _swap(tokenIn, tokenOut, amountIn);
+        
+        if (amountOut < amountOutMin) revert SlippageProtection();
     }
 
-    /// @notice Swap some tokens in the contract for the underlying and deposits them to address(this)
-    /// @param amountOutMin minimum amount of output tokens we should get (slippage protection).
-    /// @param pathIndex Index of the predetermined path we will use for the swap.
-    function swapExactTokensForUnderlying(uint256 amountOutMin, uint256 pathIndex) public onlyExecutor returns (uint256 amountOut) {
-
-        if (factory == address(0)) {
-            revert NoFactory();
-        }
-
-        address[] memory path = _allowedSwapPaths[pathIndex];
-
-        uint256 amountIn = IERC20(path[0]).balanceOf(address(this));
-
-        uint256[] memory amounts = UniswapV2Library.getAmountsOut(factory, amountIn, path);
-
-        amountOut = amounts[amounts.length - 1];
-
-        if (amountOut < amountOutMin) {
-            revert SlippageProtection();
-        }
-
-        IERC20(path[0]).safeTransfer(UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]);
-
-        _swap(amounts, path, address(this));
-    }
-
-    /// @dev requires the initial amount to have already been sent to the first pair
     function _swap(
-        uint256[] memory amounts,
-        address[] memory path,
-        address _to
-    ) internal {
-        for (uint256 i; i < path.length - 1; i++) {
-            (address input, address output) = (path[i], path[i + 1]);
-            address token0 = input < output ? input : output;
-            uint256 amountOut = amounts[i + 1];
-            (uint256 amount0Out, uint256 amount1Out) = input == token0 ? (uint256(0), amountOut) : (amountOut, uint256(0));
-            address to = i < path.length - 2 ? UniswapV2Library.pairFor(factory, output, path[i + 2]) : _to;
-            IUniswapV2Pair(UniswapV2Library.pairFor(factory, input, output)).swap(amount0Out, amount1Out, to, new bytes(0));
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn
+    ) internal returns (uint256 outAmount) {
+
+        address pair = _pairFor(tokenIn, tokenOut);
+        ERC20(tokenIn).safeTransfer(pair, amountIn);
+        (uint256 reserve0, uint256 reserve1, ) = IUniswapV2Pair(pair).getReserves();
+        
+        if (tokenIn < tokenOut) {
+            outAmount = _getAmountOut(amountIn, reserve0, reserve1);
+            IUniswapV2Pair(pair).swap(0, outAmount, address(this), "");
+        } else {
+            outAmount = _getAmountOut(amountIn, reserve1, reserve0);
+            IUniswapV2Pair(pair).swap(outAmount, 0, address(this), "");
+        }
+    }
+
+    function _pairFor(address tokenA, address tokenB) internal view returns (address pair) {
+        (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
+        pair = address(uint160(uint256(keccak256(abi.encodePacked(
+            hex'ff',
+            factory,
+            keccak256(abi.encodePacked(token0, token1)),
+            hex'e18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303'
+        )))));
+    }
+
+    function _getAmountOut(
+        uint256 amountIn,
+        uint256 reserveIn,
+        uint256 reserveOut
+    ) internal pure returns (uint256) {
+        uint256 amountInWithFee = amountIn * 997;
+        uint256 numerator = amountInWithFee * reserveOut;
+        uint256 denominator = reserveIn * 1000 + amountInWithFee;
+        return numerator / denominator;
+    }
+
+    function increment(uint256 i) internal pure returns (uint256) {
+        unchecked {
+            return i + 1;
         }
     }
 

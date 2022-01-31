@@ -15,9 +15,7 @@ contract ExampleImplementation is BaseStrategy {
     constructor(
         address investmentContract,
         BaseStrategy.ConstructorParams memory baseStrategyParams
-    ) BaseStrategy(baseStrategyParams) {
-        baseStrategyParams.strategyToken.approve(investmentContract, type(uint256).max);
-    }
+    ) BaseStrategy(baseStrategyParams) {}
 
     function _skim(uint256 amount) internal override {
         // assume IERC20(strategyToken).balanceOf(address(this)) >= amount

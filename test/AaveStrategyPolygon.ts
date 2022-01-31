@@ -5,7 +5,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { AaveStrategy, BentoBoxV1, CombineHarvester } from "../typechain";
 import { customError } from "./Utils";
 
-describe("Aave Polygon strategy", async function () {
+describe.skip("Aave Polygon strategy", async function () {
 
   this.timeout(60000);
 
