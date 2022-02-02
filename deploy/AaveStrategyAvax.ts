@@ -12,8 +12,6 @@ const deployFunction: DeployFunction = async function ({
   const { deployer } = await getNamedAccounts()
 
   const harvester = await ethers.getContract("CombineHarvester");
-  const executioner = "0x866151F295Ee4279Fcf3ae2fB483a803400CA491"; // harvester.address;
-
   const lendingPool = "0x4F01AeD16D97E3aB5ab2B501154DC9bb0F1A5A2C";
   const factory = "0xc35DADB65012eC5796536bD9864eD8773aBc74C4";
   const wavax = "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7";

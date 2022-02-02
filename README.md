@@ -39,3 +39,20 @@ Using commit: [ac977e88](https://github.com/sushiswap/bentobox-strategies/tree/a
 | Harvester address                          |
 | ------------------------------------------ |
 | 0x866151F295Ee4279Fcf3ae2fB483a803400CA491 |
+
+### Avalanche - Aave Strategies
+
+Using commit: [712587c2](https://github.com/sushiswap/bentobox-strategies/commit/712587c260bd4952ab3fc5164ea9ff00d39a8a5c)
+
+| Token                      | Strategy Address                           |
+| -------------------------- | ------------------------------------------ |
+| WETH Aave strategy         | 0x3808dcF0f03E04Df66e8d71C51A2b57d2164de80 |
+| WBTC Aave strategy         | 0x48c0C3b11712843cbC1492CB2C6d90A6bD741eA2 |
+| USDC Aave strategy         | 0x66474D334ACB7CC253B76004d65954F7c6D2efD8 |
+| USDT Aave strategy         | 0xD264b48092EFEd096a616b97DF401c01b4FD0501 |
+| DAI Aave strategy          | 0xEb8704b69C671c832390CA10E5864dFEaa70217D |
+| WAVAX Aave strategy        | 0x4bB038e775d74d76427878EAe1B5B0AcA78F23Fe |
+
+| Harvester address                          |
+| ------------------------------------------ |
+| 0xB6665Ba83e054A91db1e6fC2252b4346a12C60d7 |
