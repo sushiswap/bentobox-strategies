@@ -1,3 +1,4 @@
+import { BENTOBOX_ADDRESS } from "@sushiswap/core-sdk";
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
@@ -13,21 +14,13 @@ const deployFunction: DeployFunction = async function ({
 
   const chainId = await getChainId();
 
-  let bentoBox;
+  const bentoBoxAddress = BENTOBOX_ADDRESS[chainId];
 
-  if (chainId == "137") {
-    bentoBox = "0x0319000133d3AdA02600f0875d2cf03D442C3367";
-  } else if (chainId == "1") {
-    bentoBox = "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
-  } else if (chainId == "42") {
-    bentoBox = "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966";
-  } else {
-    throw Error("Trying to deploy Harvester strategy on a different network than Mainnet / Polygon");
-  }
+  if (!bentoBoxAddress) throw Error("BentoBox not fouond");
 
   const { address } = await deployments.deploy("CombineHarvester", {
     from: deployer,
-    args: [bentoBox],
+    args: [bentoBoxAddress],
     log: false,
     deterministicDeployment: false,
   });

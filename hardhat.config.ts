@@ -11,10 +11,7 @@ import "@typechain/hardhat";
 import "@tenderly/hardhat-tenderly";
 
 import { HardhatUserConfig, task } from "hardhat/config";
-
 import { removeConsoleLog } from "hardhat-preprocessor";
-
-import { HttpNetworkAccountsUserConfig } from "hardhat/types";
 
 const accounts = {
   mnemonic:
@@ -100,6 +97,14 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
       tags: ["mainnet"],
+    },
+    avalanche: {
+      url: "https://api.avax.network/ext/bc/C/rpc",
+      accounts,
+      chainId: 43114,
+      live: true,
+      saveDeployments: true,
+      tags: ["production"],
     },
     kovan: {
       url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,

@@ -137,14 +137,14 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     }
 
     /// @notice Harvest profits while preventing a sandwich attack exploit.
-    /// @param maxBalance The maximum balance of the underlying token that is allowed to be in BentoBox.
+    /// @param maxBalanceInBentoBox The maximum balance of the underlying token that is allowed to be in BentoBox.
     /// @param rebalance Whether BentoBox should rebalance the strategy assets to acheive it's target allocation.
     /// @param maxChangeAmount When rebalancing - the maximum amount that will be deposited to or withdrawn from a strategy to BentoBox.
     /// @param harvestRewards If we want to claim any accrued reward tokens
     /// @dev maxBalance can be set to 0 to keep the previous value.
     /// @dev maxChangeAmount can be set to 0 to allow for full rebalancing.
     function safeHarvest(
-        uint256 maxBalance,
+        uint256 maxBalanceInBentoBox,
         bool rebalance,
         uint256 maxChangeAmount,
         bool harvestRewards
@@ -153,8 +153,8 @@ abstract contract BaseStrategy is IStrategy, Ownable {
             _harvestRewards();
         }
 
-        if (maxBalance > 0) {
-            _maxBentoBoxBalance = maxBalance;
+        if (maxBalanceInBentoBox > 0) {
+            _maxBentoBoxBalance = maxBalanceInBentoBox;
         }
 
         bentoBox.harvest(address(strategyToken), rebalance, maxChangeAmount);
