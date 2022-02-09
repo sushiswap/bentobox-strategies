@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-pragma solidity 0.8.7;
+pragma solidity >=0.8;
 
 import "./interfaces/IStrategy.sol";
 import "./interfaces/IUniswapV2Pair.sol";
@@ -49,6 +49,11 @@ abstract contract BaseStrategy is IStrategy, Ownable {
     error InvalidSwapPath();
     error NoSwapPath();
 
+    /** ConstructorParam struct whith the following fields:
+        strategyToken - Address of the underlying token the strategy invests.
+        bentoBox - BentoBox address.
+        strategyExecutor - initial account that will execute the safeHarvest function.
+        factory - legacy SushiSwap (univ2) factory. */
     struct ConstructorParams {
         address strategyToken;
         address bentoBox;
@@ -56,11 +61,6 @@ abstract contract BaseStrategy is IStrategy, Ownable {
         address factory;
     }
 
-    /** @param params a ConstructorParam struct whith the following fields:
-        strategyToken - Address of the underlying token the strategy invests.
-        bentoBox - BentoBox address.
-        factory - legacy SushiSwap factory.
-        strategyExecutor - initial account that will execute the safeHarvest function. */
     constructor(ConstructorParams memory params) {
         strategyToken = ERC20(params.strategyToken);
         bentoBox = IBentoBoxMinimal(params.bentoBox);

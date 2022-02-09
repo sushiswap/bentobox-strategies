@@ -3,7 +3,7 @@ import { ethers, network } from "hardhat";
 import { expect } from "chai";
 import { BigNumber } from "@ethersproject/bignumber";
 import { AaveStrategy, BentoBoxV1, CombineHarvester } from "../typechain";
-import { customError } from "./Utils";
+import { customError } from "./Harness";
 import { BENTOBOX_ADDRESS, ChainId } from "@sushiswap/core-sdk";
 import exp from "constants";
 

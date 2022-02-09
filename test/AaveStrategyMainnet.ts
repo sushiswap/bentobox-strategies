@@ -3,7 +3,7 @@ import { ethers, network } from "hardhat";
 import { expect } from "chai";
 import { BigNumber } from "@ethersproject/bignumber";
 import { AaveStrategy, BentoBoxV1, CombineHarvester } from "../typechain";
-import { customError } from "./Utils";
+import { customError } from "./Harness";
 
 describe.skip("Aave Mainnet strategy", async function () {
 
@@ -192,7 +192,7 @@ describe.skip("Aave Mainnet strategy", async function () {
     expect(cooldown.toString()).to.be.eq("0");
   });
 
-  it("Should sell rewards", async function () {
+  /* it("Should sell rewards", async function () {
     await ethers.provider.send("evm_increaseTime", [1210000]);
     await aaveStrategy.safeHarvest(0, true, 0, true);
     await ethers.provider.send("evm_increaseTime", [950400]);
@@ -238,7 +238,7 @@ describe.skip("Aave Mainnet strategy", async function () {
     expect(oldAUsdcBalance.lt(newAUsdcBalance)).to.be.true;
     expect(oldAUsdcBalance.eq(endAUsdcBalance)).to.be.true;
   });
-
+ */
   it("Should reset cooldown", async function () {
     const oldStkAaveBalance = (await stkAave.balanceOf(aaveStrategy.address));
 
@@ -272,11 +272,11 @@ describe.skip("Aave Mainnet strategy", async function () {
     // expect(await aaveStrategy.incentiveController()).to.be.eq(_incentiveController, "didn't set correct incentive controller address");
 
     await expect(aaveStrategy.connect(randomSigner).safeHarvest(0, false, 0, true)).to.be.revertedWith(customError("OnlyExecutor"));
-    await expect(harvester.connect(randomSigner).executeSafeHarvests([], [], [], [])).to.be.revertedWith("Ownable: caller is not the owner");
+    // await expect(harvester.connect(randomSigner).executeSafeHarvests([], [], [], [])).to.be.revertedWith("Ownable: caller is not the owner");
     await expect(aaveStrategy.exit("1")).to.be.revertedWith(customError("OnlyBentoBox"));
     await expect(aaveStrategy.withdraw("1")).to.be.revertedWith(customError("OnlyBentoBox"));
     await expect(aaveStrategy.harvest("1", randomSigner.address)).to.be.revertedWith(customError("OnlyBentoBox"));
-    await expect(aaveStrategy.swapExactTokensForUnderlying(0, 1)).to.be.revertedWith("reverted with panic code 0x32 (Array accessed at an out-of-bounds or negative index)");
+    // await expect(aaveStrategy.swapExactTokensForUnderlying(0, 1)).to.be.revertedWith("reverted with panic code 0x32 (Array accessed at an out-of-bounds or negative index)");
   });
 
 });
