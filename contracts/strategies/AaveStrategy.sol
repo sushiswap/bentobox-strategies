@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.7;
 
-import "../BaseStrategy.sol";
+import "../BentoBoxStrategy.sol";
 
 library DataTypes {
     struct ReserveData {
@@ -51,7 +51,7 @@ interface IAaveIncentivesController {
     ) external returns (uint256);
 }
 
-contract AaveStrategy is BaseStrategy {
+contract AaveStrategy is BentoBoxStrategy {
 
     ILendingPool internal immutable aaveLendingPool;
     IAaveIncentivesController internal immutable incentiveController;
@@ -60,8 +60,8 @@ contract AaveStrategy is BaseStrategy {
     constructor(
         ILendingPool _aaveLendingPool,
         IAaveIncentivesController _incentiveController,
-        BaseStrategy.ConstructorParams memory params
-    ) BaseStrategy(params)  {
+        BentoBoxStrategy.ConstructorParams memory params
+    ) BentoBoxStrategy(params)  {
         aaveLendingPool = _aaveLendingPool;
         incentiveController = _incentiveController;
         aToken = ERC20(_aaveLendingPool.getReserveData(address(params.strategyToken)).aTokenAddress);

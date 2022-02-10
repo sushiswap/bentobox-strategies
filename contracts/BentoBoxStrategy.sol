@@ -11,7 +11,7 @@ import "@rari-capital/solmate/src/utils/SafeTransferLib.sol";
 /// @title Abstract contract to simplify BentoBox strategy development.
 /// @dev Extend the contract and implement _skim, _harvest, _withdraw, _exit and _harvestRewards methods.
 /// Ownership should be transfered to the Sushi ops multisig.
-abstract contract BaseStrategy is IStrategy, Ownable {
+abstract contract BentoBoxStrategy is IStrategy, Ownable {
 
     using SafeTransferLib for ERC20;
 

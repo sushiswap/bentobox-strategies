@@ -23,7 +23,7 @@ contract AaveStrategyMainnet is AaveStrategy {
         IStkAave _stkAave,
         ILendingPool aaveLendingPool,
         IAaveIncentivesController incentiveController,
-        BaseStrategy.ConstructorParams memory params
+        BentoBoxStrategy.ConstructorParams memory params
     ) AaveStrategy(aaveLendingPool, incentiveController, params) {
         stkAave = _stkAave;
         COOLDOWN_SECONDS = _stkAave.COOLDOWN_SECONDS();

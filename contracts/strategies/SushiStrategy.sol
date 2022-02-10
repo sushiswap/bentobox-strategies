@@ -2,20 +2,20 @@
 
 pragma solidity 0.8.7;
 
-import "../BaseStrategy.sol";
+import "../BentoBoxStrategy.sol";
 
 interface ISushiBar {
     function enter(uint256 _amount) external;
     function leave(uint256 _share) external;
 }
 
-contract SushiStrategy is BaseStrategy {
+contract SushiStrategy is BentoBoxStrategy {
     ISushiBar public immutable sushiBar;
 
     constructor(
         address _sushiBar,
-        BaseStrategy.ConstructorParams memory baseStrategyParams
-    ) BaseStrategy(baseStrategyParams) {
+        BentoBoxStrategy.ConstructorParams memory strategyParams
+    ) BentoBoxStrategy(strategyParams) {
         sushiBar = ISushiBar(_sushiBar);
     }
 

@@ -2,19 +2,17 @@
 
 pragma solidity 0.8.11;
 
-import "../BaseStrategy.sol";
+import "../BentoBoxStrategy.sol";
 import "yearn-protocol/contracts/BaseWrapper.sol";
 
-contract YearnStrategy is BaseWrapper, BaseStrategy {
-
-    // BaseStrategy initializes a immutable storage variable 'strategyToken' we can use
+contract YearnStrategy is BaseWrapper, BentoBoxStrategy {
 
     constructor(
         address yearnRegistry,
-        BaseStrategy.ConstructorParams memory baseStrategyParams
+        BentoBoxStrategy.ConstructorParams memory strategyParams
     )
-        BaseStrategy(baseStrategyParams)
-        BaseWrapper(baseStrategyParams.strategyToken, yearnRegistry)
+        BentoBoxStrategy(strategyParams)
+        BaseWrapper(strategyParams.strategyToken, yearnRegistry)
     {}
 
     function _skim(uint256 amount) internal override {

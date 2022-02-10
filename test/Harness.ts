@@ -1,18 +1,18 @@
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
-import { BaseStrategy, BentoBoxV1, ERC20Mock } from "../typechain";
+import { BentoBoxStrategy, BentoBoxV1, ERC20Mock } from "../typechain";
 
 export class StrategyHarness {
 
   bentoBox: BentoBoxV1;
-  strategy!: BaseStrategy;
+  strategy!: BentoBoxStrategy;
   strategyToken: ERC20Mock;
   investedStrategyToken: ERC20Mock;
 
   constructor(
     bentoBox: BentoBoxV1,
-    strategy: BaseStrategy | undefined,
+    strategy: BentoBoxStrategy | undefined,
     strategyToken: ERC20Mock,
     investedStrategyToken: ERC20Mock
   ) {
@@ -25,10 +25,10 @@ export class StrategyHarness {
     });
   }
 
-  async setNewStrategy(strategy: BaseStrategy): Promise<void> {
+  async setNewStrategy(strategy: BentoBoxStrategy): Promise<void> {
     if (this.strategy?.address == strategy.address) throw Error("same strategy");
     await this.bentoBox.setStrategy(this.strategyToken.address, strategy.address);
-    await ethers.provider.send("evm_increaseTime", [1210000]);
+    await this.advanceTime(1210000);
     await this.bentoBox.setStrategy(this.strategyToken.address, strategy.address);
     await this.bentoBox.harvest(this.strategyToken.address, true, 0); // invest in the strategy
     if (this.strategy && this.strategy.address != ethers.constants.AddressZero) {
@@ -58,6 +58,10 @@ export class StrategyHarness {
     await this.bentoBox.setStrategyTargetPercentage(this.strategyToken.address, target);
     await this.bentoBox.harvest(this.strategyToken.address, true, 0);
     await this.ensureTargetPercentage();
+  }
+
+  async advanceTime(seconds: number): Promise<void> {
+    return ethers.provider.send("evm_increaseTime", [seconds]);
   }
 
 }
