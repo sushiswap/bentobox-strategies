@@ -75,7 +75,7 @@
     "eslint": "^7.20.0",
     "ethereum-waffle": "^3.3.0",
     "ethers": "^5.3.0",
-    "hardhat": "^2.6.7",
+    "hardhat": "2.7.0",
     "hardhat-deploy": "^0.8.6",
     "hardhat-deploy-ethers": "^0.3.0-beta.10",
     "hardhat-gas-reporter": "^1.0.0",
@@ -97,6 +97,7 @@
     "@openzeppelin/contracts": "^4.3.2",
     "@rari-capital/solmate": "^6.2.0",
     "@sushiswap/core": "^1.4.2",
-    "@sushiswap/core-sdk": "^1.0.0-canary.34"
+    "@sushiswap/core-sdk": "^1.0.0-canary.34",
+    "yearn-protocol": "https://github.com/pandadefi/yearn-vaults#solidity_0.8"
   }
 }

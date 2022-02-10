@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
 
-pragma solidity 0.8.7;
-
 /// @notice Minimal interface for BentoBox token vault interactions - `token` is aliased as `address` from `IERC20` for code simplicity.
 interface IBentoBoxMinimal {
 

@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-pragma solidity 0.8.7;
-
 interface IStrategy {
     /// @notice Send the assets to the Strategy and call skim to invest them.
     /// @param amount The amount of tokens to invest.

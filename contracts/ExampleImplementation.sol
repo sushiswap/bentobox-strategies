@@ -2,20 +2,20 @@
 
 pragma solidity 0.8.7;
 
-import "./BaseStrategy.sol";
+import "./BentoBoxStrategy.sol";
 
 /*  Example implementation stub to simplify strategy development.
-    Please refer to the BaseStrategy contract natspec comments for
+    Please refer to the BentoBoxStrategy contract natspec comments for
     further tips and clarifications. Also see the SushiStrategy and the
     AavePolygonStrategy for reference implementations. */
-contract ExampleImplementation is BaseStrategy {
+contract ExampleImplementation is BentoBoxStrategy {
 
-    // BaseStrategy initializes a immutable storage variable 'strategyToken' we can use
+    // BentoBoxStrategy initializes a immutable storage variable 'strategyToken' we can use
 
     constructor(
         address investmentContract,
-        BaseStrategy.ConstructorParams memory baseStrategyParams
-    ) BaseStrategy(baseStrategyParams) {}
+        BentoBoxStrategy.ConstructorParams memory strategyParams
+    ) BentoBoxStrategy(strategyParams) {}
 
     function _skim(uint256 amount) internal override {
         // assume IERC20(strategyToken).balanceOf(address(this)) >= amount
