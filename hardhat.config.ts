@@ -33,7 +33,16 @@ task("accounts", "Prints the list of accounts", async (args, { ethers }) => {
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   etherscan: {
-    apiKey: process.env.ETHERSCAN_TOKEN,
+    apiKey: {
+      mainnet: process.env.ETHERSCAN_TOKEN,
+      ropsten: process.env.ETHERSCAN_TOKEN,
+      kovan: process.env.ETHERSCAN_TOKEN,
+      optimisticEthereum: process.env.ETHERSCAN_TOKEN,
+      arbitrumOne: process.env.ETHERSCAN_TOKEN,
+      avalanche: process.env.SNOWTRACE_TOKEN,
+      opera: process.env.FTMSCAN_TOKEN,
+      bsc: process.env.BSCSCAN_TOKEN,
+    },
   },
   gasReporter: {
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
@@ -77,7 +86,7 @@ const config: HardhatUserConfig = {
     mainnet: {
       url:
         process.env.ETHEREUM_RPC_URL ||
-        `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+        `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts,
       chainId: 1,
       saveDeployments: true,
@@ -133,11 +142,12 @@ const config: HardhatUserConfig = {
       tags: ["staging"],
     },
     fantom: {
-      url: "https://rpcapi.fantom.network",
+      url: "https://rpc.ftm.tools/",
       accounts,
       chainId: 250,
       live: true,
       saveDeployments: true,
+      tags: ["prod"],
     },
     fantom_testnet: {
       url: "https://rpc.testnet.fantom.network",
