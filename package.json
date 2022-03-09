@@ -66,6 +66,7 @@
     "@types/node": "^16.11.1",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "@rari-capital/solmate": "^5.9.0",
     "chai": "^4.3.4",
     "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
