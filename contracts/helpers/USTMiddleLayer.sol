@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// solhint-disable const-name-snakecase, not-rely-on-time
+// solhint-disable const-name-snakecase
 
 pragma solidity 0.8.7;
 
@@ -28,15 +28,13 @@ interface IUSTStrategy {
 contract USTMiddleLayer {
     using SafeTransferLib for ERC20;
 
-    error RedeemingNotReady();
+    error YieldNotHighEnough();
     error StrategyWouldAccountLoss();
 
     ERC20 public constant UST = ERC20(0xa47c8bf37f92aBed4A126BDA807A7b7498661acD);
     ERC20 public constant aUST = ERC20(0xa8De3e3c934e2A1BB08B010104CcaBBD4D6293ab);
     IUSTStrategy private constant strategy = IUSTStrategy(0xE6191aA754F9a881e0a73F2028eDF324242F39E2);
     IBentoBoxMinimal private constant bentoBox = IBentoBoxMinimal(0xd96f48665a1410C0cd669A88898ecA36B9Fc2cce);
-
-    uint256 public lastWithdraw;
 
     function accountEarnings() external {
         uint256 balanceToKeep = IBentoBoxMinimal(bentoBox).strategyData(address(UST)).balance;
@@ -48,24 +46,28 @@ contract USTMiddleLayer {
             revert StrategyWouldAccountLoss();
         }
 
+        if (liquid <= 100 ether) {
+            revert YieldNotHighEnough();
+        }
+
         strategy.safeHarvest(type(uint256).max, false, type(uint256).max, false);
     }
 
     function redeemEarningsImproved() external {
-        if (lastWithdraw + 20 minutes > block.timestamp) {
-            revert RedeemingNotReady();
-        }
-
         uint256 balanceToKeep = IBentoBoxMinimal(bentoBox).strategyData(address(UST)).balance;
         uint256 exchangeRate = strategy.feeder().exchangeRateOf(address(UST), true);
         uint256 liquid = UST.balanceOf(address(strategy));
         uint256 total = toUST(aUST.balanceOf(address(strategy)), exchangeRate) + liquid;
 
-        lastWithdraw = block.timestamp;
-
-        if (total > balanceToKeep) {
-            strategy.safeWithdraw(total - balanceToKeep - liquid);
+        if (total <= balanceToKeep) {
+            revert StrategyWouldAccountLoss();
         }
+
+        if (total - balanceToKeep <= 100 ether) {
+            revert YieldNotHighEnough();
+        }
+
+        strategy.safeWithdraw(total - balanceToKeep - liquid);
     }
 
     function toUST(uint256 amount, uint256 exchangeRate) public pure returns (uint256) {
