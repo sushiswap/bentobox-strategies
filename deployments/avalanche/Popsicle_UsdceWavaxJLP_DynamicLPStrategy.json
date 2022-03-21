@@ -1,0 +1,769 @@
+{
+  "address": "0x0D2a5107435cbbBE21Db1ADB5F1E078E63e59449",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_strategyToken",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_bentoBox",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_strategyExecutor",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "executor",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "allowed",
+          "type": "bool"
+        }
+      ],
+      "name": "LogSetStrategyExecutor",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "subStrategy",
+          "type": "address"
+        }
+      ],
+      "name": "LogSubStrategyAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "fromStrategy",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "toStrategy",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amountOut",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amountOutPrice",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amountIn",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amountInPrice",
+          "type": "uint256"
+        }
+      ],
+      "name": "LogSubStrategyChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IDynamicSubLPStrategy",
+          "name": "subStrategy",
+          "type": "address"
+        }
+      ],
+      "name": "addSubStrategy",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "bentoBox",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxSlippageBps",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minDustAmount0",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minDustAmount1",
+          "type": "uint256"
+        }
+      ],
+      "name": "changeStrategy",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "currentSubStrategy",
+      "outputs": [
+        {
+          "internalType": "contract IDynamicSubLPStrategy",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "balance",
+          "type": "uint256"
+        }
+      ],
+      "name": "exit",
+      "outputs": [
+        {
+          "internalType": "int256",
+          "name": "amountAdded",
+          "type": "int256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "exited",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "feeCollector",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "feePercent",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "balance",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "harvest",
+      "outputs": [
+        {
+          "internalType": "int256",
+          "name": "",
+          "type": "int256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "maxBentoBoxBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "maxBalance",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "rebalance",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxChangeAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "safeHarvest",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_feeCollector",
+          "type": "address"
+        },
+        {
+          "internalType": "uint8",
+          "name": "_feePercent",
+          "type": "uint8"
+        }
+      ],
+      "name": "setFeeParameters",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "executor",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "value",
+          "type": "bool"
+        }
+      ],
+      "name": "setStrategyExecutor",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "skim",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "strategyExecutors",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "strategyToken",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "subStrategies",
+      "outputs": [
+        {
+          "internalType": "contract IDynamicSubLPStrategy",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amountOutMin",
+          "type": "uint256"
+        }
+      ],
+      "name": "swapToLP",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "token0",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "token1",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdraw",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "actualAmount",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x854455cb61ec4d138b697a230c2a5755f554e212dbfd601db78fe1f6d8476a71",
+  "receipt": {
+    "to": null,
+    "from": "0xfB3485c2e209A5cfBDC1447674256578f1A80eE3",
+    "contractAddress": "0x0D2a5107435cbbBE21Db1ADB5F1E078E63e59449",
+    "transactionIndex": 21,
+    "gasUsed": "1678654",
+    "logsBloom": "0x00000000000000000000000000000000000001000000000000800000000008800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000400000000000200000020000000000000000000800000000000000000000000000000000400000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000100000000000000000000000000000000000000000020000000000000000000000000000000000000000000010000000000000000000000",
+    "blockHash": "0x429d0baa92071d1420725d5032375507d265c3a55646657d0e56b9b3571f8f97",
+    "transactionHash": "0x854455cb61ec4d138b697a230c2a5755f554e212dbfd601db78fe1f6d8476a71",
+    "logs": [
+      {
+        "transactionIndex": 21,
+        "blockNumber": 11997532,
+        "transactionHash": "0x854455cb61ec4d138b697a230c2a5755f554e212dbfd601db78fe1f6d8476a71",
+        "address": "0x0D2a5107435cbbBE21Db1ADB5F1E078E63e59449",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x000000000000000000000000fb3485c2e209a5cfbdc1447674256578f1a80ee3"
+        ],
+        "data": "0x",
+        "logIndex": 81,
+        "blockHash": "0x429d0baa92071d1420725d5032375507d265c3a55646657d0e56b9b3571f8f97"
+      },
+      {
+        "transactionIndex": 21,
+        "blockNumber": 11997532,
+        "transactionHash": "0x854455cb61ec4d138b697a230c2a5755f554e212dbfd601db78fe1f6d8476a71",
+        "address": "0x0D2a5107435cbbBE21Db1ADB5F1E078E63e59449",
+        "topics": [
+          "0xb08a78f53a7fe017d5ca8c8fcdbf06ffa2c31f2ab668378a17700d9fc558717e",
+          "0x000000000000000000000000fb3485c2e209a5cfbdc1447674256578f1a80ee3"
+        ],
+        "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+        "logIndex": 82,
+        "blockHash": "0x429d0baa92071d1420725d5032375507d265c3a55646657d0e56b9b3571f8f97"
+      }
+    ],
+    "blockNumber": 11997532,
+    "cumulativeGasUsed": "4522721",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xA389f9430876455C36478DeEa9769B7Ca4E3DDB1",
+    "0xD825d06061fdc0585e4373F0A3F01a8C02b0e6A4",
+    "0xfB3485c2e209A5cfBDC1447674256578f1A80eE3"
+  ],
+  "solcInputHash": "f9fd32a4de6b83a1ff4d63c4c832d057",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.7+commit.e28d00a7\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_strategyToken\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_bentoBox\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_strategyExecutor\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"executor\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"allowed\",\"type\":\"bool\"}],\"name\":\"LogSetStrategyExecutor\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"subStrategy\",\"type\":\"address\"}],\"name\":\"LogSubStrategyAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"fromStrategy\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"toStrategy\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amountOut\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amountOutPrice\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amountIn\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amountInPrice\",\"type\":\"uint256\"}],\"name\":\"LogSubStrategyChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"contract IDynamicSubLPStrategy\",\"name\":\"subStrategy\",\"type\":\"address\"}],\"name\":\"addSubStrategy\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"bentoBox\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxSlippageBps\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minDustAmount0\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minDustAmount1\",\"type\":\"uint256\"}],\"name\":\"changeStrategy\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"currentSubStrategy\",\"outputs\":[{\"internalType\":\"contract IDynamicSubLPStrategy\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"balance\",\"type\":\"uint256\"}],\"name\":\"exit\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"amountAdded\",\"type\":\"int256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"exited\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"feeCollector\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"feePercent\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"balance\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"harvest\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"maxBentoBoxBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"maxBalance\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"rebalance\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"maxChangeAmount\",\"type\":\"uint256\"}],\"name\":\"safeHarvest\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_feeCollector\",\"type\":\"address\"},{\"internalType\":\"uint8\",\"name\":\"_feePercent\",\"type\":\"uint8\"}],\"name\":\"setFeeParameters\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"executor\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"value\",\"type\":\"bool\"}],\"name\":\"setStrategyExecutor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"skim\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"strategyExecutors\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"strategyToken\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"subStrategies\",\"outputs\":[{\"internalType\":\"contract IDynamicSubLPStrategy\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amountOutMin\",\"type\":\"uint256\"}],\"name\":\"swapToLP\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"token0\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"token1\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"withdraw\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"actualAmount\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"events\":{\"LogSubStrategyAdded(address)\":{\"details\":\"After bentobox 'exits' the strategy harvest, skim and withdraw functions can no loner be called\"}},\"kind\":\"dev\",\"methods\":{\"changeStrategy(uint256,uint256,uint256,uint256)\":{\"params\":{\"index\":\"the index of the next strategy to use\",\"maxSlippageBps\":\"maximum tolerated amount of basis points of the total migrated                   5 = 0.05%                   10_000 = 100%\",\"minDustAmount0\":\"when the new strategy needs to wrap the token0 and token1 from previousSubStrategy                     unwrapped token0 and token1, after initial addLiquidity, what minimum remaining                     amount left in the contract (from new pair imbalance),                     should be considered to swap again for more liquidity. Set to 0 to ignore.\",\"minDustAmount1\":\"same as minDustAmount0 but for token1\"}},\"constructor\":{\"params\":{\"_bentoBox\":\"BentoBox address.\",\"_strategyExecutor\":\"an EOA that will execute the safeHarvest function.\",\"_strategyToken\":\"Address of the underlying LP token the strategy invests.\"}},\"exit(uint256)\":{\"details\":\"do not use isActive modifier here; allow bentobox to call strategy.exit() multiple times\",\"params\":{\"balance\":\"The amount of tokens the caller thinks it has invested.\"},\"returns\":{\"amountAdded\":\"The delta (+profit or -loss) that occured in contrast to `balance`.\"}},\"harvest(uint256,address)\":{\"details\":\"Only BentoBox can call harvest on this strategy.Ensures that (1) the caller was this contract (called through the safeHarvest function) and (2) that we are not being frontrun by a large BentoBox deposit when harvesting profits.Beware that calling harvest can result in a subsequent skim or withdraw call if it's rebalancing.\",\"params\":{\"balance\":\"The amount of tokens the caller thinks it has invested.\",\"sender\":\"The address of the initiator of this transaction. Can be used for reimbursements, etc.\"},\"returns\":{\"_0\":\"The delta (+profit or -loss) that occured in contrast to `balance`.\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"safeHarvest(uint256,bool,uint256)\":{\"details\":\"maxBalance can be set to 0 to keep the previous value.maxChangeAmount can be set to 0 to allow for full rebalancing.\",\"params\":{\"maxBalance\":\"The maximum balance of the underlying token that is allowed to be in BentoBox.\",\"maxChangeAmount\":\"When rebalancing - the maximum amount that will be deposited to or withdrawn from a strategy to BentoBox.\",\"rebalance\":\"Whether BentoBox should rebalance the strategy assets to acheive it's target allocation.\"}},\"skim(uint256)\":{\"params\":{\"amount\":\"The amount of tokens to invest.\"}},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"},\"withdraw(uint256)\":{\"details\":\"The `actualAmount` should be very close to the amount. The difference should NOT be used to report a loss. That's what harvest is for.\",\"params\":{\"amount\":\"The requested amount the caller wants to withdraw.\"},\"returns\":{\"actualAmount\":\"The real amount that is withdrawn.\"}}},\"stateVariables\":{\"strategyExecutors\":{\"details\":\"Slippage protection when calling harvest\"},\"subStrategies\":{\"details\":\"EOAs that can execute safeHarvest\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"exit(uint256)\":{\"notice\":\"Withdraw all assets in the safest way possible. This shouldn't fail.\"},\"harvest(uint256,address)\":{\"notice\":\"Harvest any profits made converted to the asset and pass them to the caller.\"},\"safeHarvest(uint256,bool,uint256)\":{\"notice\":\"Harvest profits while preventing a sandwich attack exploit.\"},\"skim(uint256)\":{\"notice\":\"Send the assets to the Strategy and call skim to invest them.\"},\"withdraw(uint256)\":{\"notice\":\"Withdraw assets. The returned amount can differ from the requested amount due to rounding.\"}},\"notice\":\"Dynamic strategy that can have different farming strategy For example, farming on Trader Joe then unwrap the jLP to mint pLP and farm on Pengolin.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/strategies/dynamic/DynamicLPStrategy.sol\":\"DynamicLPStrategy\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    constructor() {\\n        _setOwner(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby removing any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _setOwner(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        _setOwner(newOwner);\\n    }\\n\\n    function _setOwner(address newOwner) private {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0x6bb804a310218875e89d12c053e94a13a4607cdf7cc2052f3e52bd32a0dc50a1\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n}\\n\",\"keccak256\":\"0x90565a39ae45c80f0468dc96c7b20d0afc3055f344c8203a0c9258239f350b9f\",\"license\":\"MIT\"},\"@rari-capital/solmate/src/tokens/ERC20.sol\":{\"content\":\"// SPDX-License-Identifier: AGPL-3.0-only\\npragma solidity >=0.8.0;\\n\\n/// @notice Modern and gas efficient ERC20 + EIP-2612 implementation.\\n/// @author Modified from Uniswap (https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2ERC20.sol)\\nabstract contract ERC20 {\\n    /*///////////////////////////////////////////////////////////////\\n                                  EVENTS\\n    //////////////////////////////////////////////////////////////*/\\n\\n    event Transfer(address indexed from, address indexed to, uint256 amount);\\n\\n    event Approval(address indexed owner, address indexed spender, uint256 amount);\\n\\n    /*///////////////////////////////////////////////////////////////\\n                             METADATA STORAGE\\n    //////////////////////////////////////////////////////////////*/\\n\\n    string public name;\\n\\n    string public symbol;\\n\\n    uint8 public immutable decimals;\\n\\n    /*///////////////////////////////////////////////////////////////\\n                              ERC20 STORAGE\\n    //////////////////////////////////////////////////////////////*/\\n\\n    uint256 public totalSupply;\\n\\n    mapping(address => uint256) public balanceOf;\\n\\n    mapping(address => mapping(address => uint256)) public allowance;\\n\\n    /*///////////////////////////////////////////////////////////////\\n                           EIP-2612 STORAGE\\n    //////////////////////////////////////////////////////////////*/\\n\\n    bytes32 public constant PERMIT_TYPEHASH =\\n        keccak256(\\\"Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)\\\");\\n\\n    uint256 internal immutable INITIAL_CHAIN_ID;\\n\\n    bytes32 internal immutable INITIAL_DOMAIN_SEPARATOR;\\n\\n    mapping(address => uint256) public nonces;\\n\\n    /*///////////////////////////////////////////////////////////////\\n                               CONSTRUCTOR\\n    //////////////////////////////////////////////////////////////*/\\n\\n    constructor(\\n        string memory _name,\\n        string memory _symbol,\\n        uint8 _decimals\\n    ) {\\n        name = _name;\\n        symbol = _symbol;\\n        decimals = _decimals;\\n\\n        INITIAL_CHAIN_ID = block.chainid;\\n        INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();\\n    }\\n\\n    /*///////////////////////////////////////////////////////////////\\n                              ERC20 LOGIC\\n    //////////////////////////////////////////////////////////////*/\\n\\n    function approve(address spender, uint256 amount) public virtual returns (bool) {\\n        allowance[msg.sender][spender] = amount;\\n\\n        emit Approval(msg.sender, spender, amount);\\n\\n        return true;\\n    }\\n\\n    function transfer(address to, uint256 amount) public virtual returns (bool) {\\n        balanceOf[msg.sender] -= amount;\\n\\n        // Cannot overflow because the sum of all user\\n        // balances can't exceed the max uint256 value.\\n        unchecked {\\n            balanceOf[to] += amount;\\n        }\\n\\n        emit Transfer(msg.sender, to, amount);\\n\\n        return true;\\n    }\\n\\n    function transferFrom(\\n        address from,\\n        address to,\\n        uint256 amount\\n    ) public virtual returns (bool) {\\n        if (allowance[from][msg.sender] != type(uint256).max) {\\n            allowance[from][msg.sender] -= amount;\\n        }\\n\\n        balanceOf[from] -= amount;\\n\\n        // Cannot overflow because the sum of all user\\n        // balances can't exceed the max uint256 value.\\n        unchecked {\\n            balanceOf[to] += amount;\\n        }\\n\\n        emit Transfer(from, to, amount);\\n\\n        return true;\\n    }\\n\\n    /*///////////////////////////////////////////////////////////////\\n                              EIP-2612 LOGIC\\n    //////////////////////////////////////////////////////////////*/\\n\\n    function permit(\\n        address owner,\\n        address spender,\\n        uint256 value,\\n        uint256 deadline,\\n        uint8 v,\\n        bytes32 r,\\n        bytes32 s\\n    ) public virtual {\\n        require(deadline >= block.timestamp, \\\"PERMIT_DEADLINE_EXPIRED\\\");\\n\\n        // Unchecked because the only math done is incrementing\\n        // the owner's nonce which cannot realistically overflow.\\n        unchecked {\\n            bytes32 digest = keccak256(\\n                abi.encodePacked(\\n                    \\\"\\\\x19\\\\x01\\\",\\n                    DOMAIN_SEPARATOR(),\\n                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, value, nonces[owner]++, deadline))\\n                )\\n            );\\n\\n            address recoveredAddress = ecrecover(digest, v, r, s);\\n            require(recoveredAddress != address(0) && recoveredAddress == owner, \\\"INVALID_PERMIT_SIGNATURE\\\");\\n\\n            allowance[recoveredAddress][spender] = value;\\n        }\\n\\n        emit Approval(owner, spender, value);\\n    }\\n\\n    function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {\\n        return block.chainid == INITIAL_CHAIN_ID ? INITIAL_DOMAIN_SEPARATOR : computeDomainSeparator();\\n    }\\n\\n    function computeDomainSeparator() internal view virtual returns (bytes32) {\\n        return\\n            keccak256(\\n                abi.encode(\\n                    keccak256(\\\"EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)\\\"),\\n                    keccak256(bytes(name)),\\n                    keccak256(bytes(\\\"1\\\")),\\n                    block.chainid,\\n                    address(this)\\n                )\\n            );\\n    }\\n\\n    /*///////////////////////////////////////////////////////////////\\n                       INTERNAL MINT/BURN LOGIC\\n    //////////////////////////////////////////////////////////////*/\\n\\n    function _mint(address to, uint256 amount) internal virtual {\\n        totalSupply += amount;\\n\\n        // Cannot overflow because the sum of all user\\n        // balances can't exceed the max uint256 value.\\n        unchecked {\\n            balanceOf[to] += amount;\\n        }\\n\\n        emit Transfer(address(0), to, amount);\\n    }\\n\\n    function _burn(address from, uint256 amount) internal virtual {\\n        balanceOf[from] -= amount;\\n\\n        // Cannot underflow because a user's balance\\n        // will never be larger than the total supply.\\n        unchecked {\\n            totalSupply -= amount;\\n        }\\n\\n        emit Transfer(from, address(0), amount);\\n    }\\n}\\n\",\"keccak256\":\"0x058e0708ffdd2b04a17b96b5775d9fab8daa19d3cd37d26ce6c923679bf9cc9a\",\"license\":\"AGPL-3.0-only\"},\"@rari-capital/solmate/src/utils/SafeTransferLib.sol\":{\"content\":\"// SPDX-License-Identifier: AGPL-3.0-only\\npragma solidity >=0.8.0;\\n\\nimport {ERC20} from \\\"../tokens/ERC20.sol\\\";\\n\\n/// @notice Safe ETH and ERC20 transfer library that gracefully handles missing return values.\\n/// @author Modified from Gnosis (https://github.com/gnosis/gp-v2-contracts/blob/main/src/contracts/libraries/GPv2SafeERC20.sol)\\n/// @dev Use with caution! Some functions in this library knowingly create dirty bits at the destination of the free memory pointer.\\nlibrary SafeTransferLib {\\n    /*///////////////////////////////////////////////////////////////\\n                            ETH OPERATIONS\\n    //////////////////////////////////////////////////////////////*/\\n\\n    function safeTransferETH(address to, uint256 amount) internal {\\n        bool callStatus;\\n\\n        assembly {\\n            // Transfer the ETH and store if it succeeded or not.\\n            callStatus := call(gas(), to, amount, 0, 0, 0, 0)\\n        }\\n\\n        require(callStatus, \\\"ETH_TRANSFER_FAILED\\\");\\n    }\\n\\n    /*///////////////////////////////////////////////////////////////\\n                           ERC20 OPERATIONS\\n    //////////////////////////////////////////////////////////////*/\\n\\n    function safeTransferFrom(\\n        ERC20 token,\\n        address from,\\n        address to,\\n        uint256 amount\\n    ) internal {\\n        bool callStatus;\\n\\n        assembly {\\n            // Get a pointer to some free memory.\\n            let freeMemoryPointer := mload(0x40)\\n\\n            // Write the abi-encoded calldata to memory piece by piece:\\n            mstore(freeMemoryPointer, 0x23b872dd00000000000000000000000000000000000000000000000000000000) // Begin with the function selector.\\n            mstore(add(freeMemoryPointer, 4), and(from, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the \\\"from\\\" argument.\\n            mstore(add(freeMemoryPointer, 36), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the \\\"to\\\" argument.\\n            mstore(add(freeMemoryPointer, 68), amount) // Finally append the \\\"amount\\\" argument. No mask as it's a full 32 byte value.\\n\\n            // Call the token and store if it succeeded or not.\\n            // We use 100 because the calldata length is 4 + 32 * 3.\\n            callStatus := call(gas(), token, 0, freeMemoryPointer, 100, 0, 0)\\n        }\\n\\n        require(didLastOptionalReturnCallSucceed(callStatus), \\\"TRANSFER_FROM_FAILED\\\");\\n    }\\n\\n    function safeTransfer(\\n        ERC20 token,\\n        address to,\\n        uint256 amount\\n    ) internal {\\n        bool callStatus;\\n\\n        assembly {\\n            // Get a pointer to some free memory.\\n            let freeMemoryPointer := mload(0x40)\\n\\n            // Write the abi-encoded calldata to memory piece by piece:\\n            mstore(freeMemoryPointer, 0xa9059cbb00000000000000000000000000000000000000000000000000000000) // Begin with the function selector.\\n            mstore(add(freeMemoryPointer, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the \\\"to\\\" argument.\\n            mstore(add(freeMemoryPointer, 36), amount) // Finally append the \\\"amount\\\" argument. No mask as it's a full 32 byte value.\\n\\n            // Call the token and store if it succeeded or not.\\n            // We use 68 because the calldata length is 4 + 32 * 2.\\n            callStatus := call(gas(), token, 0, freeMemoryPointer, 68, 0, 0)\\n        }\\n\\n        require(didLastOptionalReturnCallSucceed(callStatus), \\\"TRANSFER_FAILED\\\");\\n    }\\n\\n    function safeApprove(\\n        ERC20 token,\\n        address to,\\n        uint256 amount\\n    ) internal {\\n        bool callStatus;\\n\\n        assembly {\\n            // Get a pointer to some free memory.\\n            let freeMemoryPointer := mload(0x40)\\n\\n            // Write the abi-encoded calldata to memory piece by piece:\\n            mstore(freeMemoryPointer, 0x095ea7b300000000000000000000000000000000000000000000000000000000) // Begin with the function selector.\\n            mstore(add(freeMemoryPointer, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the \\\"to\\\" argument.\\n            mstore(add(freeMemoryPointer, 36), amount) // Finally append the \\\"amount\\\" argument. No mask as it's a full 32 byte value.\\n\\n            // Call the token and store if it succeeded or not.\\n            // We use 68 because the calldata length is 4 + 32 * 2.\\n            callStatus := call(gas(), token, 0, freeMemoryPointer, 68, 0, 0)\\n        }\\n\\n        require(didLastOptionalReturnCallSucceed(callStatus), \\\"APPROVE_FAILED\\\");\\n    }\\n\\n    /*///////////////////////////////////////////////////////////////\\n                         INTERNAL HELPER LOGIC\\n    //////////////////////////////////////////////////////////////*/\\n\\n    function didLastOptionalReturnCallSucceed(bool callStatus) private pure returns (bool success) {\\n        assembly {\\n            // Get how many bytes the call returned.\\n            let returnDataSize := returndatasize()\\n\\n            // If the call reverted:\\n            if iszero(callStatus) {\\n                // Copy the revert message into memory.\\n                returndatacopy(0, 0, returnDataSize)\\n\\n                // Revert with the same message.\\n                revert(0, returnDataSize)\\n            }\\n\\n            switch returnDataSize\\n            case 32 {\\n                // Copy the return data into memory.\\n                returndatacopy(0, 0, returnDataSize)\\n\\n                // Set success to whether it returned true.\\n                success := iszero(iszero(mload(0)))\\n            }\\n            case 0 {\\n                // There was no return data.\\n                success := 1\\n            }\\n            default {\\n                // It returned some malformed input.\\n                success := 0\\n            }\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x50f187c86835070ec519acffcc259cd7900fdb85cb53333210fba9491eb65eca\",\"license\":\"AGPL-3.0-only\"},\"contracts/interfaces/IBentoBoxMinimal.sol\":{\"content\":\"// SPDX-License-Identifier: UNLICENSED\\r\\n\\r\\npragma solidity 0.8.7;\\r\\n\\r\\n/// @notice Minimal interface for BentoBox token vault interactions - `token` is aliased as `address` from `IERC20` for code simplicity.\\r\\ninterface IBentoBoxMinimal {\\r\\n\\r\\n    struct Rebase {\\r\\n        uint128 elastic;\\r\\n        uint128 base;\\r\\n    }\\r\\n\\r\\n    struct StrategyData {\\r\\n        uint64 strategyStartDate;\\r\\n        uint64 targetPercentage;\\r\\n        uint128 balance; // the balance of the strategy that BentoBox thinks is in there\\r\\n    }\\r\\n\\r\\n    function strategyData(address token) external view returns (StrategyData memory);\\r\\n\\r\\n    /// @notice Balance per ERC-20 token per account in shares.\\r\\n    function balanceOf(address, address) external view returns (uint256);\\r\\n\\r\\n    /// @notice Deposit an amount of `token` represented in either `amount` or `share`.\\r\\n    /// @param token_ The ERC-20 token to deposit.\\r\\n    /// @param from which account to pull the tokens.\\r\\n    /// @param to which account to push the tokens.\\r\\n    /// @param amount Token amount in native representation to deposit.\\r\\n    /// @param share Token amount represented in shares to deposit. Takes precedence over `amount`.\\r\\n    /// @return amountOut The amount deposited.\\r\\n    /// @return shareOut The deposited amount repesented in shares.\\r\\n    function deposit(\\r\\n        address token_,\\r\\n        address from,\\r\\n        address to,\\r\\n        uint256 amount,\\r\\n        uint256 share\\r\\n    ) external payable returns (uint256 amountOut, uint256 shareOut);\\r\\n\\r\\n    /// @notice Withdraws an amount of `token` from a user account.\\r\\n    /// @param token_ The ERC-20 token to withdraw.\\r\\n    /// @param from which user to pull the tokens.\\r\\n    /// @param to which user to push the tokens.\\r\\n    /// @param amount of tokens. Either one of `amount` or `share` needs to be supplied.\\r\\n    /// @param share Like above, but `share` takes precedence over `amount`.\\r\\n    function withdraw(\\r\\n        address token_,\\r\\n        address from,\\r\\n        address to,\\r\\n        uint256 amount,\\r\\n        uint256 share\\r\\n    ) external returns (uint256 amountOut, uint256 shareOut);\\r\\n\\r\\n    /// @notice Transfer shares from a user account to another one.\\r\\n    /// @param token The ERC-20 token to transfer.\\r\\n    /// @param from which user to pull the tokens.\\r\\n    /// @param to which user to push the tokens.\\r\\n    /// @param share The amount of `token` in shares.\\r\\n    function transfer(\\r\\n        address token,\\r\\n        address from,\\r\\n        address to,\\r\\n        uint256 share\\r\\n    ) external;\\r\\n\\r\\n    /// @dev Helper function to represent an `amount` of `token` in shares.\\r\\n    /// @param token The ERC-20 token.\\r\\n    /// @param amount The `token` amount.\\r\\n    /// @param roundUp If the result `share` should be rounded up.\\r\\n    /// @return share The token amount represented in shares.\\r\\n    function toShare(\\r\\n        address token,\\r\\n        uint256 amount,\\r\\n        bool roundUp\\r\\n    ) external view returns (uint256 share);\\r\\n\\r\\n    /// @dev Helper function to represent shares back into the `token` amount.\\r\\n    /// @param token The ERC-20 token.\\r\\n    /// @param share The amount of shares.\\r\\n    /// @param roundUp If the result should be rounded up.\\r\\n    /// @return amount The share amount back into native representation.\\r\\n    function toAmount(\\r\\n        address token,\\r\\n        uint256 share,\\r\\n        bool roundUp\\r\\n    ) external view returns (uint256 amount);\\r\\n\\r\\n    /// @notice Registers this contract so that users can approve it for the BentoBox.\\r\\n    function registerProtocol() external;\\r\\n\\r\\n    function totals(address token) external view returns (Rebase memory);\\r\\n\\r\\n    function harvest(\\r\\n        address token,\\r\\n        bool balance,\\r\\n        uint256 maxChangeAmount\\r\\n    ) external;\\r\\n}\\r\\n\",\"keccak256\":\"0xeb3c66b5c143833c7b49a76ed2f88c9815f7e77993450179c8cd616dc75f4556\",\"license\":\"UNLICENSED\"},\"contracts/interfaces/IDynamicSubLPStrategy.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.7;\\r\\n\\r\\nimport \\\"./IOracle.sol\\\";\\r\\n\\r\\ninterface IDynamicSubLPStrategy {\\r\\n    function dynamicStrategy() external view returns (address);\\r\\n\\r\\n    function skim(uint256 amount) external;\\r\\n\\r\\n    function harvest() external returns (uint256 amountAdded);\\r\\n\\r\\n    function withdraw(uint256 amount) external returns (uint256 actualAmount);\\r\\n\\r\\n    function exit() external returns (uint256 actualAmount);\\r\\n\\r\\n    function strategyTokenIn() external view returns (address);\\r\\n\\r\\n    function strategyTokenOut() external view returns (address);\\r\\n\\r\\n    function wrapAndDeposit(uint256 minDustAmount0, uint256 minDustAmount1) external returns (uint256 amount, uint256 amountPrice);\\r\\n\\r\\n    function withdrawAndUnwrapTo(IDynamicSubLPStrategy recipient) external returns (uint256 amount, uint256 amountPrice);\\r\\n\\r\\n    function swapToLP(\\r\\n        uint256 amountOutMin,\\r\\n        uint256 feePercent,\\r\\n        address feeTo\\r\\n    ) external returns (uint256 amountOut);\\r\\n}\\r\\n\",\"keccak256\":\"0x7f7932cc5fa940ccaf09534fcea16a0e7d3ffb20ec9fcdf0e3bd597d3fa1eefa\",\"license\":\"MIT\"},\"contracts/interfaces/IMasterChef.sol\":{\"content\":\"// SPDX-License-Identifier: UNLICENSED\\r\\n\\r\\npragma solidity 0.8.7;\\r\\n\\r\\ninterface IMasterChef {\\r\\n    function deposit(uint256 _pid, uint256 _amount) external;\\r\\n    function withdraw(uint256 _pid, uint256 _amount) external;\\r\\n    function userInfo(uint256 _pid, address user) external view returns (uint256 amount, uint256 rewardDebt);\\r\\n    function emergencyWithdraw(uint256 _pid) external;\\r\\n}\\r\\n\\r\\ninterface ICakeChef is IMasterChef {\\r\\n    function enterStaking(uint256 _amount) external;\\r\\n    function leaveStaking(uint256 _amount) external;\\r\\n}\",\"keccak256\":\"0x80fee12779e932a344adfb7029733414b10d37a8fd87bad6f016e525618fec38\",\"license\":\"UNLICENSED\"},\"contracts/interfaces/IOracle.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity >=0.6.12;\\r\\n\\r\\ninterface IOracle {\\r\\n    /// @notice Get the latest exchange rate.\\r\\n    /// @param data Usually abi encoded, implementation specific data that contains information and arguments to & about the oracle.\\r\\n    /// For example:\\r\\n    /// (string memory collateralSymbol, string memory assetSymbol, uint256 division) = abi.decode(data, (string, string, uint256));\\r\\n    /// @return success if no valid (recent) rate is available, return false else true.\\r\\n    /// @return rate The rate of the requested asset / pair / pool.\\r\\n    function get(bytes calldata data) external returns (bool success, uint256 rate);\\r\\n\\r\\n    /// @notice Check the last exchange rate without any state changes.\\r\\n    /// @param data Usually abi encoded, implementation specific data that contains information and arguments to & about the oracle.\\r\\n    /// For example:\\r\\n    /// (string memory collateralSymbol, string memory assetSymbol, uint256 division) = abi.decode(data, (string, string, uint256));\\r\\n    /// @return success if no valid (recent) rate is available, return false else true.\\r\\n    /// @return rate The rate of the requested asset / pair / pool.\\r\\n    function peek(bytes calldata data) external view returns (bool success, uint256 rate);\\r\\n\\r\\n    /// @notice Check the current spot exchange rate without any state changes. For oracles like TWAP this will be different from peek().\\r\\n    /// @param data Usually abi encoded, implementation specific data that contains information and arguments to & about the oracle.\\r\\n    /// For example:\\r\\n    /// (string memory collateralSymbol, string memory assetSymbol, uint256 division) = abi.decode(data, (string, string, uint256));\\r\\n    /// @return rate The rate of the requested asset / pair / pool.\\r\\n    function peekSpot(bytes calldata data) external view returns (uint256 rate);\\r\\n\\r\\n    /// @notice Returns a human readable (short) name about this oracle.\\r\\n    /// @param data Usually abi encoded, implementation specific data that contains information and arguments to & about the oracle.\\r\\n    /// For example:\\r\\n    /// (string memory collateralSymbol, string memory assetSymbol, uint256 division) = abi.decode(data, (string, string, uint256));\\r\\n    /// @return (string) A human readable symbol name about this oracle.\\r\\n    function symbol(bytes calldata data) external view returns (string memory);\\r\\n\\r\\n    /// @notice Returns a human readable name about this oracle.\\r\\n    /// @param data Usually abi encoded, implementation specific data that contains information and arguments to & about the oracle.\\r\\n    /// For example:\\r\\n    /// (string memory collateralSymbol, string memory assetSymbol, uint256 division) = abi.decode(data, (string, string, uint256));\\r\\n    /// @return (string) A human readable name about this oracle.\\r\\n    function name(bytes calldata data) external view returns (string memory);\\r\\n}\\r\\n\",\"keccak256\":\"0x724e4079842c80db8202bbd75fd9ccee057012cf82f5615898f76ce550ff7f46\",\"license\":\"MIT\"},\"contracts/interfaces/IStrategy.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-or-later\\r\\n\\r\\npragma solidity 0.8.7;\\r\\n\\r\\ninterface IStrategy {\\r\\n    /// @notice Send the assets to the Strategy and call skim to invest them.\\r\\n    /// @param amount The amount of tokens to invest.\\r\\n    function skim(uint256 amount) external;\\r\\n\\r\\n    /// @notice Harvest any profits made converted to the asset and pass them to the caller.\\r\\n    /// @param balance The amount of tokens the caller thinks it has invested.\\r\\n    /// @param sender The address of the initiator of this transaction. Can be used for reimbursements, etc.\\r\\n    /// @return amountAdded The delta (+profit or -loss) that occured in contrast to `balance`.\\r\\n    function harvest(uint256 balance, address sender) external returns (int256 amountAdded);\\r\\n\\r\\n    /// @notice Withdraw assets. The returned amount can differ from the requested amount due to rounding.\\r\\n    /// @dev The `actualAmount` should be very close to the amount.\\r\\n    /// The difference should NOT be used to report a loss. That's what harvest is for.\\r\\n    /// @param amount The requested amount the caller wants to withdraw.\\r\\n    /// @return actualAmount The real amount that is withdrawn.\\r\\n    function withdraw(uint256 amount) external returns (uint256 actualAmount);\\r\\n\\r\\n    /// @notice Withdraw all assets in the safest way possible. This shouldn't fail.\\r\\n    /// @param balance The amount of tokens the caller thinks it has invested.\\r\\n    /// @return amountAdded The delta (+profit or -loss) that occured in contrast to `balance`.\\r\\n    function exit(uint256 balance) external returns (int256 amountAdded);\\r\\n}\\r\\n\",\"keccak256\":\"0x78124cec79b353649c003f761d4975c90a63c5e91a33f5eea296dfc14a7fd172\",\"license\":\"GPL-3.0-or-later\"},\"contracts/interfaces/ISushiSwap.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-or-later\\r\\n\\r\\npragma solidity 0.8.7;\\r\\npragma experimental ABIEncoderV2;\\r\\n\\r\\n/// @notice Interface for SushiSwap.\\r\\ninterface ISushiSwap {\\r\\n    function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast);\\r\\n    function token0() external pure returns (address);\\r\\n    function token1() external pure returns (address);\\r\\n    function burn(address to) external returns (uint amount0, uint amount1);\\r\\n    function swap(uint amount0Out, uint amount1Out, address to, bytes calldata data) external;\\r\\n    \\r\\n    function addLiquidity(\\r\\n        address tokenA,\\r\\n        address tokenB,\\r\\n        uint256 amountADesired,\\r\\n        uint256 amountBDesired,\\r\\n        uint256 amountAMin,\\r\\n        uint256 amountBMin,\\r\\n        address to,\\r\\n        uint256 deadline\\r\\n    )\\r\\n        external\\r\\n        returns (\\r\\n            uint256 amountA,\\r\\n            uint256 amountB,\\r\\n            uint256 liquidity\\r\\n        );\\r\\n\\r\\n    function removeLiquidity(\\r\\n        address tokenA,\\r\\n        address tokenB,\\r\\n        uint liquidity,\\r\\n        uint amountAMin,\\r\\n        uint amountBMin,\\r\\n        address to,\\r\\n        uint deadline\\r\\n    )\\r\\n        external\\r\\n        returns (\\r\\n            uint amountA,\\r\\n            uint amountB\\r\\n        );\\r\\n\\r\\n    function swapExactTokensForTokens(\\r\\n        uint256 amountIn,\\r\\n        uint256 amountOutMin,\\r\\n        address[] calldata path,\\r\\n        address to,\\r\\n        uint256 deadline\\r\\n    ) external returns (uint256[] memory amounts);\\r\\n}\",\"keccak256\":\"0x3f5318b89fc4145bf7186fdc0fc5c40335bc5b9987d9e261483c2c88b16fe21d\",\"license\":\"GPL-3.0-or-later\"},\"contracts/libraries/Babylonian.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-or-later\\r\\n\\r\\npragma solidity 0.8.7;\\r\\n\\r\\n/// @notice Babylonian method (https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method).\\r\\nlibrary Babylonian {\\r\\n    // computes square roots using the babylonian method\\r\\n    // credit for this implementation goes to\\r\\n    // https://github.com/abdk-consulting/abdk-libraries-solidity/blob/master/ABDKMath64x64.sol#L687\\r\\n    function sqrt(uint256 x) internal pure returns (uint256) {\\r\\n        if (x == 0) return 0;\\r\\n        // this block is equivalent to r = uint256(1) << (BitMath.mostSignificantBit(x) / 2);\\r\\n        // however that code costs significantly more gas\\r\\n        uint256 xx = x;\\r\\n        uint256 r = 1;\\r\\n        if (xx >= 0x100000000000000000000000000000000) {\\r\\n            xx >>= 128;\\r\\n            r <<= 64;\\r\\n        }\\r\\n        if (xx >= 0x10000000000000000) {\\r\\n            xx >>= 64;\\r\\n            r <<= 32;\\r\\n        }\\r\\n        if (xx >= 0x100000000) {\\r\\n            xx >>= 32;\\r\\n            r <<= 16;\\r\\n        }\\r\\n        if (xx >= 0x10000) {\\r\\n            xx >>= 16;\\r\\n            r <<= 8;\\r\\n        }\\r\\n        if (xx >= 0x100) {\\r\\n            xx >>= 8;\\r\\n            r <<= 4;\\r\\n        }\\r\\n        if (xx >= 0x10) {\\r\\n            xx >>= 4;\\r\\n            r <<= 2;\\r\\n        }\\r\\n        if (xx >= 0x8) {\\r\\n            r <<= 1;\\r\\n        }\\r\\n        r = (r + x / r) >> 1;\\r\\n        r = (r + x / r) >> 1;\\r\\n        r = (r + x / r) >> 1;\\r\\n        r = (r + x / r) >> 1;\\r\\n        r = (r + x / r) >> 1;\\r\\n        r = (r + x / r) >> 1;\\r\\n        r = (r + x / r) >> 1; // Seven iterations should be enough\\r\\n        uint256 r1 = x / r;\\r\\n        return (r < r1 ? r : r1);\\r\\n    }\\r\\n}\",\"keccak256\":\"0x3ae32bf2288a03a5d60780369e8ea19b86123bde5319e347809e3406084214de\",\"license\":\"GPL-3.0-or-later\"},\"contracts/strategies/dynamic/DynamicLPStrategy.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-or-later\\r\\n\\r\\npragma solidity 0.8.7;\\r\\nimport \\\"@rari-capital/solmate/src/tokens/ERC20.sol\\\";\\r\\nimport \\\"@rari-capital/solmate/src/utils/SafeTransferLib.sol\\\";\\r\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\r\\nimport \\\"../../libraries/Babylonian.sol\\\";\\r\\nimport \\\"../../interfaces/IStrategy.sol\\\";\\r\\nimport \\\"../../interfaces/ISushiSwap.sol\\\";\\r\\nimport \\\"../../interfaces/IMasterChef.sol\\\";\\r\\nimport \\\"../../interfaces/IDynamicSubLPStrategy.sol\\\";\\r\\nimport \\\"../../interfaces/IBentoBoxMinimal.sol\\\";\\r\\n\\r\\n/// @notice Dynamic strategy that can have different farming strategy\\r\\n/// For example, farming on Trader Joe then unwrap the jLP to\\r\\n/// mint pLP and farm on Pengolin.\\r\\ncontract DynamicLPStrategy is IStrategy, Ownable {\\r\\n    using SafeTransferLib for ERC20;\\r\\n\\r\\n    address public immutable strategyToken;\\r\\n    address public immutable token0;\\r\\n    address public immutable token1;\\r\\n\\r\\n    address public immutable bentoBox;\\r\\n\\r\\n    address public feeCollector;\\r\\n    uint8 public feePercent;\\r\\n\\r\\n    uint256 public maxBentoBoxBalance; /// @dev Slippage protection when calling harvest\\r\\n    mapping(address => bool) public strategyExecutors; /// @dev EOAs that can execute safeHarvest\\r\\n\\r\\n    IDynamicSubLPStrategy[] public subStrategies;\\r\\n    IDynamicSubLPStrategy public currentSubStrategy;\\r\\n\\r\\n    bool public exited; /// @dev After bentobox 'exits' the strategy harvest, skim and withdraw functions can no loner be called\\r\\n\\r\\n    event LogSubStrategyAdded(address indexed subStrategy);\\r\\n    event LogSubStrategyChanged(\\r\\n        address indexed fromStrategy,\\r\\n        address indexed toStrategy,\\r\\n        uint256 amountOut,\\r\\n        uint256 amountOutPrice,\\r\\n        uint256 amountIn,\\r\\n        uint256 amountInPrice\\r\\n    );\\r\\n    event LogSetStrategyExecutor(address indexed executor, bool allowed);\\r\\n\\r\\n    /** @param _strategyToken Address of the underlying LP token the strategy invests.\\r\\n        @param _bentoBox BentoBox address.\\r\\n        @param _strategyExecutor an EOA that will execute the safeHarvest function.\\r\\n    */\\r\\n    constructor(\\r\\n        address _strategyToken,\\r\\n        address _bentoBox,\\r\\n        address _strategyExecutor\\r\\n    ) {\\r\\n        strategyToken = _strategyToken;\\r\\n        token0 = ISushiSwap(_strategyToken).token0();\\r\\n        token1 = ISushiSwap(_strategyToken).token1();\\r\\n\\r\\n        bentoBox = _bentoBox;\\r\\n\\r\\n        if (_strategyExecutor != address(0)) {\\r\\n            strategyExecutors[_strategyExecutor] = true;\\r\\n            emit LogSetStrategyExecutor(_strategyExecutor, true);\\r\\n        }\\r\\n    }\\r\\n\\r\\n    modifier isActive() {\\r\\n        require(!exited, \\\"BentoBox Strategy: exited\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    modifier onlyBentoBox() {\\r\\n        require(msg.sender == bentoBox, \\\"BentoBox Strategy: only BentoBox\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    /// @notice Ensure the current strategy is handling _strategyToken token so that skim,\\r\\n    /// withdraw and exit can report correctly back to bentobox.\\r\\n    modifier onlyValidStrategy() {\\r\\n        require(address(currentSubStrategy) != address(0), \\\"zero address\\\");\\r\\n        require(currentSubStrategy.strategyTokenIn() == strategyToken, \\\"not handling strategyToken\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    modifier onlyExecutor() {\\r\\n        require(strategyExecutors[msg.sender], \\\"BentoBox Strategy: only Executors\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    function addSubStrategy(IDynamicSubLPStrategy subStrategy) public onlyOwner {\\r\\n        require(address(subStrategy) != address(0), \\\"zero address\\\");\\r\\n        require(subStrategy.dynamicStrategy() == address(this), \\\"dynamicStrategy mismatch\\\");\\r\\n\\r\\n        /// @dev make sure the strategy pair token is using the same token0 and token1\\r\\n        ISushiSwap sushiPair = ISushiSwap(subStrategy.strategyTokenIn());\\r\\n        require(sushiPair.token0() == token0 && sushiPair.token1() == token1, \\\"incompatible tokens\\\");\\r\\n\\r\\n        subStrategies.push(subStrategy);\\r\\n        emit LogSubStrategyAdded(address(subStrategy));\\r\\n\\r\\n        if (address(currentSubStrategy) == address(0)) {\\r\\n            currentSubStrategy = subStrategy;\\r\\n\\r\\n            emit LogSubStrategyChanged(address(0), address(currentSubStrategy), 0, 0, 0, 0);\\r\\n        }\\r\\n    }\\r\\n\\r\\n    /// @param index the index of the next strategy to use\\r\\n    /// @param maxSlippageBps maximum tolerated amount of basis points of the total migrated\\r\\n    ///                   5 = 0.05%\\r\\n    ///                   10_000 = 100%\\r\\n    /// @param minDustAmount0 when the new strategy needs to wrap the token0 and token1 from previousSubStrategy\\r\\n    ///                     unwrapped token0 and token1, after initial addLiquidity, what minimum remaining\\r\\n    ///                     amount left in the contract (from new pair imbalance),\\r\\n    ///                     should be considered to swap again for more liquidity. Set to 0 to ignore.\\r\\n    /// @param minDustAmount1 same as minDustAmount0 but for token1\\r\\n    function changeStrategy(\\r\\n        uint256 index,\\r\\n        uint256 maxSlippageBps,\\r\\n        uint256 minDustAmount0,\\r\\n        uint256 minDustAmount1\\r\\n    ) public onlyExecutor {\\r\\n        require(index < subStrategies.length, \\\"invalid index\\\");\\r\\n\\r\\n        IDynamicSubLPStrategy previousSubStrategy = currentSubStrategy;\\r\\n        currentSubStrategy = subStrategies[index];\\r\\n        require(previousSubStrategy != currentSubStrategy, \\\"already current\\\");\\r\\n\\r\\n        /// @dev the next sub strategy is not using the same strategy token\\r\\n        /// and requires a convertion\\r\\n        if (previousSubStrategy.strategyTokenIn() != currentSubStrategy.strategyTokenIn()) {\\r\\n            /// @dev unwrap needs send the token0 and token1 to the next strategy directly\\r\\n            (uint256 amountFrom, uint256 priceAmountFrom) = previousSubStrategy.withdrawAndUnwrapTo(currentSubStrategy);\\r\\n\\r\\n            /// @dev wrap from the tokens sent from the previous strategy\\r\\n            (uint256 amountTo, uint256 priceAmountTo) = currentSubStrategy.wrapAndDeposit(minDustAmount0, minDustAmount1);\\r\\n\\r\\n            uint256 minToteraledPrice = priceAmountFrom - ((priceAmountFrom * maxSlippageBps) / 10_000);\\r\\n\\r\\n            require(priceAmountTo >= minToteraledPrice, \\\"maximumBps exceeded\\\");\\r\\n\\r\\n            emit LogSubStrategyChanged(\\r\\n                address(previousSubStrategy),\\r\\n                address(currentSubStrategy),\\r\\n                amountFrom,\\r\\n                priceAmountFrom,\\r\\n                amountTo,\\r\\n                priceAmountTo\\r\\n            );\\r\\n        }\\r\\n    }\\r\\n\\r\\n    /// @inheritdoc IStrategy\\r\\n    function skim(uint256 amount) external override onlyValidStrategy {\\r\\n        /// @dev bentobox transfers the token in this strategy so we need to\\r\\n        /// forward them to the sub strategy so that the specific skim can work.\\r\\n        ERC20(strategyToken).transfer(address(currentSubStrategy), amount);\\r\\n        currentSubStrategy.skim(amount);\\r\\n    }\\r\\n\\r\\n    /// @inheritdoc IStrategy\\r\\n    function withdraw(uint256 amount) external override isActive onlyBentoBox onlyValidStrategy returns (uint256 actualAmount) {\\r\\n        return currentSubStrategy.withdraw(amount);\\r\\n    }\\r\\n\\r\\n    /// @notice Harvest profits while preventing a sandwich attack exploit.\\r\\n    /// @param maxBalance The maximum balance of the underlying token that is allowed to be in BentoBox.\\r\\n    /// @param rebalance Whether BentoBox should rebalance the strategy assets to acheive it's target allocation.\\r\\n    /// @param maxChangeAmount When rebalancing - the maximum amount that will be deposited to or withdrawn from a strategy to BentoBox.\\r\\n    /// @dev maxBalance can be set to 0 to keep the previous value.\\r\\n    /// @dev maxChangeAmount can be set to 0 to allow for full rebalancing.\\r\\n    function safeHarvest(\\r\\n        uint256 maxBalance,\\r\\n        bool rebalance,\\r\\n        uint256 maxChangeAmount\\r\\n    ) external onlyExecutor {\\r\\n        if (maxBalance > 0) {\\r\\n            maxBentoBoxBalance = maxBalance;\\r\\n        }\\r\\n\\r\\n        IBentoBoxMinimal(bentoBox).harvest(strategyToken, rebalance, maxChangeAmount);\\r\\n    }\\r\\n\\r\\n    /// @inheritdoc IStrategy\\r\\n    /// @dev Only BentoBox can call harvest on this strategy.\\r\\n    /// @dev Ensures that (1) the caller was this contract (called through the safeHarvest function)\\r\\n    /// and (2) that we are not being frontrun by a large BentoBox deposit when harvesting profits.\\r\\n    /// @dev Beware that calling harvest can result in a subsequent skim or withdraw call if it's rebalancing.\\r\\n    function harvest(uint256 balance, address sender) external override isActive onlyBentoBox returns (int256) {\\r\\n        require(address(currentSubStrategy) != address(0), \\\"zero address\\\");\\r\\n\\r\\n        /// @dev Don't revert if conditions aren't met in order to allow\\r\\n        /// BentoBox to continue execution as it might need to do a rebalance.\\r\\n        if (sender == address(this) && IBentoBoxMinimal(bentoBox).totals(strategyToken).elastic <= maxBentoBoxBalance && balance > 0) {\\r\\n            return int256(currentSubStrategy.harvest());\\r\\n        }\\r\\n\\r\\n        return int256(0);\\r\\n    }\\r\\n\\r\\n    /// @inheritdoc IStrategy\\r\\n    /// @dev do not use isActive modifier here; allow bentobox to call strategy.exit() multiple times\\r\\n    function exit(uint256 balance) external override onlyBentoBox onlyValidStrategy returns (int256 amountAdded) {\\r\\n        uint256 actualBalance = currentSubStrategy.exit();\\r\\n\\r\\n        /// @dev Calculate tokens added (or lost).\\r\\n        amountAdded = int256(actualBalance) - int256(balance);\\r\\n        exited = true;\\r\\n    }\\r\\n\\r\\n    function swapToLP(uint256 amountOutMin) external onlyExecutor returns (uint256) {\\r\\n        return currentSubStrategy.swapToLP(amountOutMin, feePercent, feeCollector);\\r\\n    }\\r\\n\\r\\n    function setStrategyExecutor(address executor, bool value) external onlyOwner {\\r\\n        strategyExecutors[executor] = value;\\r\\n        emit LogSetStrategyExecutor(executor, value);\\r\\n    }\\r\\n\\r\\n    function setFeeParameters(address _feeCollector, uint8 _feePercent) external onlyOwner {\\r\\n        require(feePercent <= 100, \\\"invalid feePercent\\\");\\r\\n        feeCollector = _feeCollector;\\r\\n        feePercent = _feePercent;\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0x6ba3a90db35fffed3dce0137343b2ef7389982f51ba3ff31293029a7160dd4b6\",\"license\":\"GPL-3.0-or-later\"}},\"version\":1}",
+  "bytecode": "0x6101006040523480156200001257600080fd5b5060405162001fac38038062001fac833981016040819052620000359162000284565b6200004033620001f2565b826001600160a01b03166080816001600160a01b031660601b81525050826001600160a01b0316630dfe16816040518163ffffffff1660e01b815260040160206040518083038186803b1580156200009757600080fd5b505afa158015620000ac573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190620000d291906200025f565b6001600160a01b031660a0816001600160a01b031660601b81525050826001600160a01b031663d21220a76040518163ffffffff1660e01b815260040160206040518083038186803b1580156200012857600080fd5b505afa1580156200013d573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906200016391906200025f565b6001600160601b0319606091821b811660c0529083901b1660e0526001600160a01b03811615620001e9576001600160a01b038116600081815260036020908152604091829020805460ff1916600190811790915591519182527fb08a78f53a7fe017d5ca8c8fcdbf06ffa2c31f2ab668378a17700d9fc558717e910160405180910390a25b505050620002ce565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80516001600160a01b03811681146200025a57600080fd5b919050565b6000602082840312156200027257600080fd5b6200027d8262000242565b9392505050565b6000806000606084860312156200029a57600080fd5b620002a58462000242565b9250620002b56020850162000242565b9150620002c56040850162000242565b90509250925092565b60805160601c60a05160601c60c05160601c60e05160601c611c3d6200036f60003960008181610282015281816104520152818161050c015281816106a0015281816108d90152610ca701526000818161035b01526110b80152600081816101a5015261100c0152600081816102b1015281816104e401528181610722015281816108a201528181610a2b01528181610afb0152610d290152611c3d6000f3fe608060405234801561001057600080fd5b50600436106101585760003560e01c8063747efea1116100c3578063c415b95c1161007c578063c415b95c14610343578063d21220a714610356578063d395bc2d1461037d578063daa656de14610390578063e8bd73a5146103a3578063f2fde38b146103ac57600080fd5b8063747efea1146102ac57806374ceb267146102d35780637f8661a1146102e65780637fd6f15c146102f95780638da5cb5b1461031f578063afd706a31461033057600080fd5b80635ce6c327116101155780635ce6c3271461022e5780635fe4f30b1461024257806363b98ac8146102575780636939aaf51461026a5780636b2ace871461027d578063715018a6146102a457600080fd5b806302e548d61461015d57806303edad501461018d5780630dfe1681146101a057806318fccc76146101c75780632e1a7d4d146101e85780635066ebdd146101fb575b600080fd5b600554610170906001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b61017061019b366004611934565b6103bf565b6101707f000000000000000000000000000000000000000000000000000000000000000081565b6101da6101d5366004611966565b6103e9565b604051908152602001610184565b6101da6101f6366004611934565b61063c565b61021e610209366004611800565b60036020526000908152604090205460ff1681565b6040519015158152602001610184565b60055461021e90600160a01b900460ff1681565b61025561025036600461198b565b610850565b005b61025561026536600461187a565b61093a565b610255610278366004611934565b6109e6565b6101707f000000000000000000000000000000000000000000000000000000000000000081565b610255610bdb565b6101707f000000000000000000000000000000000000000000000000000000000000000081565b6102556102e1366004611841565b610c11565b6101da6102f4366004611934565b610c9a565b60015461030d90600160a01b900460ff1681565b60405160ff9091168152602001610184565b6000546001600160a01b0316610170565b61025561033e366004611800565b610e74565b600154610170906001600160a01b031681565b6101707f000000000000000000000000000000000000000000000000000000000000000081565b61025561038b3660046119e7565b611290565b6101da61039e366004611934565b611685565b6101da60025481565b6102556103ba366004611800565b6116fe565b600481815481106103cf57600080fd5b6000918252602090912001546001600160a01b0316905081565b600554600090600160a01b900460ff16156104475760405162461bcd60e51b815260206004820152601960248201527810995b9d1bd09bde0814dd1c985d1959de4e88195e1a5d1959603a1b60448201526064015b60405180910390fd5b336001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000161461048f5760405162461bcd60e51b815260040161043e90611a19565b6005546001600160a01b03166104b75760405162461bcd60e51b815260040161043e90611ac4565b6001600160a01b038216301480156105925750600254604051634ffe34db60e01b81526001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000811660048301527f00000000000000000000000000000000000000000000000000000000000000001690634ffe34db90602401604080518083038186803b15801561054d57600080fd5b505afa158015610561573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061058591906118cb565b516001600160801b031611155b801561059e5750600083115b1561063257600560009054906101000a90046001600160a01b03166001600160a01b0316634641257d6040518163ffffffff1660e01b8152600401602060405180830381600087803b1580156105f357600080fd5b505af1158015610607573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061062b919061194d565b9050610636565b5060005b92915050565b600554600090600160a01b900460ff16156106955760405162461bcd60e51b815260206004820152601960248201527810995b9d1bd09bde0814dd1c985d1959de4e88195e1a5d1959603a1b604482015260640161043e565b336001600160a01b037f000000000000000000000000000000000000000000000000000000000000000016146106dd5760405162461bcd60e51b815260040161043e90611a19565b6005546001600160a01b03166107055760405162461bcd60e51b815260040161043e90611ac4565b60055460408051631485867d60e01b815290516001600160a01b037f00000000000000000000000000000000000000000000000000000000000000008116931691631485867d916004808301926020929190829003018186803b15801561076b57600080fd5b505afa15801561077f573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906107a39190611824565b6001600160a01b0316146107c95760405162461bcd60e51b815260040161043e90611aea565b600554604051632e1a7d4d60e01b8152600481018490526001600160a01b0390911690632e1a7d4d906024015b602060405180830381600087803b15801561081057600080fd5b505af1158015610824573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610848919061194d565b90505b919050565b3360009081526003602052604090205460ff1661087f5760405162461bcd60e51b815260040161043e90611a83565b821561088b5760028390555b6040516366c6bb0b60e01b81526001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000811660048301528315156024830152604482018390527f000000000000000000000000000000000000000000000000000000000000000016906366c6bb0b90606401600060405180830381600087803b15801561091d57600080fd5b505af1158015610931573d6000803e3d6000fd5b50505050505050565b6000546001600160a01b031633146109645760405162461bcd60e51b815260040161043e90611a4e565b6001546064600160a01b90910460ff1611156109b75760405162461bcd60e51b81526020600482015260126024820152711a5b9d985b1a590819995954195c98d95b9d60721b604482015260640161043e565b6001805460ff909216600160a01b026001600160a81b03199092166001600160a01b0390931692909217179055565b6005546001600160a01b0316610a0e5760405162461bcd60e51b815260040161043e90611ac4565b60055460408051631485867d60e01b815290516001600160a01b037f00000000000000000000000000000000000000000000000000000000000000008116931691631485867d916004808301926020929190829003018186803b158015610a7457600080fd5b505afa158015610a88573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610aac9190611824565b6001600160a01b031614610ad25760405162461bcd60e51b815260040161043e90611aea565b60055460405163a9059cbb60e01b81526001600160a01b039182166004820152602481018390527f00000000000000000000000000000000000000000000000000000000000000009091169063a9059cbb90604401602060405180830381600087803b158015610b4157600080fd5b505af1158015610b55573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610b7991906118ae565b50600554604051636939aaf560e01b8152600481018390526001600160a01b0390911690636939aaf590602401600060405180830381600087803b158015610bc057600080fd5b505af1158015610bd4573d6000803e3d6000fd5b5050505050565b6000546001600160a01b03163314610c055760405162461bcd60e51b815260040161043e90611a4e565b610c0f6000611799565b565b6000546001600160a01b03163314610c3b5760405162461bcd60e51b815260040161043e90611a4e565b6001600160a01b038216600081815260036020908152604091829020805460ff191685151590811790915591519182527fb08a78f53a7fe017d5ca8c8fcdbf06ffa2c31f2ab668378a17700d9fc558717e910160405180910390a25050565b6000336001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001614610ce45760405162461bcd60e51b815260040161043e90611a19565b6005546001600160a01b0316610d0c5760405162461bcd60e51b815260040161043e90611ac4565b60055460408051631485867d60e01b815290516001600160a01b037f00000000000000000000000000000000000000000000000000000000000000008116931691631485867d916004808301926020929190829003018186803b158015610d7257600080fd5b505afa158015610d86573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610daa9190611824565b6001600160a01b031614610dd05760405162461bcd60e51b815260040161043e90611aea565b600554604080516374fd6c7760e11b815290516000926001600160a01b03169163e9fad8ee91600480830192602092919082900301818787803b158015610e1657600080fd5b505af1158015610e2a573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610e4e919061194d565b9050610e5a8382611b62565b6005805460ff60a01b1916600160a01b1790559392505050565b6000546001600160a01b03163314610e9e5760405162461bcd60e51b815260040161043e90611a4e565b6001600160a01b038116610ec45760405162461bcd60e51b815260040161043e90611ac4565b306001600160a01b0316816001600160a01b031663b636a0196040518163ffffffff1660e01b815260040160206040518083038186803b158015610f0757600080fd5b505afa158015610f1b573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610f3f9190611824565b6001600160a01b031614610f955760405162461bcd60e51b815260206004820152601860248201527f64796e616d69635374726174656779206d69736d617463680000000000000000604482015260640161043e565b6000816001600160a01b0316631485867d6040518163ffffffff1660e01b815260040160206040518083038186803b158015610fd057600080fd5b505afa158015610fe4573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906110089190611824565b90507f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316816001600160a01b0316630dfe16816040518163ffffffff1660e01b815260040160206040518083038186803b15801561106d57600080fd5b505afa158015611081573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906110a59190611824565b6001600160a01b031614801561115c57507f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316816001600160a01b031663d21220a76040518163ffffffff1660e01b815260040160206040518083038186803b15801561111957600080fd5b505afa15801561112d573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906111519190611824565b6001600160a01b0316145b61119e5760405162461bcd60e51b8152602060048201526013602482015272696e636f6d70617469626c6520746f6b656e7360681b604482015260640161043e565b6004805460018101825560009182527f8a35acfbc15ff81a39ae7d344fd709f28e8600b4aa8c65c6b64bfe7fe36bd19b0180546001600160a01b0319166001600160a01b03851690811790915560405190917f532af62603a7917d8a959bf9c60ef3a9b25b2f1c8db43b9e292df3d61c13ece391a26005546001600160a01b031661128c57600580546001600160a01b0319166001600160a01b03841690811790915560408051600080825260208201819052918101829052606081018290527f11bc2f1d9baf5a62666255fd9abcc999804f799f7bdb855b7014d21c03d7a14f9060800160405180910390a35b5050565b3360009081526003602052604090205460ff166112bf5760405162461bcd60e51b815260040161043e90611a83565b60045484106113005760405162461bcd60e51b815260206004820152600d60248201526c0d2dcecc2d8d2c840d2dcc8caf609b1b604482015260640161043e565b600554600480546001600160a01b03909216918690811061132357611323611bce565b600091825260209091200154600580546001600160a01b0319166001600160a01b0392831690811790915590821614156113915760405162461bcd60e51b815260206004820152600f60248201526e185b1c9958591e4818dd5c9c995b9d608a1b604482015260640161043e565b600560009054906101000a90046001600160a01b03166001600160a01b0316631485867d6040518163ffffffff1660e01b815260040160206040518083038186803b1580156113df57600080fd5b505afa1580156113f3573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906114179190611824565b6001600160a01b0316816001600160a01b0316631485867d6040518163ffffffff1660e01b815260040160206040518083038186803b15801561145957600080fd5b505afa15801561146d573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906114919190611824565b6001600160a01b031614610bd4576005546040516383f3b2dd60e01b81526001600160a01b0391821660048201526000918291908416906383f3b2dd906024016040805180830381600087803b1580156114ea57600080fd5b505af11580156114fe573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061152291906119c3565b6005546040516362f8ccd560e01b8152600481018990526024810188905292945090925060009182916001600160a01b0316906362f8ccd5906044016040805180830381600087803b15801561157757600080fd5b505af115801561158b573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906115af91906119c3565b909250905060006127106115c38a86611b43565b6115cd9190611b21565b6115d79085611ba1565b90508082101561161f5760405162461bcd60e51b81526020600482015260136024820152721b585e1a5b5d5b509c1cc8195e18d959591959606a1b604482015260640161043e565b6005546040805187815260208101879052908101859052606081018490526001600160a01b03918216918816907f11bc2f1d9baf5a62666255fd9abcc999804f799f7bdb855b7014d21c03d7a14f9060800160405180910390a350505050505050505050565b3360009081526003602052604081205460ff166116b45760405162461bcd60e51b815260040161043e90611a83565b600554600154604051631cc6604160e01b815260048101859052600160a01b820460ff1660248201526001600160a01b039182166044820152911690631cc66041906064016107f6565b6000546001600160a01b031633146117285760405162461bcd60e51b815260040161043e90611a4e565b6001600160a01b03811661178d5760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b606482015260840161043e565b61179681611799565b50565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80516001600160801b038116811461084b57600080fd5b60006020828403121561181257600080fd5b813561181d81611be4565b9392505050565b60006020828403121561183657600080fd5b815161181d81611be4565b6000806040838503121561185457600080fd5b823561185f81611be4565b9150602083013561186f81611bf9565b809150509250929050565b6000806040838503121561188d57600080fd5b823561189881611be4565b9150602083013560ff8116811461186f57600080fd5b6000602082840312156118c057600080fd5b815161181d81611bf9565b6000604082840312156118dd57600080fd5b6040516040810181811067ffffffffffffffff8211171561190e57634e487b7160e01b600052604160045260246000fd5b60405261191a836117e9565b8152611928602084016117e9565b60208201529392505050565b60006020828403121561194657600080fd5b5035919050565b60006020828403121561195f57600080fd5b5051919050565b6000806040838503121561197957600080fd5b82359150602083013561186f81611be4565b6000806000606084860312156119a057600080fd5b8335925060208401356119b281611bf9565b929592945050506040919091013590565b600080604083850312156119d657600080fd5b505080516020909101519092909150565b600080600080608085870312156119fd57600080fd5b5050823594602084013594506040840135936060013592509050565b6020808252818101527f42656e746f426f782053747261746567793a206f6e6c792042656e746f426f78604082015260600190565b6020808252818101527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572604082015260600190565b60208082526021908201527f42656e746f426f782053747261746567793a206f6e6c79204578656375746f726040820152607360f81b606082015260800190565b6020808252600c908201526b7a65726f206164647265737360a01b604082015260600190565b6020808252601a908201527f6e6f742068616e646c696e67207374726174656779546f6b656e000000000000604082015260600190565b600082611b3e57634e487b7160e01b600052601260045260246000fd5b500490565b6000816000190483118215151615611b5d57611b5d611bb8565b500290565b60008083128015600160ff1b850184121615611b8057611b80611bb8565b6001600160ff1b0384018313811615611b9b57611b9b611bb8565b50500390565b600082821015611bb357611bb3611bb8565b500390565b634e487b7160e01b600052601160045260246000fd5b634e487b7160e01b600052603260045260246000fd5b6001600160a01b038116811461179657600080fd5b801515811461179657600080fdfea2646970667358221220a5b7d043fae1608a6a7b7935d0acc96bb03f5f218b2e05b9033b08c5a4f1f78664736f6c63430008070033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106101585760003560e01c8063747efea1116100c3578063c415b95c1161007c578063c415b95c14610343578063d21220a714610356578063d395bc2d1461037d578063daa656de14610390578063e8bd73a5146103a3578063f2fde38b146103ac57600080fd5b8063747efea1146102ac57806374ceb267146102d35780637f8661a1146102e65780637fd6f15c146102f95780638da5cb5b1461031f578063afd706a31461033057600080fd5b80635ce6c327116101155780635ce6c3271461022e5780635fe4f30b1461024257806363b98ac8146102575780636939aaf51461026a5780636b2ace871461027d578063715018a6146102a457600080fd5b806302e548d61461015d57806303edad501461018d5780630dfe1681146101a057806318fccc76146101c75780632e1a7d4d146101e85780635066ebdd146101fb575b600080fd5b600554610170906001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b61017061019b366004611934565b6103bf565b6101707f000000000000000000000000000000000000000000000000000000000000000081565b6101da6101d5366004611966565b6103e9565b604051908152602001610184565b6101da6101f6366004611934565b61063c565b61021e610209366004611800565b60036020526000908152604090205460ff1681565b6040519015158152602001610184565b60055461021e90600160a01b900460ff1681565b61025561025036600461198b565b610850565b005b61025561026536600461187a565b61093a565b610255610278366004611934565b6109e6565b6101707f000000000000000000000000000000000000000000000000000000000000000081565b610255610bdb565b6101707f000000000000000000000000000000000000000000000000000000000000000081565b6102556102e1366004611841565b610c11565b6101da6102f4366004611934565b610c9a565b60015461030d90600160a01b900460ff1681565b60405160ff9091168152602001610184565b6000546001600160a01b0316610170565b61025561033e366004611800565b610e74565b600154610170906001600160a01b031681565b6101707f000000000000000000000000000000000000000000000000000000000000000081565b61025561038b3660046119e7565b611290565b6101da61039e366004611934565b611685565b6101da60025481565b6102556103ba366004611800565b6116fe565b600481815481106103cf57600080fd5b6000918252602090912001546001600160a01b0316905081565b600554600090600160a01b900460ff16156104475760405162461bcd60e51b815260206004820152601960248201527810995b9d1bd09bde0814dd1c985d1959de4e88195e1a5d1959603a1b60448201526064015b60405180910390fd5b336001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000161461048f5760405162461bcd60e51b815260040161043e90611a19565b6005546001600160a01b03166104b75760405162461bcd60e51b815260040161043e90611ac4565b6001600160a01b038216301480156105925750600254604051634ffe34db60e01b81526001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000811660048301527f00000000000000000000000000000000000000000000000000000000000000001690634ffe34db90602401604080518083038186803b15801561054d57600080fd5b505afa158015610561573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061058591906118cb565b516001600160801b031611155b801561059e5750600083115b1561063257600560009054906101000a90046001600160a01b03166001600160a01b0316634641257d6040518163ffffffff1660e01b8152600401602060405180830381600087803b1580156105f357600080fd5b505af1158015610607573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061062b919061194d565b9050610636565b5060005b92915050565b600554600090600160a01b900460ff16156106955760405162461bcd60e51b815260206004820152601960248201527810995b9d1bd09bde0814dd1c985d1959de4e88195e1a5d1959603a1b604482015260640161043e565b336001600160a01b037f000000000000000000000000000000000000000000000000000000000000000016146106dd5760405162461bcd60e51b815260040161043e90611a19565b6005546001600160a01b03166107055760405162461bcd60e51b815260040161043e90611ac4565b60055460408051631485867d60e01b815290516001600160a01b037f00000000000000000000000000000000000000000000000000000000000000008116931691631485867d916004808301926020929190829003018186803b15801561076b57600080fd5b505afa15801561077f573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906107a39190611824565b6001600160a01b0316146107c95760405162461bcd60e51b815260040161043e90611aea565b600554604051632e1a7d4d60e01b8152600481018490526001600160a01b0390911690632e1a7d4d906024015b602060405180830381600087803b15801561081057600080fd5b505af1158015610824573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610848919061194d565b90505b919050565b3360009081526003602052604090205460ff1661087f5760405162461bcd60e51b815260040161043e90611a83565b821561088b5760028390555b6040516366c6bb0b60e01b81526001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000811660048301528315156024830152604482018390527f000000000000000000000000000000000000000000000000000000000000000016906366c6bb0b90606401600060405180830381600087803b15801561091d57600080fd5b505af1158015610931573d6000803e3d6000fd5b50505050505050565b6000546001600160a01b031633146109645760405162461bcd60e51b815260040161043e90611a4e565b6001546064600160a01b90910460ff1611156109b75760405162461bcd60e51b81526020600482015260126024820152711a5b9d985b1a590819995954195c98d95b9d60721b604482015260640161043e565b6001805460ff909216600160a01b026001600160a81b03199092166001600160a01b0390931692909217179055565b6005546001600160a01b0316610a0e5760405162461bcd60e51b815260040161043e90611ac4565b60055460408051631485867d60e01b815290516001600160a01b037f00000000000000000000000000000000000000000000000000000000000000008116931691631485867d916004808301926020929190829003018186803b158015610a7457600080fd5b505afa158015610a88573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610aac9190611824565b6001600160a01b031614610ad25760405162461bcd60e51b815260040161043e90611aea565b60055460405163a9059cbb60e01b81526001600160a01b039182166004820152602481018390527f00000000000000000000000000000000000000000000000000000000000000009091169063a9059cbb90604401602060405180830381600087803b158015610b4157600080fd5b505af1158015610b55573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610b7991906118ae565b50600554604051636939aaf560e01b8152600481018390526001600160a01b0390911690636939aaf590602401600060405180830381600087803b158015610bc057600080fd5b505af1158015610bd4573d6000803e3d6000fd5b5050505050565b6000546001600160a01b03163314610c055760405162461bcd60e51b815260040161043e90611a4e565b610c0f6000611799565b565b6000546001600160a01b03163314610c3b5760405162461bcd60e51b815260040161043e90611a4e565b6001600160a01b038216600081815260036020908152604091829020805460ff191685151590811790915591519182527fb08a78f53a7fe017d5ca8c8fcdbf06ffa2c31f2ab668378a17700d9fc558717e910160405180910390a25050565b6000336001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001614610ce45760405162461bcd60e51b815260040161043e90611a19565b6005546001600160a01b0316610d0c5760405162461bcd60e51b815260040161043e90611ac4565b60055460408051631485867d60e01b815290516001600160a01b037f00000000000000000000000000000000000000000000000000000000000000008116931691631485867d916004808301926020929190829003018186803b158015610d7257600080fd5b505afa158015610d86573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610daa9190611824565b6001600160a01b031614610dd05760405162461bcd60e51b815260040161043e90611aea565b600554604080516374fd6c7760e11b815290516000926001600160a01b03169163e9fad8ee91600480830192602092919082900301818787803b158015610e1657600080fd5b505af1158015610e2a573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610e4e919061194d565b9050610e5a8382611b62565b6005805460ff60a01b1916600160a01b1790559392505050565b6000546001600160a01b03163314610e9e5760405162461bcd60e51b815260040161043e90611a4e565b6001600160a01b038116610ec45760405162461bcd60e51b815260040161043e90611ac4565b306001600160a01b0316816001600160a01b031663b636a0196040518163ffffffff1660e01b815260040160206040518083038186803b158015610f0757600080fd5b505afa158015610f1b573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610f3f9190611824565b6001600160a01b031614610f955760405162461bcd60e51b815260206004820152601860248201527f64796e616d69635374726174656779206d69736d617463680000000000000000604482015260640161043e565b6000816001600160a01b0316631485867d6040518163ffffffff1660e01b815260040160206040518083038186803b158015610fd057600080fd5b505afa158015610fe4573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906110089190611824565b90507f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316816001600160a01b0316630dfe16816040518163ffffffff1660e01b815260040160206040518083038186803b15801561106d57600080fd5b505afa158015611081573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906110a59190611824565b6001600160a01b031614801561115c57507f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316816001600160a01b031663d21220a76040518163ffffffff1660e01b815260040160206040518083038186803b15801561111957600080fd5b505afa15801561112d573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906111519190611824565b6001600160a01b0316145b61119e5760405162461bcd60e51b8152602060048201526013602482015272696e636f6d70617469626c6520746f6b656e7360681b604482015260640161043e565b6004805460018101825560009182527f8a35acfbc15ff81a39ae7d344fd709f28e8600b4aa8c65c6b64bfe7fe36bd19b0180546001600160a01b0319166001600160a01b03851690811790915560405190917f532af62603a7917d8a959bf9c60ef3a9b25b2f1c8db43b9e292df3d61c13ece391a26005546001600160a01b031661128c57600580546001600160a01b0319166001600160a01b03841690811790915560408051600080825260208201819052918101829052606081018290527f11bc2f1d9baf5a62666255fd9abcc999804f799f7bdb855b7014d21c03d7a14f9060800160405180910390a35b5050565b3360009081526003602052604090205460ff166112bf5760405162461bcd60e51b815260040161043e90611a83565b60045484106113005760405162461bcd60e51b815260206004820152600d60248201526c0d2dcecc2d8d2c840d2dcc8caf609b1b604482015260640161043e565b600554600480546001600160a01b03909216918690811061132357611323611bce565b600091825260209091200154600580546001600160a01b0319166001600160a01b0392831690811790915590821614156113915760405162461bcd60e51b815260206004820152600f60248201526e185b1c9958591e4818dd5c9c995b9d608a1b604482015260640161043e565b600560009054906101000a90046001600160a01b03166001600160a01b0316631485867d6040518163ffffffff1660e01b815260040160206040518083038186803b1580156113df57600080fd5b505afa1580156113f3573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906114179190611824565b6001600160a01b0316816001600160a01b0316631485867d6040518163ffffffff1660e01b815260040160206040518083038186803b15801561145957600080fd5b505afa15801561146d573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906114919190611824565b6001600160a01b031614610bd4576005546040516383f3b2dd60e01b81526001600160a01b0391821660048201526000918291908416906383f3b2dd906024016040805180830381600087803b1580156114ea57600080fd5b505af11580156114fe573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061152291906119c3565b6005546040516362f8ccd560e01b8152600481018990526024810188905292945090925060009182916001600160a01b0316906362f8ccd5906044016040805180830381600087803b15801561157757600080fd5b505af115801561158b573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906115af91906119c3565b909250905060006127106115c38a86611b43565b6115cd9190611b21565b6115d79085611ba1565b90508082101561161f5760405162461bcd60e51b81526020600482015260136024820152721b585e1a5b5d5b509c1cc8195e18d959591959606a1b604482015260640161043e565b6005546040805187815260208101879052908101859052606081018490526001600160a01b03918216918816907f11bc2f1d9baf5a62666255fd9abcc999804f799f7bdb855b7014d21c03d7a14f9060800160405180910390a350505050505050505050565b3360009081526003602052604081205460ff166116b45760405162461bcd60e51b815260040161043e90611a83565b600554600154604051631cc6604160e01b815260048101859052600160a01b820460ff1660248201526001600160a01b039182166044820152911690631cc66041906064016107f6565b6000546001600160a01b031633146117285760405162461bcd60e51b815260040161043e90611a4e565b6001600160a01b03811661178d5760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b606482015260840161043e565b61179681611799565b50565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80516001600160801b038116811461084b57600080fd5b60006020828403121561181257600080fd5b813561181d81611be4565b9392505050565b60006020828403121561183657600080fd5b815161181d81611be4565b6000806040838503121561185457600080fd5b823561185f81611be4565b9150602083013561186f81611bf9565b809150509250929050565b6000806040838503121561188d57600080fd5b823561189881611be4565b9150602083013560ff8116811461186f57600080fd5b6000602082840312156118c057600080fd5b815161181d81611bf9565b6000604082840312156118dd57600080fd5b6040516040810181811067ffffffffffffffff8211171561190e57634e487b7160e01b600052604160045260246000fd5b60405261191a836117e9565b8152611928602084016117e9565b60208201529392505050565b60006020828403121561194657600080fd5b5035919050565b60006020828403121561195f57600080fd5b5051919050565b6000806040838503121561197957600080fd5b82359150602083013561186f81611be4565b6000806000606084860312156119a057600080fd5b8335925060208401356119b281611bf9565b929592945050506040919091013590565b600080604083850312156119d657600080fd5b505080516020909101519092909150565b600080600080608085870312156119fd57600080fd5b5050823594602084013594506040840135936060013592509050565b6020808252818101527f42656e746f426f782053747261746567793a206f6e6c792042656e746f426f78604082015260600190565b6020808252818101527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572604082015260600190565b60208082526021908201527f42656e746f426f782053747261746567793a206f6e6c79204578656375746f726040820152607360f81b606082015260800190565b6020808252600c908201526b7a65726f206164647265737360a01b604082015260600190565b6020808252601a908201527f6e6f742068616e646c696e67207374726174656779546f6b656e000000000000604082015260600190565b600082611b3e57634e487b7160e01b600052601260045260246000fd5b500490565b6000816000190483118215151615611b5d57611b5d611bb8565b500290565b60008083128015600160ff1b850184121615611b8057611b80611bb8565b6001600160ff1b0384018313811615611b9b57611b9b611bb8565b50500390565b600082821015611bb357611bb3611bb8565b500390565b634e487b7160e01b600052601160045260246000fd5b634e487b7160e01b600052603260045260246000fd5b6001600160a01b038116811461179657600080fd5b801515811461179657600080fdfea2646970667358221220a5b7d043fae1608a6a7b7935d0acc96bb03f5f218b2e05b9033b08c5a4f1f78664736f6c63430008070033",
+  "devdoc": {
+    "events": {
+      "LogSubStrategyAdded(address)": {
+        "details": "After bentobox 'exits' the strategy harvest, skim and withdraw functions can no loner be called"
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "changeStrategy(uint256,uint256,uint256,uint256)": {
+        "params": {
+          "index": "the index of the next strategy to use",
+          "maxSlippageBps": "maximum tolerated amount of basis points of the total migrated                   5 = 0.05%                   10_000 = 100%",
+          "minDustAmount0": "when the new strategy needs to wrap the token0 and token1 from previousSubStrategy                     unwrapped token0 and token1, after initial addLiquidity, what minimum remaining                     amount left in the contract (from new pair imbalance),                     should be considered to swap again for more liquidity. Set to 0 to ignore.",
+          "minDustAmount1": "same as minDustAmount0 but for token1"
+        }
+      },
+      "constructor": {
+        "params": {
+          "_bentoBox": "BentoBox address.",
+          "_strategyExecutor": "an EOA that will execute the safeHarvest function.",
+          "_strategyToken": "Address of the underlying LP token the strategy invests."
+        }
+      },
+      "exit(uint256)": {
+        "details": "do not use isActive modifier here; allow bentobox to call strategy.exit() multiple times",
+        "params": {
+          "balance": "The amount of tokens the caller thinks it has invested."
+        },
+        "returns": {
+          "amountAdded": "The delta (+profit or -loss) that occured in contrast to `balance`."
+        }
+      },
+      "harvest(uint256,address)": {
+        "details": "Only BentoBox can call harvest on this strategy.Ensures that (1) the caller was this contract (called through the safeHarvest function) and (2) that we are not being frontrun by a large BentoBox deposit when harvesting profits.Beware that calling harvest can result in a subsequent skim or withdraw call if it's rebalancing.",
+        "params": {
+          "balance": "The amount of tokens the caller thinks it has invested.",
+          "sender": "The address of the initiator of this transaction. Can be used for reimbursements, etc."
+        },
+        "returns": {
+          "_0": "The delta (+profit or -loss) that occured in contrast to `balance`."
+        }
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      },
+      "safeHarvest(uint256,bool,uint256)": {
+        "details": "maxBalance can be set to 0 to keep the previous value.maxChangeAmount can be set to 0 to allow for full rebalancing.",
+        "params": {
+          "maxBalance": "The maximum balance of the underlying token that is allowed to be in BentoBox.",
+          "maxChangeAmount": "When rebalancing - the maximum amount that will be deposited to or withdrawn from a strategy to BentoBox.",
+          "rebalance": "Whether BentoBox should rebalance the strategy assets to acheive it's target allocation."
+        }
+      },
+      "skim(uint256)": {
+        "params": {
+          "amount": "The amount of tokens to invest."
+        }
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      },
+      "withdraw(uint256)": {
+        "details": "The `actualAmount` should be very close to the amount. The difference should NOT be used to report a loss. That's what harvest is for.",
+        "params": {
+          "amount": "The requested amount the caller wants to withdraw."
+        },
+        "returns": {
+          "actualAmount": "The real amount that is withdrawn."
+        }
+      }
+    },
+    "stateVariables": {
+      "strategyExecutors": {
+        "details": "Slippage protection when calling harvest"
+      },
+      "subStrategies": {
+        "details": "EOAs that can execute safeHarvest"
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "exit(uint256)": {
+        "notice": "Withdraw all assets in the safest way possible. This shouldn't fail."
+      },
+      "harvest(uint256,address)": {
+        "notice": "Harvest any profits made converted to the asset and pass them to the caller."
+      },
+      "safeHarvest(uint256,bool,uint256)": {
+        "notice": "Harvest profits while preventing a sandwich attack exploit."
+      },
+      "skim(uint256)": {
+        "notice": "Send the assets to the Strategy and call skim to invest them."
+      },
+      "withdraw(uint256)": {
+        "notice": "Withdraw assets. The returned amount can differ from the requested amount due to rounding."
+      }
+    },
+    "notice": "Dynamic strategy that can have different farming strategy For example, farming on Trader Joe then unwrap the jLP to mint pLP and farm on Pengolin.",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 7,
+        "contract": "contracts/strategies/dynamic/DynamicLPStrategy.sol:DynamicLPStrategy",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 6800,
+        "contract": "contracts/strategies/dynamic/DynamicLPStrategy.sol:DynamicLPStrategy",
+        "label": "feeCollector",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_address"
+      },
+      {
+        "astId": 6802,
+        "contract": "contracts/strategies/dynamic/DynamicLPStrategy.sol:DynamicLPStrategy",
+        "label": "feePercent",
+        "offset": 20,
+        "slot": "1",
+        "type": "t_uint8"
+      },
+      {
+        "astId": 6804,
+        "contract": "contracts/strategies/dynamic/DynamicLPStrategy.sol:DynamicLPStrategy",
+        "label": "maxBentoBoxBalance",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 6809,
+        "contract": "contracts/strategies/dynamic/DynamicLPStrategy.sol:DynamicLPStrategy",
+        "label": "strategyExecutors",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 6814,
+        "contract": "contracts/strategies/dynamic/DynamicLPStrategy.sol:DynamicLPStrategy",
+        "label": "subStrategies",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_array(t_contract(IDynamicSubLPStrategy)3256)dyn_storage"
+      },
+      {
+        "astId": 6817,
+        "contract": "contracts/strategies/dynamic/DynamicLPStrategy.sol:DynamicLPStrategy",
+        "label": "currentSubStrategy",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_contract(IDynamicSubLPStrategy)3256"
+      },
+      {
+        "astId": 6819,
+        "contract": "contracts/strategies/dynamic/DynamicLPStrategy.sol:DynamicLPStrategy",
+        "label": "exited",
+        "offset": 20,
+        "slot": "5",
+        "type": "t_bool"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_contract(IDynamicSubLPStrategy)3256)dyn_storage": {
+        "base": "t_contract(IDynamicSubLPStrategy)3256",
+        "encoding": "dynamic_array",
+        "label": "contract IDynamicSubLPStrategy[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_contract(IDynamicSubLPStrategy)3256": {
+        "encoding": "inplace",
+        "label": "contract IDynamicSubLPStrategy",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      },
+      "t_uint8": {
+        "encoding": "inplace",
+        "label": "uint8",
+        "numberOfBytes": "1"
+      }
+    }
+  }
+}
