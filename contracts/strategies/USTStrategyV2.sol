@@ -275,7 +275,7 @@ contract USTStrategyV2 is BaseStrategy {
     }
 
     function setFeeCollector(address _feeCollector, uint256 _fee) external onlyOwner {
-        require(_fee <= 50, "max fee is 50");
+        require(_fee <= 100, "max fee is 100");
         feeCollector = _feeCollector;
         fee = _fee;
     }
