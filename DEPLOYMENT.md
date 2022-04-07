@@ -1,6 +1,7 @@
 ## Deployments
 
 ### Ethereum
+
 | Contract       | Address                                    |
 | -------------- | ------------------------------------------ |
 | USTMIddleLayer | 0x0D2a5107435cbbBE21Db1ADB5F1E078E63e59449 |
@@ -45,3 +46,9 @@
 | Popsicle_UsdceWavaxJLP_DynamicLPStrategy    | 0x0D2a5107435cbbBE21Db1ADB5F1E078E63e59449 |
 | Popsicle_UsdceWavaxJLP_DynamicSubLPStrategy | 0xaF2fBB9CB80EdFb7d3f2d170a65AE3bFa42d0B86 |
 | Popsicle_UsdceWavaxPLP_DynamicSubLPStrategy | 0xe05811aff7A105fe05b7144F4E0Dd777a83a194e |
+
+### Fantom - SpiritSwap Strategy
+
+| Contract            | Token address                              | Strategy Address                           |
+| ------------------- | ------------------------------------------ | ------------------------------------------ |
+| FTM/MIM LP strategy | 0xB32b31DfAfbD53E310390F641C7119b5B9Ea0488 | 0xD5d0f5d872ed4eB74AA3E8fa6D833d6f7603D2EC |

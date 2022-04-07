@@ -289,7 +289,7 @@ describe("Popsicle USDC.e/WAVAX Dynamic LP Strategy", async () => {
       await expect(Strategy.swapToLP(getBigNumber(2, 14))).to.revertedWith("INSUFFICIENT_AMOUNT_OUT");
     });
 
-    it("should harvest using pangolin strat, mint lp, and report a profit", async () => {
+    it.only("should harvest using pangolin strat, mint lp, report a profit and allow to continue harvesting", async () => {
       const oldBentoBalance = (await DegenBox.totals(JoeLP.address)).elastic;
 
       await advanceTime(rewardAdvanceTime);
@@ -300,6 +300,8 @@ describe("Popsicle USDC.e/WAVAX Dynamic LP Strategy", async () => {
       await expect(Strategy.safeHarvest(0, false, 0)).to.emit(DegenBox, "LogStrategyProfit");
       const newBentoBalance = (await DegenBox.totals(JoeLP.address)).elastic;
       expect(newBentoBalance).to.be.gt(oldBentoBalance);
+
+      await Strategy.safeHarvest(0, true, 0); // harvest png
     });
 
     it("should not be possible to skim, withdraw, rebalance or exit when the current strategy tokenIn is different from strategy tokenIn", async () => {

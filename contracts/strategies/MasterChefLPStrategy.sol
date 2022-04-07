@@ -8,7 +8,7 @@ import "../interfaces/ISushiSwap.sol";
 import "../interfaces/IMasterChef.sol";
 import "../libraries/Babylonian.sol";
 
-contract LPStrategy is BaseStrategy {
+contract MasterChefLPStrategy is BaseStrategy {
     using SafeERC20 for IERC20;
 
     event LpMinted(uint256 total, uint256 strategyAmount, uint256 feeAmount);
