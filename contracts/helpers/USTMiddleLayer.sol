@@ -33,7 +33,7 @@ contract USTMiddleLayer {
 
     ERC20 public constant UST = ERC20(0xa47c8bf37f92aBed4A126BDA807A7b7498661acD);
     ERC20 public constant aUST = ERC20(0xa8De3e3c934e2A1BB08B010104CcaBBD4D6293ab);
-    IUSTStrategy private constant strategy = IUSTStrategy(0xE6191aA754F9a881e0a73F2028eDF324242F39E2);
+    IUSTStrategy private constant strategy = IUSTStrategy(0xE0C29b1A278D4B5EAE5016A7bC9bfee6c663D146);
     IBentoBoxMinimal private constant bentoBox = IBentoBoxMinimal(0xd96f48665a1410C0cd669A88898ecA36B9Fc2cce);
 
     function accountEarnings() external {
