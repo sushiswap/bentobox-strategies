@@ -4,7 +4,7 @@
 
 | Contract       | Address                                    |
 | -------------- | ------------------------------------------ |
-| USTMIddleLayer | 0x0D2a5107435cbbBE21Db1ADB5F1E078E63e59449 |
+| USTMiddleLayer | 0x0D2a5107435cbbBE21Db1ADB5F1E078E63e59449 |
 | USTStrategyV3  | 0x9CD243E5200B290F10d74D93E0CA6C9e51B3d664 |
 
 ### Avalanche - Joe Strategy
