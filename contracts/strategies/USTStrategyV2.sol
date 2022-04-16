@@ -219,13 +219,13 @@ contract USTStrategyV2 is BaseStrategy {
                     uint256 toTransfer = uint256(amount) - feeAmount;
                     IERC20(strategyToken).safeTransfer(bentoBox, uint256(toTransfer));
                     IERC20(strategyToken).safeTransfer(feeCollector, feeAmount);
-                    return (amount);
+                    return (int256(toTransfer));
                 } else {
                     uint256 feeAmount = (uint256(contractBalance) * fee) / 100;
                     uint256 toTransfer = uint256(contractBalance) - feeAmount;
                     IERC20(strategyToken).safeTransfer(bentoBox, toTransfer);
                     IERC20(strategyToken).safeTransfer(feeCollector, feeAmount);
-                    return int256(contractBalance);
+                    return (int256(toTransfer));
                 }
             } else {
                 // we made a loss
