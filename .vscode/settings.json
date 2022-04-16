@@ -11,6 +11,8 @@
   "solidity.enabledAsYouTypeCompilationErrorCheck": true,
   "solidity.validationDelay": 1500,
   "solidity.packageDefaultDependenciesDirectory": "node_modules",
+  "typescript.updateImportsOnFileMove.enabled": "never",
+  "javascript.updateImportsOnFileMove.enabled": "never",
   "solidity.defaultCompiler": "remote",
   "eslint.validate": ["javascript"],
 }
